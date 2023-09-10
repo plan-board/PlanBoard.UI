@@ -42,7 +42,7 @@ import Settings from "./domains/settings/Settings";
 
 function App() {
   const { AuthData } = useSelector((state) => state.auth);
-  console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
+  // console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
 
   const [isAuth, setIsAuth] = useState(localStorage.getItem("access_token"));
   const rolId = parseInt(localStorage.getItem("roleId"));
@@ -62,11 +62,11 @@ function App() {
         .then((res) => {
           if (res?.status === 200) {
             if (res?.data?.Status == true) {
-              console.log(
-                "🚀 ~ file: App.js:62 ~ .then ~ res?.data?.Status:",
-                res?.data?.Status
-              );
-              console.log(res?.data);
+              // console.log(
+              //   "🚀 ~ file: App.js:62 ~ .then ~ res?.data?.Status:",
+              //   res?.data?.Status
+              // );
+              // console.log(res?.data);
               dispatch(setAuthData(res?.data));
               localStorage.setItem("access_token", res.data.Data[0].TokenValid);
             }

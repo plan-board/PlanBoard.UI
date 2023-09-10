@@ -8,9 +8,9 @@ import Exit from "../images/exit.png";
 import { useSelector } from "react-redux";
 
 const Navbar = ({ isAuth }) => {
-  console.log("🚀 ~ file: Navbar.jsx:11 ~ Navbar ~ isAuth:", isAuth)
-  const { AuthData } = useSelector((state) => state.auth);
-  console.log("🚀 ~ file: Navbar.jsx:12 ~ Navbar ~ AuthData:", AuthData)
+  // console.log("🚀 ~ file: Navbar.jsx:11 ~ Navbar ~ isAuth:", isAuth)
+  const { AuthData } = useSelector((state) => state?.auth);
+  // console.log("🚀 ~ file: Navbar.jsx:12 ~ Navbar ~ AuthData:", AuthData)
 
   // const employeeName = localStorage.getItem("TokenValid");
   // console.log("🚀 ~ file: Navbar.jsx:11 ~ Navbar ~ employeeName:", employeeName)
@@ -29,7 +29,7 @@ const Navbar = ({ isAuth }) => {
   };
 
   return (
-    <div className="w3-bar w3-top w3-gray h5">
+    <div className="w3-bar w3-top w3-gray h5" style={{ zIndex: 10 }}>
       {isAuth ? (
         <div className="">
           <button
@@ -49,8 +49,8 @@ const Navbar = ({ isAuth }) => {
           </button> */}
           <button className=" w3-right w3-button w3-bar-item">
             <img src={Profile} className="w3-circle avatar" />{" "}
-            {AuthData?.Data[0].EmployeeName} ({AuthData?.Data[0].EmployeeTpye}) -
-            (
+            {AuthData?.Data[0].EmployeeName} ({AuthData?.Data[0].EmployeeTpye})
+            - (
             {AuthData?.Data[0].EmployeeTpye === "HOD" ? (
               <>{AuthData?.HOD.map((ele) => ele.HODName).join(",")}</>
             ) : AuthData?.Data[0].EmployeeTpye === "ZM" ? (

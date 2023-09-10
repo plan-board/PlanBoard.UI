@@ -12,7 +12,10 @@ const Sidebar = ({ isAuth, rolId }) => {
   };
 
   return (
-    <div className="w3-sidebar w3-bar-block w3-hide-small  ">
+    <div
+      className="w3-sidebar w3-bar-block w3-hide-small"
+      style={{ zIndex: 20 }}
+    >
       <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
         <img src={logo} className="" style={{ width: "50px" }} />
         <p className="w3-small h6">Planboard</p>

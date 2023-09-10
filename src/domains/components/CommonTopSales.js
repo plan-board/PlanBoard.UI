@@ -96,11 +96,19 @@ const CommonTopSales = ({
             <hr className="hr1" />
 
             <b>
+            {" "}
+              [v.0 :{" "}
+              <u className=" w3-text-red">
+                {" "}
+                {summaryData[0]?.summ_cy_plan_value} (
+                {summaryData[0]?.summ_cy_sale_percentage}%){" "}
+              </u>{" "}
+              ]{" "}
               {" "}
               [v.1 :{" "}
               <u className=" w3-text-red">
                 {" "}
-                {summaryData[0]?.summ_cy_plan_v1_value} (
+                {summaryData[0]?.summ_cy_plan_value_v1} (
                 {summaryData[0]?.summ_cy_sale_percentage}%){" "}
               </u>{" "}
               ]{" "}

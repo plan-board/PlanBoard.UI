@@ -101,7 +101,7 @@ const Depot = () => {
             onClick={() => toggleTab(1)}
           >
             <div>
-            <h3>Territory Month Wise Report</h3>
+            <h3>Territory Wise Monthly Plan / Achievement</h3>
           </div>
             <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
           </div>

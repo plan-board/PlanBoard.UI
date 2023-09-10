@@ -166,7 +166,7 @@ const Territory = () => {
             onClick={() => toggleTab(1)}
           >
             <div>
-            <h3>Delaer Month Wise Report</h3>
+            <h3>Dealer Wise Monthly Plan / Achievement</h3>
           </div>
             {selectedTerritory ? (<Wgt_Delear_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
@@ -175,7 +175,7 @@ const Territory = () => {
             onClick={() => toggleTab(2)}
           >
             <div>
-            <h3>Delaer Weekly Wise Report</h3>
+            <h3>Dealer Wise Weekly Plan / Achievement</h3>
           </div>
             {selectedTerritory ? (<Wgt_Delear_Weekly_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
 
@@ -185,7 +185,7 @@ const Territory = () => {
             onClick={() => toggleTab(3)}
           >
             <div>
-            <h3>Delaer Month Wise Report</h3>
+            <h3>Dealer Wise Monthly Plan / Achievement</h3>
           </div>
           </div>
         </div>

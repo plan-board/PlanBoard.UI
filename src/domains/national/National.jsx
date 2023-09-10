@@ -16,7 +16,7 @@ import DealerMonthSale from "../components/DealerMonthSale";
 
 const National = () => {
   const { AuthData } = useSelector((state) => state.auth);
-  console.log("====auth====", AuthData);
+  // console.log("====auth====", AuthData);
   // Set Select Zone
   const [selectedZone, setSelectedZone] = useState(0);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(
@@ -24,12 +24,12 @@ const National = () => {
   );
   const [filteredZones, setFilteredZones] = useState([]);
   const [filteredZonesData, setFilteredZonesData] = useState([]);
-  console.log(
-    "🚀 ~ file: National.jsx:27 ~ National ~ filteredZonesData:",
-    filteredZonesData
-  );
+  // console.log(
+  //   "🚀 ~ file: National.jsx:27 ~ National ~ filteredZonesData:",
+  //   filteredZonesData
+  // );
   const [data, setData] = useState(null);
-  console.log("🚀 ~ file: National.jsx:28 ~ National ~ id:", data);
+  // console.log("🚀 ~ file: National.jsx:28 ~ National ~ id:", data);
 
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
@@ -49,11 +49,11 @@ const National = () => {
 
   const onSelectedTerritoryChange = (newValue) => {
     setSelectedTerritory(newValue);
-    console.log("45-setselectedTerritory", newValue);
+    // console.log("45-setselectedTerritory", newValue);
   };
 
   const onSelectedDepoChange = (newValue) => {
-    console.log("79-onSelectedDepoChange", newValue);
+    // console.log("79-onSelectedDepoChange", newValue);
 
     setSelectedDepot(newValue);
   };
@@ -72,6 +72,7 @@ const National = () => {
         id="Wgt_Zone_Id"
         className=" w3-leftbar w3-border-red Wgt_Zone_Class w3-row w3-row-padding w3-margin-bottom w3-white "
       >
+        <div><h3>Zone Wise Monthly Plan / Achievement</h3></div>
         <NationalZoneMonthSale selectedZone={selectedZone} />
       </div>
       <div className="w3-clear w3-padding-16"> </div>
@@ -149,19 +150,27 @@ const National = () => {
             onClick={() => toggleTab(1)}
           >
             <div>
-              <h3>Depot Month Wise Report</h3>
+              <h3>Depot Wise Monthly Plan / Achievement</h3>
             </div>
             <DepoMonthWiseSalesReport
               selectedZone={selectedZoneDrop}
               selectedDepot={0}
             />
+            {/* <div style={{ marginTop: "12px" }}>
+              <h3>Depot Month Wise Report V1</h3>
+            </div>
+            <DepoMonthWiseSalesReport
+              selectedZone={selectedZoneDrop}
+              selectedDepot={0}
+              forVersion={"v1"}
+            /> */}
           </div>
           <div
             className={toggleState === 2 ? "  " : " w3-hide  "}
             onClick={() => toggleTab(2)}
           >
             <div>
-              <h3>Territory Month Wise Report</h3>
+              <h3>Territory Wise Monthly Plan / Achievement</h3>
             </div>
             <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
           </div>
@@ -170,7 +179,7 @@ const National = () => {
             onClick={() => toggleTab(3)}
           >
             <div>
-              <h3>Dealer Month Wise Report</h3>
+              <h3>Dealer Wise Monthly Plan / Achievement</h3>
             </div>
             {/* {selectedTerritory ? (<Wgt_Delear_Ui data={selectedTerritory} />) : (<div>Please select a territory</div>)} */}
             {selectedTerritory ? (

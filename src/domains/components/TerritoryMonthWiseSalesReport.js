@@ -10,13 +10,16 @@ import "react-table-6/react-table.css";
 import withFixedColumns from "react-table-hoc-fixed-columns";
 import "react-table-hoc-fixed-columns/lib/styles.css";
 
+
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
+const itemsPerPage = 10; // Number of items to display per page
+
 const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const dispatch = useDispatch();
   const [territoryMonthPlan, setTerritoryMonthPlan] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-  const [filterText, setFilterText] = React.useState("");
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     const payload = {
@@ -48,313 +51,360 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
     fetchTerritoryMonthPlan();
   }, [selectedDepot]);
 
-  // const columns = [
-
-  //   {
-  //     name: "Depot",
-  //     selector: (row) => row.depot_name,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Territory",
-  //     selector: (row) => row.territory_name,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "LLY",
-  //     selector: (row) => row.LLY_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "LY",
-  //     selector: (row) => (
-  //       <>
-  //         {row.LY_Value}
-  //         <br />
-  //         <span className="w3-text-gray ">
-  //           ({((row.LY_Value / row.LLY_Value) * 100).toFixed(2)}%){" "}
-  //         </span>{" "}
-  //       </>
-  //     ),
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "CY Plan",
-  //     selector: (row) => (
-  //       <>
-  //         {row.CY_Value}
-  //         <br />
-  //         <span className="w3-text-gray ">
-  //           ({((row.CY_Value / row.LY_Value) * 100).toFixed(2)}%)
-  //         </span>{" "}
-  //       </>
-  //     ),
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "YTD",
-  //     selector: (row) => (
-  //       <>
-  //         {row.YTD_Value}
-  //         <br />
-  //         <span className="w3-text-gray ">
-  //           ({(((row.YTD_Value) / (row.CY_Value)) * 100).toFixed(2)}%)
-  //         </span>
-  //       </>
-  //     ),
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Apr",
-  //     selector: (row) => row.Apr_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "May",
-  //     selector: (row) => row.May_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Jun",
-  //     selector: (row) => row.Jun_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Jul",
-  //     selector: (row) => row.Jul_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Aug",
-  //     selector: (row) => row.Aug_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Sep",
-  //     selector: (row) => row.Sep_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Oct",
-  //     selector: (row) => row.Oct_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Nov",
-  //     selector: (row) => row.Nov_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Dec",
-  //     selector: (row) => row.Dec_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Jan",
-  //     selector: (row) => row.Jan_Month_Value,
-  //     sortable: true,
-  //   },
-  //   {
-  //     name: "Feb",
-  //     selector: (row) => row.Feb_Month_Value,
-  //     sortable: true,
-  //   },
-
-  //   {
-  //     name: "Mar",
-  //     selector: (row) => row.Mar_Month_Value,
-  //     sortable: true,
-  //   },
-
-  // ];
-
-  const columns = [
-    {
-      fixed: "left",
-      columns: [
-        {
-          Header: "Depot",
-          accessor: "depot_name",
-          sortable: true,
-        },
-        {
-          Header: "Territory",
-          accessor: "territory_name",
-          sortable: true,
-        },
-        {
-          Header: "LLY",
-          accessor: "LLY_Value",
-          sortable: true,
-        },
-        {
-          Header: "LY",
-          accessor: "LY_Value",
-          sortable: true,
-        },
-        {
-          Header: "CY Plan",
-          accessor: "CY_Value",
-          sortable: true,
-        },
-        {
-          Header: "YTD",
-          accessor: "YTD_Value",
-          sortable: true,
-        },
-      ],
-    },
-    {
-      columns: [
-        {
-          Header: "Apr",
-          accessor: "Apr_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "May",
-          accessor: "May_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Jun",
-          accessor: "Jun_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Jul",
-          accessor: "Jul_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Aug",
-          accessor: "Aug_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Sep",
-          accessor: "Sep_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Oct",
-          accessor: "Oct_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Nov",
-          accessor: "Nov_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Dec",
-          accessor: "Dec_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Jan",
-          accessor: "Jan_Month_Value",
-          sortable: true,
-        },
-        {
-          Header: "Feb",
-          accessor: "Feb_Month_Value",
-          sortable: true,
-        },
-
-        {
-          Header: "Mar",
-          accessor: "Mar_Month_Value",
-          sortable: true,
-        },
-      ],
-    },
-  ];
-
   const filteredItems = territoryMonthPlan.filter(
     (item) =>
       item.territory_name &&
       item.territory_name.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  const CustomSubHeaderComponent = ({ children, align }) => {
-    const containerStyle = {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: align === "left" ? "flex-start" : "center",
-      marginBottom: "10px",
-    };
+  const [currentPage, setCurrentPage] = useState(0);  
+  const pageCount = Math.ceil(filteredItems.length / itemsPerPage);
+  const offset = currentPage * itemsPerPage;
+  const dataToShow = filteredItems.slice(offset, offset + itemsPerPage);
 
-    return (
-      <div className=" w3-left " style={containerStyle}>
-        {children}
-      </div>
-    );
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
-  const rowCount = territoryMonthPlan.length;
-
-  const additionalComponent = (
-    <span className="w3-left w3-margin-right ">
-      {" "}
-      Territory(s) ({rowCount}){" "}
-    </span>
+  const totalLYValue = dataToShow.reduce(
+    (acc, item) => acc + (item.LY_Value || 0),
+    0
+  );
+  const totalLLYValue = dataToShow.reduce(
+    (acc, item) => acc + (item.LLY_Value || 0),
+    0
+  );
+  const totalCYValue = dataToShow.reduce(
+    (acc, item) => acc + (item.CY_Value || 0),
+    0
+  );
+  const totalYTDValue = dataToShow.reduce(
+    (acc, item) => acc + (item.YTD_Value || 0),
+    0
+  );
+  const totalAprValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
+    0
+  );
+  const totalAprValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Apr_Month_Sale || 0),
+    0
+  );
+  const totalMayValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
+    0
+  );
+  const totalMayValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.May_Month_Sale || 0),
+    0
+  );
+  const totalJunValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
+    0
+  );
+  const totalJunValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Jun_Month_Sale || 0),
+    0
+  );
+  const totalJulValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
+    0
+  );
+  const totalJulValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Jul_Month_Sale || 0),
+    0
+  );
+  const totalAugValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
+    0
+  );
+  const totalAugValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Aug_Month_Sale || 0),
+    0
+  );
+  const totalSepValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
+    0
+  );
+  const totalSepValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Sep_Month_Sale || 0),
+    0
+  );
+  const totalOctValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
+    0
+  );
+  const totalOctValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Oct_Month_Sale || 0),
+    0
+  );
+  const totalNovValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
+    0
+  );
+  const totalNovValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Nov_Month_Sale || 0),
+    0
+  );
+  const totalDecValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
+    0
+  );
+  const totalDecValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Dec_Month_Sale || 0),
+    0
+  );
+  const totalJanValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
+    0
+  );
+  const totalJanValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Jan_Month_Sale || 0),
+    0
+  );
+  const totalFebValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
+    0
+  );
+  const totalFebValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Feb_Month_Sale || 0),
+    0
+  );
+  const totalMarValue = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
+    0
+  );
+  const totalMarValue_v1 = dataToShow?.reduce(
+    (acc, item) => acc + (item?.Mar_Month_Sale || 0),
+    0
   );
 
-  const subHeaderComponent = (
-    <input
-      type="text"
-      placeholder="Filter By Territory  Name"
-      aria-label="Search Input"
-      value={filterText}
-      onChange={(e) => setFilterText(e.target.value)}
-    />
+  const tableRows = dataToShow.map((item, index) => (
+    <tr key={index}>
+      <td>{item?.depot_name}</td>
+      <td>{item?.territory_name}</td>
+      <td>{item?.LY_Value}</td>
+      <td>{item?.LLY_Value}</td>
+      <td>{item?.CY_Value} <hr className="hr0" />{item?.YTD_Value}</td>
+      <td>
+        {item?.Apr_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Apr_Month_Sale}
+      </td>
+      <td>
+        {item?.May_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.May_Month_Sale}
+      </td>
+      <td>
+        {item?.Jun_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Jun_Month_Sale}
+      </td>
+      <td>
+        {item?.Jul_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Jul_Month_Sale}
+      </td>
+      <td>
+        {item?.Aug_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Aug_Month_Sale}
+      </td>
+      <td>
+        {item?.Sep_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Sep_Month_Sale}
+      </td>
+      <td>
+        {item?.Oct_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Oct_Month_Sale}
+      </td>
+      <td>
+        {item?.Nov_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Nov_Month_Sale}
+      </td>
+      <td>
+        {item?.Dec_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Dec_Month_Sale}
+      </td>
+      <td>
+        {item?.Jan_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Jan_Month_Sale}
+      </td>
+      <td>
+        {item?.Feb_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Feb_Month_Sale}
+      </td>
+      <td>
+        {item?.Mar_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Mar_Month_Sale}
+      </td>
+    </tr>
+  ));
+
+  // Add a new row for total CY_Value and YTD_Value
+  const totalRow = (
+    <tr key="total" className="colrdrow">
+      <td colSpan={2}>
+        Total
+      </td>
+      <td>
+        {totalLLYValue.toFixed(2)}
+      </td>
+      <td>
+        {totalLYValue.toFixed(2)}
+      </td>
+      <td>
+        {totalCYValue.toFixed(2)}
+        <hr className="hr0" />
+        {totalYTDValue.toFixed(2)}
+      </td>
+      <td>
+        {totalAprValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalAprValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalMayValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalMayValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalJunValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalJunValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalJulValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalJulValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalAugValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalAugValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalSepValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalSepValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalOctValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalOctValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalNovValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalNovValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalDecValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalDecValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalJanValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalJanValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalFebValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalFebValue_v1?.toFixed(2)}
+      </td>
+      <td>
+        {totalMarValue?.toFixed(2)}
+        <hr className="hr0" />
+        {totalMarValue_v1?.toFixed(2)}
+      </td>
+    </tr>
   );
 
-  const ExportButton = ({ onExport }) => (
-    <button onClick={onExport}>
-      {" "}
-      <i className="fa fa-excel"> </i> Export{" "}
-    </button>
-  );
-  const handleExport = () => {
-    console.log("Exporting table data");
-  };
+  const tableWithTotalRow = [...tableRows, totalRow];
 
   return (
-    <>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        // <DataTable
-        //   columns={columns}
-        //   data={filteredItems}
-        //   pagination
-        //   className="datatable"
-        //   fixedHeader={true}
-        //   fixedHeaderScrollHeight="400px" subHeader
-        //   subHeaderComponent={
-        //     <CustomSubHeaderComponent align="left">
-        //       {additionalComponent}
-        //       {subHeaderComponent}
-        //     </CustomSubHeaderComponent>
-        //   }
-        // />
-        <ReactTableFixedColumns
-          data={filteredItems}
-          columns={columns}
-          defaultPageSize={10}
-          className="datatable"
-          fixedHeaderScrollHeight="400px"
-          subHeaderComponent={
-            <CustomSubHeaderComponent align="left">
-              {additionalComponent}
-              {subHeaderComponent}
-            </CustomSubHeaderComponent>
-          }
-        />
-      )}
-    </>
+    <div id="mom-north" className="w3-row w3-margin-top ">
+      <div id="mom-bar-north" >
+        <div className="form-group filterInput">
+          <input className="w3-margin-bottom w3-input w3-border "
+            type="text"
+            placeholder="Filter By Territory  Name"
+            aria-label="Search Input"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
+        </div>
+        <table className="w3-table w3-stripped table-bordered">
+          <tr className="colrdrow">
+            <td >
+            Depot
+            </td>
+            <td >
+              Territory
+            </td>
+            <td >
+              LLY
+            </td>
+            <td >
+              LY
+            </td>
+            <td >
+              CY Plan / YTD
+            </td>
+            <td className="w3-gray"> Apr </td>
+            <td className="w3-gray"> May </td>
+            <td className="w3-gray"> Jun </td>
+            <td className="w3-gray"> Jul </td>
+            <td className="w3-gray"> Aug </td>
+            <td className="w3-gray"> Sep </td>
+            <td className="w3-gray"> Oct </td>
+            <td className="w3-gray"> Nov </td>
+            <td className="w3-gray"> Dec </td>
+            <td className="w3-gray"> Jan </td>
+            <td className="w3-gray"> Feb </td>
+            <td className="w3-gray"> Mar </td>
+          </tr>
+          {isLoading ? (
+            <tr>
+              <td colSpan="18">
+                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+              </td>
+            </tr>
+          ) : (
+            <>
+              {dataToShow?.length === 0 ? (
+                <tr>
+                  <td colSpan="18">No data found</td>
+                </tr>
+              ) : (
+                tableWithTotalRow
+              )}
+            </>
+          )}
+        </table>
+         {/* Pagination */}
+        <div className="pagination">
+          {Array.from({ length: pageCount }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index)}
+              className={`page-button ${currentPage === index ? "active" : ""}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
