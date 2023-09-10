@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import LoadingPlaceholder from "../../../components/LoadingPlaceholder";
 import axiosInstance from "./../../../auth/api";
 import { SHOW_TOAST } from "../../../store/constant/types";
+import DataTable from "react-data-table-component";
 
 const FocusSectorMaster = () => {
   const dispatch = useDispatch();
@@ -22,9 +23,9 @@ const FocusSectorMaster = () => {
     Token: localStorage.getItem("access_token"),
     FPParam: [
       {
-        FYId: fyId,
-        Month: monthId,
-        MarketSectorId: mSectorId,
+        FYId: 0,
+        Month: 0,
+        MarketSectorId: 0,
       },
     ],
   };
@@ -46,7 +47,7 @@ const FocusSectorMaster = () => {
   // fetch Focus Sector
   useEffect(() => {
     fetchFocusSector();
-  }, [monthId, fyId, mSectorId]);
+  }, []);
 
   useEffect(() => {
     const payload = {
@@ -144,6 +145,7 @@ const FocusSectorMaster = () => {
       //   console.log("=====SetFocusProduct====", response);
       if (response?.status === 200) {
         alert(response?.data?.Data?.[0]?.MESSAGE);
+        fetchFocusSector();
       }
       setLoading(false);
     } catch (error) {
@@ -151,6 +153,62 @@ const FocusSectorMaster = () => {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
+
+  const columns = [
+    {
+      name: "S.No",
+      selector: (row) => row.tableid,
+      sortable: true,
+    },
+    {
+      name: "FY",
+      selector: (row) => row.FYName,
+      sortable: true,
+    },
+    {
+      name: "Month",
+      selector: (row) => row.Month,
+      sortable: true,
+    },
+    {
+      name: "Focus Sector",
+      selector: (row) => row.MarketSectorName,
+      sortable: true,
+    },
+  ];
+  const [filterText, setFilterText] = useState('');
+  const filteredItems = sectorMaster.filter(
+    item => item.MarketSectorName && item.MarketSectorName.toLowerCase().includes(filterText.toLowerCase()),
+  );
+
+  const CustomSubHeaderComponent = ({ children, align }) => {
+    const containerStyle = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: align === 'left' ? 'flex-start' : 'center',
+      marginBottom: '10px',
+    };
+
+    return (
+      <div className=" w3-left " style={containerStyle}>
+        {children}
+      </div>
+    );
+  };
+
+  const additionalComponent = (
+    <span className="w3-left w3-margin-right "> Monthly Focus Sectors(s)   ({filteredItems?.length}) </span>
+  );
+
+  const subHeaderComponent = (
+    <input className="w3-margin-bottom w3-input w3-border filterInput"
+      type="text"
+      placeholder="Filter By Sector  Name"
+      aria-label="Search Input"
+      value={filterText}
+      onChange={(e) => setFilterText(e.target.value)}
+    />
+  );
 
   return (
     <>
@@ -216,16 +274,33 @@ const FocusSectorMaster = () => {
                 onClick={() => handleSetFocusProduct()}
                 style={{ marginTop: "10px" }}
               >
-                <i className="fa fa-plus"></i> Add
+                <i className="fa fa-plus"></i> Save
               </button>
             </td>
           </tr>
         </table>
       </form>
       <div className="w3-row w3-padding-16"> </div>
+      <div>
+      {subHeaderComponent}
+      </div>
+      <DataTable
+        columns={columns}
+        data={filteredItems}
+        pagination
+        className="datatable"
+        fixedHeader={true}
+        fixedHeaderScrollHeight="400px" subHeader
+        subHeaderComponent={
+          <CustomSubHeaderComponent align="left">
+            {additionalComponent}
+          </CustomSubHeaderComponent>
+        }
+      />
 
-      <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
+      {/* <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
         <tr className=" w3-light-gray  h6">
+          <td className=" "> S.No </td>
           <td className=" "> FY </td>
           <td className=" "> Month </td>
           <td className=" "> Focus Sector </td>
@@ -256,6 +331,7 @@ const FocusSectorMaster = () => {
             ) : (
               sectorMaster.map((item, index) => (
                 <tr key={index}>
+                  <td>{++index}</td>
                   <td>{item?.FYName}</td>
                   <td className="">{item?.Month}</td>
                   <td className="">{item?.MarketSectorName}</td>
@@ -271,7 +347,7 @@ const FocusSectorMaster = () => {
             )}
           </>
         )}
-      </table>
+      </table> */}
     </>
   );
 };

@@ -45,7 +45,7 @@ const Zone = () => {
         </div>
         <div class="w3-row w3-padding " style={{ minheight: "300px" }}>
           <div>
-            <h3>Depot Month Wise Report</h3>
+            <h3>Depot Wise Monthly Plan / Achievement</h3>
           </div>
           <div className={toggleState === 1 ? "  " : " w3-hide  "} onClick={() => toggleTab(1)} >
             <DepoMonthWiseSalesReport selectedZone={selectedZone} selectedDepot={selectedDepot} />
