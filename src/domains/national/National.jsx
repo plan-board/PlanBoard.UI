@@ -16,7 +16,7 @@ import DealerMonthSale from "../components/DealerMonthSale";
 
 const National = () => {
   const { AuthData } = useSelector((state) => state.auth);
-  console.log("====auth====", AuthData);
+  // console.log("====auth====", AuthData);
   // Set Select Zone
   const [selectedZone, setSelectedZone] = useState(0);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(
@@ -24,12 +24,12 @@ const National = () => {
   );
   const [filteredZones, setFilteredZones] = useState([]);
   const [filteredZonesData, setFilteredZonesData] = useState([]);
-  console.log(
-    "🚀 ~ file: National.jsx:27 ~ National ~ filteredZonesData:",
-    filteredZonesData
-  );
+  // console.log(
+  //   "🚀 ~ file: National.jsx:27 ~ National ~ filteredZonesData:",
+  //   filteredZonesData
+  // );
   const [data, setData] = useState(null);
-  console.log("🚀 ~ file: National.jsx:28 ~ National ~ id:", data);
+  // console.log("🚀 ~ file: National.jsx:28 ~ National ~ id:", data);
 
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
@@ -49,11 +49,11 @@ const National = () => {
 
   const onSelectedTerritoryChange = (newValue) => {
     setSelectedTerritory(newValue);
-    console.log("45-setselectedTerritory", newValue);
+    // console.log("45-setselectedTerritory", newValue);
   };
 
   const onSelectedDepoChange = (newValue) => {
-    console.log("79-onSelectedDepoChange", newValue);
+    // console.log("79-onSelectedDepoChange", newValue);
 
     setSelectedDepot(newValue);
   };
@@ -154,6 +154,14 @@ const National = () => {
             <DepoMonthWiseSalesReport
               selectedZone={selectedZoneDrop}
               selectedDepot={0}
+            />
+            <div style={{ marginTop: "12px" }}>
+              <h3>Depot Month Wise Report V1</h3>
+            </div>
+            <DepoMonthWiseSalesReport
+              selectedZone={selectedZoneDrop}
+              selectedDepot={0}
+              forVersion={"v1"}
             />
           </div>
           <div

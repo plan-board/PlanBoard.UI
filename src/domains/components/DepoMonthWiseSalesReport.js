@@ -14,7 +14,11 @@ import "react-table-hoc-fixed-columns/lib/styles.css";
 
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
 
-const DepoMonthWiseSalesReport = ({ selectedZone, selectedDepot }) => {
+const DepoMonthWiseSalesReport = ({
+  selectedZone,
+  selectedDepot,
+  forVersion,
+}) => {
   // console.log('"-----on click');
   const dispatch = useDispatch();
   const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
@@ -106,7 +110,119 @@ const DepoMonthWiseSalesReport = ({ selectedZone, selectedDepot }) => {
   const handleExport = () => {
     console.log("Exporting table data");
   };
-   
+  // const columns = [
+  //   {
+  //     name: "Zone",
+  //     selector: (row) => row.zone_name,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Depot",
+  //     selector: (row) => row.depot_name,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "LLY",
+  //     selector: (row) => row.LLY_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "LY",
+  //     selector: (row) => (
+  //       <>
+  //         {row.LY_Value}
+  //         <br />
+  //         <span className="w3-text-gray ">
+  //           ({((row.LY_Value / row.LLY_Value) * 100).toFixed(2)}%){" "}
+  //         </span>{" "}
+  //       </>
+  //     ),
+  //     sortable: true,
+  //     fixed: "left",
+  //   },
+  //   {
+  //     name: "CY Plan",
+  //     selector: (row) => (
+  //       <>
+  //         {row.CY_Value}
+  //         <br />
+  //         <span className="w3-text-gray ">
+  //           ({((row.CY_Value / row.LY_Value) * 100).toFixed(2)}%)
+  //         </span>{" "}
+  //       </>
+  //     ),
+  //     sortable: true,
+  //     fixed: "left",
+  //   },
+  //   {
+  //     name: "YTD",
+  //     selector: (row) => row.YTD_Value,
+  //     sortable: true,
+  //     fixed: "left",
+  //   },
+  //   {
+  //     name: "Apr",
+  //     selector: (row) => row.Apr_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "May",
+  //     selector: (row) => row.May_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Jun",
+  //     selector: (row) => row.Jun_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Jul",
+  //     selector: (row) => row.Jul_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Aug",
+  //     selector: (row) => row.Aug_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Sep",
+  //     selector: (row) => row.Sep_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Oct",
+  //     selector: (row) => row.Oct_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Nov",
+  //     selector: (row) => row.Nov_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Dec",
+  //     selector: (row) => row.Dec_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Jan",
+  //     selector: (row) => row.Jan_Month_Value,
+  //     sortable: true,
+  //   },
+  //   {
+  //     name: "Feb",
+  //     selector: (row) => row.Feb_Month_Value,
+  //     sortable: true,
+  //   },
+
+  //   {
+  //     name: "Mar",
+  //     selector: (row) => row.Mar_Month_Value,
+  //     sortable: true,
+  //   },
+  // ];
+
   const columns = [
     {
       fixed: "left",
@@ -212,23 +328,159 @@ const DepoMonthWiseSalesReport = ({ selectedZone, selectedDepot }) => {
       ],
     },
   ];
+
+  const columns_V1 = [
+    {
+      fixed: "left",
+      columns: [
+        {
+          Header: "Zone",
+          accessor: "zone_name",
+          sortable: true,
+        },
+        {
+          Header: "Depot",
+          accessor: "depot_name",
+          sortable: true,
+        },
+        {
+          Header: "LLY",
+          accessor: "LLY_Value",
+          sortable: true,
+        },
+        {
+          Header: "LY",
+          accessor: "LY_Value",
+          sortable: true,
+          fixed: "left",
+        },
+        {
+          Header: "CY Plan",
+          accessor: "CY_Value",
+          sortable: true,
+          fixed: "left",
+        },
+        {
+          Header: "YTD",
+          accessor: "YTD_Value",
+          sortable: true,
+          fixed: "left",
+        },
+      ],
+    },
+    {
+      columns: [
+        {
+          Header: "Apr",
+          accessor: "Apr_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "May",
+          accessor: "May_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Jun",
+          accessor: "Jun_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Jul",
+          accessor: "Jul_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Aug",
+          accessor: "Aug_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Sep",
+          accessor: "Sep_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Oct",
+          accessor: "Oct_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Nov",
+          accessor: "Nov_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Dec",
+          accessor: "Dec_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Jan",
+          accessor: "Jan_Month_Value_v1",
+          sortable: true,
+        },
+        {
+          Header: "Feb",
+          accessor: "Feb_Month_Value_v1",
+          sortable: true,
+        },
+
+        {
+          Header: "Mar",
+          accessor: "Mar_Month_Value_v1",
+          sortable: true,
+        },
+      ],
+    },
+  ];
   // console.log("222", filteredItems);
   return (
     <>
-       
-      <ReactTableFixedColumns
-        data={filteredItems}
+      {/* <DataTable
         columns={columns}
-        defaultPageSize={10}
+        data={filteredItems}
+        pagination
         className="datatable"
+        fixedHeader={true}
         fixedHeaderScrollHeight="400px"
+        subHeader
         subHeaderComponent={
           <CustomSubHeaderComponent align="left">
             {additionalComponent}
             {subHeaderComponent}
           </CustomSubHeaderComponent>
         }
-      />
+      /> */}
+      {forVersion === "v1" ? (
+        <ReactTableFixedColumns
+          data={filteredItems}
+          columns={columns_V1}
+          defaultPageSize={10}
+          className="datatable"
+          fixedHeaderScrollHeight="400px"
+          subHeaderComponent={
+            <CustomSubHeaderComponent align="left">
+              {additionalComponent}
+              {subHeaderComponent}
+            </CustomSubHeaderComponent>
+          }
+        />
+      ) : (
+        <ReactTableFixedColumns
+          data={filteredItems}
+          columns={columns}
+          defaultPageSize={10}
+          className="datatable"
+          fixedHeaderScrollHeight="400px"
+          subHeaderComponent={
+            <CustomSubHeaderComponent align="left">
+              {additionalComponent}
+              {subHeaderComponent}
+            </CustomSubHeaderComponent>
+          }
+        />
+      )}
     </>
   );
 };
