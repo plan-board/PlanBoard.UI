@@ -46,99 +46,99 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
     0
   );
   const totalAprValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Value || 0),
-    0
-  );
-  const totalAprValue_v1 = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
     0
   );
-  const totalMayValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.May_Month_Value || 0),
+  const totalAprValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Apr_Month_Sale || 0),
     0
   );
-  const totalMayValue_v1 = zoneMonthPlan?.reduce(
+  const totalMayValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
     0
   );
-  const totalJunValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Value || 0),
+  const totalMayValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.May_Month_Sale || 0),
     0
   );
-  const totalJunValue_v1 = zoneMonthPlan?.reduce(
+  const totalJunValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
     0
   );
-  const totalJulValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Value || 0),
+  const totalJunValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Jun_Month_Sale || 0),
     0
   );
-  const totalJulValue_v1 = zoneMonthPlan?.reduce(
+  const totalJulValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
     0
   );
-  const totalAugValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Value || 0),
+  const totalJulValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Jul_Month_Sale || 0),
     0
   );
-  const totalAugValue_v1 = zoneMonthPlan?.reduce(
+  const totalAugValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
     0
   );
-  const totalSepValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Value || 0),
+  const totalAugValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Aug_Month_Sale || 0),
     0
   );
-  const totalSepValue_v1 = zoneMonthPlan?.reduce(
+  const totalSepValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
     0
   );
-  const totalOctValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Value || 0),
+  const totalSepValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Sep_Month_Sale || 0),
     0
   );
-  const totalOctValue_v1 = zoneMonthPlan?.reduce(
+  const totalOctValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
     0
   );
-  const totalNovValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Value || 0),
+  const totalOctValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Oct_Month_Sale || 0),
     0
   );
-  const totalNovValue_v1 = zoneMonthPlan?.reduce(
+  const totalNovValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
     0
   );
-  const totalDecValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Value || 0),
+  const totalNovValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Nov_Month_Sale || 0),
     0
   );
-  const totalDecValue_v1 = zoneMonthPlan?.reduce(
+  const totalDecValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
     0
   );
-  const totalJanValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Value || 0),
+  const totalDecValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Dec_Month_Sale || 0),
     0
   );
-  const totalJanValue_v1 = zoneMonthPlan?.reduce(
+  const totalJanValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
     0
   );
-  const totalFebValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Value || 0),
+  const totalJanValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Jan_Month_Sale || 0),
     0
   );
-  const totalFebValue_v1 = zoneMonthPlan?.reduce(
+  const totalFebValue = zoneMonthPlan?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
     0
   );
+  const totalFebValue_v1 = zoneMonthPlan?.reduce(
+    (acc, item) => acc + (item?.Feb_Month_Sale || 0),
+    0
+  );
   const totalMarValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Value || 0),
+    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
     0
   );
   const totalMarValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
+    (acc, item) => acc + (item?.Mar_Month_Sale || 0),
     0
   );
 
@@ -154,64 +154,64 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         </span>
       </td>
       <td className="">
-        {item?.Apr_Month_Value}
-        <hr className="hr0" />
         {item?.Apr_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Apr_Month_Sale}
       </td>
       <td className="">
-        {item?.May_Month_Value}
-        <hr className="hr0" />
         {item?.May_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.May_Month_Sale}
       </td>
       <td className="">
-        {item?.Jun_Month_Value}
-        <hr className="hr0" />
         {item?.Jun_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Jun_Month_Sale}
       </td>
       <td className="">
-        {item?.Jul_Month_Value}
-        <hr className="hr0" />
         {item?.Jul_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Jul_Month_Sale}
       </td>
       <td className="">
-        {item?.Aug_Month_Value}
-        <hr className="hr0" />
         {item?.Aug_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Aug_Month_Sale}
       </td>
       <td className="">
-        {item?.Sep_Month_Value}
-        <hr className="hr0" />
         {item?.Sep_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Sep_Month_Sale}
       </td>
       <td className="">
-        {item?.Oct_Month_Value}
-        <hr className="hr0" />
         {item?.Oct_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Oct_Month_Sale}
       </td>
       <td className="">
-        {item?.Nov_Month_Value}
-        <hr className="hr0" />
         {item?.Nov_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Nov_Month_Sale}
       </td>
       <td className="">
-        {item?.Dec_Month_Value}
-        <hr className="hr0" />
         {item?.Dec_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Dec_Month_Sale}
       </td>
       <td className="">
-        {item?.Jan_Month_Value}
-        <hr className="hr0" />
         {item?.Jan_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Jan_Month_Sale}
       </td>
       <td className="">
-        {item?.Feb_Month_Value}
-        <hr className="hr0" />
         {item?.Feb_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Feb_Month_Sale}
       </td>
       <td className="">
-        {item?.Mar_Month_Value}
-        <hr className="hr0" />
         {item?.Mar_Month_Value_v1}
+        <hr className="hr0" />
+        {item?.Mar_Month_Sale}
       </td>
     </tr>
   ));
@@ -332,7 +332,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
           </tr>
           {isLoading ? (
             <tr>
-              <td colSpan="12">
+              <td colSpan="16">
                 <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
               </td>
             </tr>
@@ -340,7 +340,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
             <>
               {zoneMonthPlan?.length === 0 ? (
                 <tr>
-                  <td colSpan="12">No data found</td>
+                  <td colSpan="16">No data found</td>
                 </tr>
               ) : (
                 tableWithTotalRow

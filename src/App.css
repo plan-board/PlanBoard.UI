@@ -189,3 +189,36 @@ min-height: 30px;
   background-color: #ffeb3b;
   color:#000;
 }
+
+.filterInput{
+  width: 20%;
+}
+/* pagination */
+/* Pagination container */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Pagination button */
+.page-button {
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+
+  /* Hover effect */
+  &:hover {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+  }
+
+  /* Active page */
+  &.active {
+    background-color: #0056b3; /* Slightly darker blue for the active page */
+  }
+}

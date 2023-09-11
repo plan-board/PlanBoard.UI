@@ -85,12 +85,12 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
         <br />
 
         <table className="tbl_grid w3-table table-bordered h6 w3-small">
-          <tr className="w3-gray">
+          {/* <tr className="w3-gray">
             <td colSpan="30" className=" h5 w3-padding  text-left ">
               Dealers Weekly Plan ({weekdata?.length})
 
             </td>
-          </tr>
+          </tr> */}
 
           <tr className=" w3-yellow h6 w3-small">
             <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
