@@ -8,10 +8,8 @@ import DepoSelectionBox from "../components/DepoSelectionBox";
 
 import NationalZoneMonthSale from "../components/NationalZoneMonthSale";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
-import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport";
-import TerritoryMonthSale from "../components/TerritoryMonthSale";
-import TerritorySelectionBox from "../components/TerritorySelectionBox";
-import Wgt_Delear_Ui from "../territory/Wgt_Delear_Ui";
+import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport"; 
+import TerritorySelectionBox from "../components/TerritorySelectionBox"; 
 import DealerMonthSale from "../components/DealerMonthSale";
 
 const National = () => {
@@ -180,8 +178,7 @@ const National = () => {
           >
             <div>
               <h3>Dealer Wise Monthly Plan / Achievement</h3>
-            </div>
-            {/* {selectedTerritory ? (<Wgt_Delear_Ui data={selectedTerritory} />) : (<div>Please select a territory</div>)} */}
+            </div> 
             {selectedTerritory ? (
               <DealerMonthSale selectedTerritory={selectedTerritory} />
             ) : (

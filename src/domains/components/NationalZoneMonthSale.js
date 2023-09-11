@@ -294,19 +294,19 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
   const tableWithTotalRow = [...tableRows, totalRow];
 
   return (
-    <div id="mom-north" className="w3-row w3-margin-top ">
-      <div id="mom-bar-north" className=" ">
-        <table className="w3-table w3-stripped table-bordered">
+    <div id="mom-north" className="w3-row">
+    <div id="mom-bar-north" className=" ">
+      <table className="w3-table w3-stripped table-bordered table-striped">
           <tr>
             <td className="w3-red" rowspan="2">
               {" "}
               Zone{" "}
             </td>
-            <td className="w3-red" rowspan="2">
+            <td className="w3-red"  rowspan="2">
               {" "}
               LY 22-23{" "}
             </td>
-            <td className="w3-red" rowspan="2">
+            <td className="w3-red"  rowspan="2">
               {" "}
               Plan 2023 <hr className="hr0" /> YTD{" "}
             </td>

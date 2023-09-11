@@ -181,6 +181,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
 
   const tableRows = dataToShow.map((item, index) => (
     <tr key={index}>
+      <td>{++index}</td>
       <td>{item?.depot_name}</td>
       <td>{item?.territory_name}</td>
       <td>{item?.LY_Value}</td>
@@ -345,6 +346,9 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         </div>
         <table className="w3-table w3-stripped table-bordered">
           <tr className="colrdrow">
+            <td >
+            S.No
+            </td>
             <td >
             Depot
             </td>

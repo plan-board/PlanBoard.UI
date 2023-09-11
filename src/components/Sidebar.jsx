@@ -12,92 +12,45 @@ const Sidebar = ({ isAuth, rolId }) => {
   };
 
   return (
-    <div
-      className="w3-sidebar w3-bar-block w3-hide-small"
-      style={{ zIndex: 20 }}
-    >
+    <div className="w3-sidebar w3-bar-block w3-hide-small sidebar-nav" style={{ zIndex: 20 }}>
       <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
         <img src={logo} className="" style={{ width: "50px" }} />
         <p className="w3-small h6">Planboard</p>
       </button>
-
       {hasPermission(rolId, "national") && (
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="national"
-        >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
+        <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="national">
+            <i className="fa fa-globe"></i>
             <p className="w3-small h6">National</p>
-          </button>
         </NavLink>
       )}
       {hasPermission(rolId, "zone") && (
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="zone"
-        >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
+        <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="zone">
+            <i className="fa fa-area-chart"></i>
             <p className="w3-small h6">Zone</p>
-          </button>
         </NavLink>
       )}
       {hasPermission(rolId, "depot") && (
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="depot"
-        >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
+        <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="depot">
+            <i className="fa fa-list-alt"></i>
             <p className="w3-small h6">Depot</p>
-          </button>
         </NavLink>
       )}
       {hasPermission(rolId, "territory") && (
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="territory"
-        >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa  fa-bar-chart "></i>
+        <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="territory">
+            <i className="fa  fa-map-marker"></i>
             <p className="w3-small h6">Territory</p>
-          </button>
         </NavLink>
       )}
-
       {hasPermission(rolId, "dashscheduleboard") && (
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="schedule"
-        >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
+        <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="schedule">
+            <i className="fa fa-table"></i>
             <p className="w3-small h6">Schedule</p>
-          </button>
         </NavLink>
       )}
       {hasPermission(rolId, "national") && (
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="settings"
-        >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
+        <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="settings">
             <i className="fa fa-gear"></i>
             <p className="w3-small h6">Settings</p>
-          </button>
         </NavLink>
       )}
     </div>

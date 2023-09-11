@@ -1,0 +1,224 @@
+.w3-sidebar {
+  width: 7%;
+  background: #333;
+}
+.w3-sidebar p {
+  color: lightslategray;
+}
+.w3-sidebar p.title {
+  color: slategray;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.w3-sidebar i {
+  color: slategray;
+  font-size: 36px;
+}
+
+  .hr0{margin: 0px; border: 0px; border-top: 1px solid gray;} 
+.hr1 {
+  margin: 0px;
+  margin: 5px 0px 5px 0px;
+  border: 0px;
+  border-top: 1px solid gray;
+}
+.tbl_grid {
+  border-color: #333;
+}
+.tbl_grid tr td, th {
+  padding: 2px;
+  border-color: #333;
+  text-align: center;
+}
+.inp40 {
+    width: 99%;
+}
+@media only screen and (max-width: 600px) {
+  .main {
+    margin-left: 0;
+  }
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.main {
+  margin-left: 7%;
+  padding: 50px 50px 50px 20px;
+  color: #333;
+}
+
+.login {
+  height: calc(100vh - 50px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper {
+  width: 60%;
+  height: 60%;
+  background-color: #fff;
+  /*  -webkit-box-shadow: 0px 5px 33px -21px rgba(66, 68, 90, 1);
+  -moz-box-shadow: 0px 5px 33px -21px rgba(66, 68, 90, 1);
+  box-shadow: 0px 5px 33px -21px rgba(66, 68, 90, 1);*/
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.left,
+.right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.center {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.or {
+  border: 2px solid gray;
+  border-radius: 50%;
+  padding: 10px;
+  color: gray;
+  background-color: white;
+  font-weight: bold;
+  z-index: 2;
+}
+
+.line {
+  width: 0.5px;
+  height: 90% !important;
+  background-color: gray;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 1;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 992px) {
+  .card {
+    width: 100%;
+    margin-bottom: 50px;
+  }
+
+  .wrapper {
+    width: 65%;
+    height: 90%;
+    flex-direction: column;
+  }
+
+  .loginTitle {
+    display: none;
+  }
+
+  .center {
+    width: 100%;
+    position: relative;
+  }
+
+  .left {
+    padding: 20px;
+  }
+
+  .right {
+    padding: 20px;
+  }
+
+  .line {
+    height: 0.5px;
+    width: 300px;
+  }
+}
+
+.exit_icon {
+  width: 20px;
+}
+
+.headingMB{
+  margin-bottom: 10px;
+}
+
+
+
+
+/* Align subheader component to the left */
+.react-data-table-component .rdt_TableHead {
+  justify-content: flex-start;
+}
+
+ 
+.datatable .rdt_TableCol{
+min-width: unset;
+}
+.datatable .rdt_TableCell,.datatable .rdt_TableCol{
+  padding-right: 2px;
+}
+.datatable .rdt_TableHeadRow{
+  color: #000 !important;
+background-color: #ffeb3b !important;
+min-height: 30px;
+}
+
+.colrdrow{
+  background-color: #ffeb3b;
+  color:#000;
+}
+
+.filterInput{
+  width: 20%;
+}
+/* pagination */
+/* Pagination container */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Pagination button */
+.page-button {
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+
+  /* Hover effect */
+  &:hover {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+  }
+
+  /* Active page */
+  &.active {
+    background-color: #0056b3; /* Slightly darker blue for the active page */
+  }
+}

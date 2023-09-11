@@ -58,14 +58,3 @@ code {
 .-header {
   top: 0 !important;
 }
-.-header .rt-tr .rt-th {
-  text-align: center !important;
-  background-color: #ffeb3b !important;
-  padding: 10px !important;
-}
-.nav-link {
-  padding: 0 !important;
-}
-.nav-link.active {
-  background-color: #e4e4e4;
-}
