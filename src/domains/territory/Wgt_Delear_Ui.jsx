@@ -17,8 +17,11 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
 
-  const [selectedRow, setSelectedRow] = useState(null);
+ 
+  const [selectedRow, setSelectedRow] = useState(null); 
+  const [sumValue, setSumValue] = useState(0);
   const [modalData, setModalData] = useState(null);
+  const [monthName, setMonthName] = useState("");
 
   function getInput() {
     console.log("🚀 ~ file: Wgt_Delear_Ui.jsx:20 ~ getinputs:", getinputs);
@@ -32,20 +35,25 @@ const Wgt_Delear_Ui = ({ data }) => {
   }
 
   const getMonthTarget = (item) => {
-    console.log("--open item", item);
+    console.log("--getMonthTarget item", item);
     setVisibility(true);
+    setSumValue(0);
     setModalData(item);
     fetchMonthDataById(item);
   }
 
   const fetchMonthDataById = async (dataObj) => {
-    const cMonth = new Date().getMonth() + 1;
+    const cMonth = new Date().getMonth();
+    const date = new Date();
+    setMonthName(date.toLocaleString('default', { month: 'long' }));
+     
     const payload = {
       Token: localStorage.getItem("access_token"),
       FPDealerWiseParam: [
         {
-          FYId: 0,//dataObj.FYId,
-          Month: 0//cMonth,
+          // FYId: dataObj.FYId,
+          Month: cMonth,
+          DealerId: dataObj?.dealerid,
         }
       ]
     };
@@ -53,9 +61,17 @@ const Wgt_Delear_Ui = ({ data }) => {
       const response = await axiosInstance.post("GetFocusProductDealerWise", payload);
 
       if (response?.status === 200) {
-        const filterByDealer = response?.data?.Data.filter((item) => item.DealerId == dataObj.dealerid)
-        setSelectedRow(filterByDealer);
-        console.log("=====GetFocusProductDealerWise==== 65", filterByDealer);
+        // const filterByDealer = response?.data?.Data.filter((item) => item.DealerId == dataObj.dealerid)
+        setSelectedRow(response?.data?.Data); // add filterByDealer when data
+        console.log("=====GetFocusProductDealerWise==== 65", response?.data?.Data);
+
+        // const upValue = selectedRow.reduce((acc, item) => acc + (parseFloat(item.Value) || 0), 0).toFixed(2);
+        // console.log("-upValue",upValue)
+        // const upValueAsNumber = parseFloat(upValue); 
+        // console.log("-upValueAsNumber",upValueAsNumber)
+        // console.log("-Aug_Month_Value_v1",modalData?.Aug_Month_Value_v1)
+
+        // setSumValue(parseFloat(upValueAsNumber + modalData?.Aug_Month_Value_v1).toFixed(2))
       }
     } catch (error) {
       // Handle errors
@@ -91,11 +107,65 @@ const Wgt_Delear_Ui = ({ data }) => {
     // Close the modal by resetting the selected row and modal data
     setSelectedRow(null);
     setModalData(null);
+    setSumValue(0);
+  };
+
+
+
+  // Handle input changes for a specific row
+  const handleInputChange = (tableid, name, value) => {
+    // Create a copy of the form data with the updated value
+    const updatedFormData = selectedRow.map((row) =>
+      row.tableid === tableid ? { ...row, [name]: value } : row
+    );
+    // Update the state with the new form data
+    setSelectedRow(updatedFormData);
+
+
+    const upValue = updatedFormData.reduce((acc, item) => acc + (parseFloat(item.Value) || 0), 0).toFixed(2);
+    const upValueAsNumber = parseFloat(upValue); 
+
+    setSumValue(parseFloat(upValueAsNumber + modalData?.Aug_Month_Value_v1).toFixed(2))
+
+  };
+
+  // Handle form submission
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // Send formData to your server or perform other actions
+    console.log('Form Data:', selectedRow);
+
+    try {
+      const payArr = selectedRow.map((item) => ({
+        "FYId": item.FYId,
+        "Month": item.Month,
+        "FocusedProductId": item.tableid,
+        "DealerId": modalData.dealerid,
+        "Value": item.Value,
+        "Volume": item.Volume
+      }));
+
+      const payload = {
+        Token: localStorage.getItem("access_token"),
+        FocusedProductDealerWiseParam: payArr
+      };
+
+      const response = await axiosInstance.post("SetFocusedProductDealerWise", payload);
+
+      if (response?.status === 200) { 
+        console.log("=====aSetFocusedProductDealerWise==== 65", response);
+        popupCloseHandler(false);
+      }
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
   };
 
 
   return (
     <>
+    
       <table className="tbl_grid w3-table table-bordered  h6 w3-small">
         {/* <tr className="w3-blue  h6 ">
           <td colSpan="30" className=" text-left ">
@@ -371,8 +441,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             <tr key={index}>
               <td>{++index}</td>
               <td className="" colSpan={1}>
-                {" "}
-                {item?.dealer_name}{" "}
+                 {item?.dealer_name}
               </td>
               <td className="" colSpan={1}>
                 {" "}
@@ -412,8 +481,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                 ) : (
                   <td>
                     {item?.Apr_Month_Value_v1}
-                    {/* <hr className="hr0" />
-                    {item?.Apr_Month_Value} */}
+                    <hr className="hr0" />
+                    {item?.Apr_Month_Sale}
                   </td>
                 )
               ) : (
@@ -451,7 +520,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                     ) : (
                       <>
                         {item?.May_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.May_Month_Value} */}
+                        <hr className="hr0" /> {item?.May_Month_Sale}
                       </>
                     )}
                   </td>
@@ -491,8 +560,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                     ) : (
                       <>
                         {item?.Jun_Month_Value_v1}
-                        {/* <hr className="hr0" />
-                        {item?.Jun_Month_Value} */}
+                        <hr className="hr0" />
+                        {item?.Jun_Month_Sale}
                       </>
                     )}
                   </td>
@@ -533,7 +602,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                       <>
                         {" "}
                         {item?.Jul_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Jul_Month_Value} */}
+                        <hr className="hr0" /> {item?.Jul_Month_Sale}
                       </>
                     )}
                   </td>
@@ -549,13 +618,14 @@ const Wgt_Delear_Ui = ({ data }) => {
                     <td className="  w3-blue ">
                       {item?.Aug_Month_Value}
                       <input
+                        style={{ width: "50px", marginLeft: "3px"}}
                         className="inp40"
                         defaultValue={item?.Aug_Month_Value_v1}
-                        readOnly={true}
+                        readOnly={true} 
                         name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      /><div style={{ padding: "5px", cursor: "pointer" }} onClick={() => getMonthTarget(item)}>
-                        <i className="fa fa-pencil" title="Click to update" ></i></div>
+                        onChange={(e) => onchangeInputs(e, item?.id)} 
+                      /><div  style={{ padding: "5px", cursor: "pointer" }} onClick={() => getMonthTarget(item)}>
+                        <i style={{ fontSize: "20px"}} className="fa fa-pencil" title="Click to update" ></i></div>
                     </td>
                     <td className=" w3-blue ">
                       {" "}
@@ -574,7 +644,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                     ) : (
                       <>
                         {item?.Aug_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Aug_Month_Value} */}
+                        <hr className="hr0" /> {item?.Aug_Month_Sale}
                       </>
                     )}
                   </td>
@@ -613,8 +683,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                     ) : (
                       <>
                         {item?.Sep_Month_Value_v1}
-                        {/* <hr className="hr0" />
-                        {item?.Sep_Month_Value} */}
+                        <hr className="hr0" />
+                        {item?.Sep_Month_Sale}
                       </>
                     )}
                   </td>
@@ -654,7 +724,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                     ) : (
                       <>
                         {item?.Oct_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Oct_Month_Value} */}
+                        <hr className="hr0" /> {item?.Oct_Month_Sale}
                       </>
                     )}
                   </td>
@@ -695,7 +765,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                       <>
                         {" "}
                         {item?.Nov_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Nov_Month_Value} */}
+                        <hr className="hr0" /> {item?.Nov_Month_Sale}
                       </>
                     )}
                   </td>
@@ -735,7 +805,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                     ) : (
                       <>
                         {item?.Dec_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Dec_Month_Value} */}
+                        <hr className="hr0" /> {item?.Dec_Month_Sale}
                       </>
                     )}
                   </td>
@@ -776,8 +846,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                       <>
                         {" "}
                         {item?.Jan_Month_Value_v1}
-                        {/* <hr className="hr0" />
-                        {item?.Jan_Month_Value} */}
+                        <hr className="hr0" />
+                        {item?.Jan_Month_Sale}
                       </>
                     )}
                   </td>
@@ -817,7 +887,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                       <>
                         {" "}
                         {item?.Feb_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Feb_Month_Value} */}
+                        <hr className="hr0" /> {item?.Feb_Month_Sale}
                       </>
                     )}
                   </td>
@@ -858,7 +928,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                       <>
                         {" "}
                         {item?.Mar_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Mar_Month_Value} */}
+                        <hr className="hr0" /> {item?.Mar_Month_Sale}
                       </>
                     )}
                   </td>
@@ -874,11 +944,11 @@ const Wgt_Delear_Ui = ({ data }) => {
       <CustomPopup
         onClose={popupCloseHandler}
         show={visibility}
-        title={modalData?.dealer_name + ' - Month : ' + currentMonth}
+        title={modalData?.dealer_name + '(' + modalData?.dealer_code +') - Month : ' + monthName}
       >
         <span className="h6 w3-small" >(Dealer Month Sales Plan + Focus Sector Breakup )</span>
         <hr />
-        <form className="w3-container">
+        <form className="w3-container" onSubmit={handleSubmit}>
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
               <td colspan="30"> A :  Sales Plan Produced by Dealer Level Rules    </td>
@@ -888,7 +958,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 Rule 1 : Active Dealer <br />
                 Rule 2 : Category based % impact  <br />
               </td>
-              <td style={{ width: "10%" }}><input type="text" value=" 5  " disabled={true} className="inp40" />
+              <td style={{ width: "10%" }}><input type="text" value={modalData?.Aug_Month_Value_v1} className="inp40" readOnly={true} />
               </td>
             </tr>
 
@@ -927,18 +997,21 @@ const Wgt_Delear_Ui = ({ data }) => {
                     <td>{item?.SameMonthLY}</td>
                     <td>{item?.SameMonthLY}</td>
                     <td>
-                      <input type="text" value={item?.Volume} className="inp40" />
+
+                      <input type="text" value={item?.Volume} className="inp40" name="Volume" onChange={(e) => handleInputChange(item.tableid, 'Volume', e.target.value)} />
                     </td>
                     <td>
-                      <input type="text" value={item?.Value} className="inp40" />
+                      <input type="text" value={item?.Value} className="inp40" name="Value" onChange={(e) => handleInputChange(item.tableid, 'Value', e.target.value)} />
                     </td>
                   </tr>
                 ))
               )}
+              <tr>
+                <td colSpan={9}></td>
+                <td><input type="text" value={sumValue} disabled={true} className="inp40" /></td>
+              </tr>
             </>
-
-          </table>
-
+          </table> 
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
               <td colspan="30"> Net  Sales Plan ( Aug ) Total Sale  A + B   </td>
@@ -946,12 +1019,8 @@ const Wgt_Delear_Ui = ({ data }) => {
             <tr className="">
               <td style={{ width: "80%" }}> ( This total will be updated to Dealers Sales Plan ( v1 ) and the list will will be added in transaction table as dealers breakup )  </td>
               <td style={{ width: "10%" }} align="right" > <button className="w3-button w3-indigo " >  Submit </button></td>
-              <td style={{ width: "10%" }}><input type="text" value=" 7  " disabled={true} className="inp40" /></td>
             </tr>
-
           </table>
-
-
         </form>
 
       </CustomPopup>

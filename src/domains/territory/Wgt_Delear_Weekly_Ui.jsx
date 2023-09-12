@@ -93,10 +93,13 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
           </tr> */}
 
           <tr className=" w3-yellow h6 w3-small">
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
+            <td className="" colSpan={1} rowSpan={2} style={{ width: "4%" }}>
+              S. NO
+            </td>
+            <td className="" colSpan={1} rowSpan={2} style={{ width: "16%" }}>
               Delear{" "}
             </td>
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
+            <td className="" colSpan={1} rowSpan={2} style={{ width: "7%" }}>
               Delear Code
             </td>{" "}
             <td className="" colSpan={4}>
@@ -118,6 +121,9 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
           {weekdata?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => (
            
             <tr className="h6 w3-small" key={item?.dealerid}>
+              <td className="">
+                {++index}
+              </td>
               <td className="" colSpan={1} style={{ width: "15%" }}>
                 {item?.dealer_name}
               </td>

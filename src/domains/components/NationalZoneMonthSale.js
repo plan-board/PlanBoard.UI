@@ -37,6 +37,10 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
     getZoneMonthPlan();
   }, [selectedZone]);
 
+  const totalLYValue = zoneMonthPlan.reduce(
+    (acc, item) => acc + (item.LY_Value || 0),
+    0
+  );
   const totalCYValue = zoneMonthPlan.reduce(
     (acc, item) => acc + (item.CY_Value || 0),
     0
@@ -144,6 +148,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
 
   const tableRows = zoneMonthPlan.map((item, index) => (
     <tr key={index}>
+      <td className="">{++index}</td>
       <td className="">{item?.zone_name}</td>
       <td className="">{item?.LY_Value}</td>
       <td className="">
@@ -222,6 +227,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <td className="" colSpan={2}>
         Total
       </td>
+      <td className="">{totalLYValue}</td>
       <td className="">
         {totalCYValue.toFixed(2)} <hr className="hr0" />
         {totalYTDValue.toFixed(2)}
@@ -294,19 +300,22 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
   const tableWithTotalRow = [...tableRows, totalRow];
 
   return (
-    <div id="mom-north" className="w3-row w3-margin-top ">
-      <div id="mom-bar-north" className=" ">
-        <table className="w3-table w3-stripped table-bordered">
+    <div id="mom-north" className="w3-row">
+    <div id="mom-bar-north" className=" ">
+      <table className="w3-table w3-stripped table-bordered table-striped">
           <tr>
+            <td className="w3-red" rowspan="2">
+              S.No
+            </td>
             <td className="w3-red" rowspan="2">
               {" "}
               Zone{" "}
             </td>
-            <td className="w3-red" rowspan="2">
+            <td className="w3-red"  rowspan="2">
               {" "}
               LY 22-23{" "}
             </td>
-            <td className="w3-red" rowspan="2">
+            <td className="w3-red"  rowspan="2">
               {" "}
               Plan 2023 <hr className="hr0" /> YTD{" "}
             </td>

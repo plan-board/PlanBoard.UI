@@ -1,0 +1,122 @@
+export const Wgt_Depotwise_Data = [
+    {
+      id: 1,
+      zoneId:1,
+      depot: "Delhi-Naraina",
+      territorys: "6", 
+      dealers: "116", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },  
+    {
+      id: 2,
+      zoneId:1,
+      depot: "Ambala",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },  
+
+    {
+      id: 3,
+      zoneId:2,
+      depot: "Gurgaon",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },    
+
+    {
+      id: 4,
+      zoneId:3,
+      depot: "Jalandhar",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },  
+
+
+    {
+      id: 5,
+      zoneId:1,
+      depot: "Jammu",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },  
+
+
+    {
+      id: 6,
+      zoneId:4,
+      depot: "Ludhiana",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },  
+
+
+    {
+      id: 7,
+      zoneId:2,
+      depot: "Nebsarai",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },    
+
+
+    {
+      id: 8,
+      zoneId:3,
+      depot: "Zirakpur [Himachal]",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },    
+
+
+    {
+      id: 9,
+      zoneId:1,
+      depot: "Zirakpur",
+      territorys: "5", 
+      dealers: "146", 
+      ly: "100",
+      target: "126",
+      target_percentage: "26",
+      achieved: "60",
+      achieved_percentage: "12",
+    },  
+  ];

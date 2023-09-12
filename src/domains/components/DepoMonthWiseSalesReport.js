@@ -177,7 +177,8 @@ const DepoMonthWiseSalesReport = ({
   );
 
   const tableRows = filteredItems.map((item, index) => (
-    <tr key={index}>
+    <tr key={index}> 
+      <td>{++index}</td> 
       <td>{item?.zone_name}</td>
       <td>{item?.depot_name}</td>
       <td>{item?.LY_Value}</td>
@@ -249,7 +250,7 @@ const DepoMonthWiseSalesReport = ({
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
     <tr key="total" className="colrdrow">
-      <td colSpan={2}>
+      <td colSpan={3}>
         Total
       </td>
       <td>
@@ -342,7 +343,10 @@ const DepoMonthWiseSalesReport = ({
         </div>
         <table className="w3-table w3-stripped table-bordered">
           <tr className="colrdrow">
-            <td >
+            <td > 
+              S.No
+            </td>
+            <td > 
               Zone
             </td>
             <td >

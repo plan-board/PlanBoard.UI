@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import { Navigate, Link, useNavigate } from "react-router-dom";
 
 import iconGoogle from "../images/google.png";
+import logoShalimaar from "../images/logo.png";
+import logoPlanboard from "../images/logo1-white.png";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "../firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -142,78 +144,54 @@ const Login = ({ setIsAuth }) => {
   }; // 2 : handleLogin ends
 
   return (
-    <div className="login  w3-border w3-text-gray">
-      <div className="wrapper w3-padding ">
-        <div className="w3-row  w3-padding ">
-          <div className="w3-col l5">
-            <form onSubmit={handleLogin}>
-              <div className="form-group h6">
-                Registered Email
-                <input
-                  className="w3-input w3-border"
-                  type="email"
-                  placeholder="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group h6">
-                Password
-                <input
-                  className="w3-input w3-border"
-                  type="password"
-                  placeholder="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group w3-small h6 ">
-                <p>
-                  {" "}
-                  <u>I forgot my password </u>
-                </p>
-              </div>
-
-              <div className="form-group">
-                <button
-                  className="w3-button w3-block  w3-indigo "
-                  type="submit"
-                >
-                  Login
-                </button>
-              </div>
-
-              <div className="form-group w3-text-red">
-                <p>{error}</p>
-              </div>
-            </form>
-
-            <div className="w3-small h5 w3-content w3-center w3-margin w3-padding-large ">
-              Sign in with Planboard registered account.
+    <>
+        <style>
+            {'.w3-sidebar{display:none}'}
+        </style>
+        <div className="login">
+            <div className="logo-container">
+                <img src={logoShalimaar} />
+                <img src={logoPlanboard} />
             </div>
-          </div>
-
-          <div className="center w3-col l2">
-            <div className="line" />
-            <div className="or w3-circle">OR</div>
-          </div>
-
-          <div className="w3-col l5 w3-right">
-            <div
-              className="w3-button w3-block  w3-red"
-              onClick={signInWithGoogle}
-            >
-              <img src={iconGoogle} alt="" className="icon" />
-              Sign in with Gmail
+            <div className="wrapper">
+                <div className="login-box">
+                    <h2 className="login-title">Sign In Here</h2>
+                    <div className="w3-content w3-center w3-padding-large mb-3">
+                        Sign in with Planboard registered account.
+                    </div>
+                    <form onSubmit={handleLogin}>
+                        <div className="form-group h6">
+                            <input className="w3-input w3-border" type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+                        </div>
+                        <div className="form-group h6">
+                            <input className="w3-input w3-border" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
+                        </div>
+                        <div className="form-group w3-small h6 ">
+                            <a href="#">I forgot my password !</a>
+                        </div>
+                        <div className="form-group m-0">
+                            <button className="" type="submit"> Login </button>
+                        </div>
+                        <div className="form-group w3-text-red">
+                            <p>{error}</p>
+                        </div>
+                        <div className="or">
+                            <div className="w3-circle">OR</div>
+                        </div>
+                        <div>
+                            <div className="w3-button w3-block w3-red" onClick={signInWithGoogle}>
+                                <img src={iconGoogle} alt="" className="icon" />
+                                Continue with Gmail
+                            </div>
+                            <div className="w3-content w3-center w3-padding-large ">
+                                Sign in with your corporate Gmail workspace email account
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div className="w3-small h5 w3-content w3-center w3-margin w3-padding-large ">
-              Sign in with your corporate Gmail workspace email account
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
+    </>
   );
 };
 

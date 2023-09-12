@@ -23,7 +23,7 @@ const FocusSectorMaster = () => {
     Token: localStorage.getItem("access_token"),
     FPParam: [
       {
-        FYId: 0,
+        // FYId: 0,
         Month: 0,
         MarketSectorId: 0,
       },
@@ -135,7 +135,7 @@ const FocusSectorMaster = () => {
         {
           FYId: fyId,
           Month: monthId,
-          MarketSectorId: mSectorId,
+          ProductMarketSectorId: mSectorId,
         },
       ],
     };
@@ -146,6 +146,7 @@ const FocusSectorMaster = () => {
       if (response?.status === 200) {
         alert(response?.data?.Data?.[0]?.MESSAGE);
         fetchFocusSector();
+        setMSector(0)
       }
       setLoading(false);
     } catch (error) {
