@@ -154,14 +154,6 @@ const National = () => {
               selectedZone={selectedZoneDrop}
               selectedDepot={0}
             />
-            {/* <div style={{ marginTop: "12px" }}>
-              <h3>Depot Month Wise Report V1</h3>
-            </div>
-            <DepoMonthWiseSalesReport
-              selectedZone={selectedZoneDrop}
-              selectedDepot={0}
-              forVersion={"v1"}
-            /> */}
           </div>
           <div
             className={toggleState === 2 ? "  " : " w3-hide  "}

@@ -20,6 +20,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [selectedRow, setSelectedRow] = useState(null); 
   const [sumValue, setSumValue] = useState(0);
   const [modalData, setModalData] = useState(null);
+  const [monthName, setMonthName] = useState("");
 
   function getInput() {
     console.log("🚀 ~ file: Wgt_Delear_Ui.jsx:20 ~ getinputs:", getinputs);
@@ -33,20 +34,25 @@ const Wgt_Delear_Ui = ({ data }) => {
   }
 
   const getMonthTarget = (item) => {
-    console.log("--open item", item);
+    console.log("--getMonthTarget item", item);
     setVisibility(true);
+    setSumValue(0);
     setModalData(item);
     fetchMonthDataById(item);
   }
 
   const fetchMonthDataById = async (dataObj) => {
-    const cMonth = new Date().getMonth() + 1;
+    const cMonth = new Date().getMonth();
+    const date = new Date();
+    setMonthName(date.toLocaleString('default', { month: 'long' }));
+     
     const payload = {
       Token: localStorage.getItem("access_token"),
       FPDealerWiseParam: [
         {
-          FYId: 0,//dataObj.FYId,
-          Month: 0//cMonth,
+          // FYId: dataObj.FYId,
+          Month: cMonth,
+          DealerId: dataObj?.dealerid,
         }
       ]
     };
@@ -100,6 +106,7 @@ const Wgt_Delear_Ui = ({ data }) => {
     // Close the modal by resetting the selected row and modal data
     setSelectedRow(null);
     setModalData(null);
+    setSumValue(0);
   };
 
 
@@ -131,8 +138,8 @@ const Wgt_Delear_Ui = ({ data }) => {
       const payArr = selectedRow.map((item) => ({
         "FYId": item.FYId,
         "Month": item.Month,
-        "FocusedProductId": item.MarketSectorId,
-        "DealerId": item.DealerId,
+        "FocusedProductId": item.tableid,
+        "DealerId": modalData.dealerid,
         "Value": item.Value,
         "Volume": item.Volume
       }));
@@ -610,13 +617,14 @@ const Wgt_Delear_Ui = ({ data }) => {
                     <td className="  w3-blue ">
                       {item?.Aug_Month_Value}
                       <input
+                        style={{ width: "50px", marginLeft: "3px"}}
                         className="inp40"
                         defaultValue={item?.Aug_Month_Value_v1}
                         readOnly={true} 
                         name={item?.id + `_sales`}
                         onChange={(e) => onchangeInputs(e, item?.id)}
-                      /><div style={{ padding: "5px", cursor: "pointer" }} onClick={() => getMonthTarget(item)}>
-                        <i className="fa fa-pencil" title="Click to update" ></i></div>
+                      /><div  style={{ padding: "5px", cursor: "pointer" }} onClick={() => getMonthTarget(item)}>
+                        <i style={{ fontSize: "20px"}} className="fa fa-pencil" title="Click to update" ></i></div>
                     </td>
                     <td className=" w3-blue ">
                       {" "}
@@ -935,7 +943,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       <CustomPopup
         onClose={popupCloseHandler}
         show={visibility}
-        title={modalData?.dealer_name + ' - Month : ' + currentMonth}
+        title={modalData?.dealer_name + '(' + modalData?.dealer_code +') - Month : ' + monthName}
       >
         <span className="h6 w3-small" >(Dealer Month Sales Plan + Focus Sector Breakup )</span>
         <hr />

@@ -250,7 +250,7 @@ const DepoMonthWiseSalesReport = ({
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
     <tr key="total" className="colrdrow">
-      <td colSpan={2}>
+      <td colSpan={3}>
         Total
       </td>
       <td>
