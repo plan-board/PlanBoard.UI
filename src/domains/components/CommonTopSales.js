@@ -53,24 +53,24 @@ const CommonTopSales = ({
 
   return (
     <>
-      <div className=" w3-leftbar w3-border-red w3-row w3-row-padding w3-padding-16 w3-white w3-margin-bottom ">
-        {actionType == 'hod' ? (<div className="w3-col l2 w3-center">
+      <div className="card-box">
+        {actionType == 'hod' ? (
+        <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
             All Zone{" "}
           </span>
           <hr className="hr1" />
           <span className=" "> Shalimar</span>
-        </div>) : (<div className="w3-col l2 w3-center">
+        </div>) : (
+        <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
             {summaryData[0]?.summ_entity_type}
           </span>
           <hr className="hr1" />
           <span className=" "> {summaryData[0]?.summ_entity_name}</span>
         </div>)}
-
-
-        <div className="w3-col l10 w3-center">
-          <div className="w3-col l3 m3 s3 w3-center">
+        
+          <div className="one-fifth text-center">
             <span className="w3-text-gray h6">
               {" "}
               LLY {summaryData[0]?.summ_lly_fy}{" "}
@@ -79,7 +79,7 @@ const CommonTopSales = ({
             <span className=" ">{summaryData[0]?.summ_lly_sale_value}</span>
           </div>
 
-          <div className="w3-col l3 m3 s3 w3-center">
+          <div className="one-fifth text-center">
             <span className="w3-text-gray h6">
               {" "}
               LY {summaryData[0]?.summ_ly_fy}{" "}
@@ -88,7 +88,7 @@ const CommonTopSales = ({
             <span className=" "> {summaryData[0]?.summ_ly_sale_value} </span>
           </div>
 
-          <div className="w3-col l3 m3 s3 w3-center w3-row-padding">
+          <div className="one-fifth text-center">
             <span className="w3-text-gray h6">
               {" "}
               TARGET {summaryData[0]?.summ_cy_fy}{" "}
@@ -139,7 +139,7 @@ const CommonTopSales = ({
           </div> */}
           </div>
 
-          <div className="w3-col l3 m3 s3  w3-center">
+          <div className="one-fifth text-center">
             <span className="w3-text-gray h6"> YTD </span>
             <hr className="hr1" />
             <span className=" "> {summaryData[0]?.summ_cy_sale_value} </span>
@@ -148,7 +148,7 @@ const CommonTopSales = ({
               ( {summaryData[0]?.summ_cy_plan_percentage} %){" "}
             </i>
           </div>
-        </div>
+          
       </div>
     </>
   );
