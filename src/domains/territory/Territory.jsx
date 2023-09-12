@@ -123,41 +123,43 @@ const Territory = () => {
         selectedTerritory={selectedTerritory}
       />
 
-      <TerritoryMonthSale selectedTerritory={selectedTerritory} />
+      <div class="card-box">
+        <TerritoryMonthSale selectedTerritory={selectedTerritory} />
+      </div>
 
       <div class="w3-row w3-padding-16"></div>
 
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray">
+      <div class="card-box">
+        <div className="w3-bar tab-container">
           <div
             className={
               toggleState === 1
-                ? " w3-bar-item w3-button w3-white  w3-hover-white  "
-                : " w3-bar-item w3-button w3-gray  w3-hover-white  "
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
-            <span className=" h6  w3-text-gray "> Dealer Monthly Plan </span>
+            <span className="h6"> Dealer Monthly Plan </span>
           </div>
           <div
             className={
               toggleState === 2
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
             }
             onClick={() => toggleTab(2)}
           >
-            <span className=" h6  w3-text-gray "> Dealer Weakly Plan </span>
+            <span className="h6"> Dealer Weakly Plan </span>
           </div>
           <div
             className={
               toggleState === 3
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
             }
             onClick={() => toggleTab(3)}
           >
-            <span className=" h6 w3-text-gray "> Dealer Activity Plan </span>
+            <span className="h6"> Dealer Activity Plan </span>
           </div>
         </div>
         <div class="w3-row w3-padding ">

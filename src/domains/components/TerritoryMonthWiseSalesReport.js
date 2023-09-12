@@ -344,56 +344,48 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
             onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <table className="w3-table w3-stripped table-bordered">
-          <tr className="colrdrow">
-            <td >
-            S.No
-            </td>
-            <td >
-            Depot
-            </td>
-            <td >
-              Territory
-            </td>
-            <td >
-              LLY
-            </td>
-            <td >
-              LY
-            </td>
-            <td >
-              CY Plan / YTD
-            </td>
-            <td className="w3-gray"> Apr </td>
-            <td className="w3-gray"> May </td>
-            <td className="w3-gray"> Jun </td>
-            <td className="w3-gray"> Jul </td>
-            <td className="w3-gray"> Aug </td>
-            <td className="w3-gray"> Sep </td>
-            <td className="w3-gray"> Oct </td>
-            <td className="w3-gray"> Nov </td>
-            <td className="w3-gray"> Dec </td>
-            <td className="w3-gray"> Jan </td>
-            <td className="w3-gray"> Feb </td>
-            <td className="w3-gray"> Mar </td>
-          </tr>
-          {isLoading ? (
+        <table className="table-bordered table-striped">
+          <thead>
             <tr>
-              <td colSpan="18">
-                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-              </td>
+              <th> S.No </th>
+              <th> Depot </th>
+              <th> Territory </th>
+              <th> LLY </th>
+              <th> LY </th>
+              <th> CY Plan / YTD </th>
+              <th> Apr </th>
+              <th> May </th>
+              <th> Jun </th>
+              <th> Jul </th>
+              <th> Aug </th>
+              <th> Sep </th>
+              <th> Oct </th>
+              <th> Nov </th>
+              <th> Dec </th>
+              <th> Jan </th>
+              <th> Feb </th>
+              <th> Mar </th>
             </tr>
-          ) : (
-            <>
-              {dataToShow?.length === 0 ? (
-                <tr>
-                  <td colSpan="18">No data found</td>
-                </tr>
-              ) : (
-                tableWithTotalRow
-              )}
-            </>
-          )}
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="18">
+                  <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+                </td>
+              </tr>
+            ) : (
+              <>
+                {dataToShow?.length === 0 ? (
+                  <tr>
+                    <td colSpan="18">No data found</td>
+                  </tr>
+                ) : (
+                  tableWithTotalRow
+                )}
+              </>
+            )}
+          </tbody>
         </table>
          {/* Pagination */}
         <div className="pagination">

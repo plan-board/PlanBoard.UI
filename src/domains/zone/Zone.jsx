@@ -22,9 +22,9 @@ const Zone = () => {
   };
 
   return (
-    <div className=" main ">
+    <div className="main">
 
-      <div className="w3-row  w3-margin-bottom">
+      <div className="w3-row w3-margin-bottom">
         <div className="w3-col l3 m3 s6 ">
           <ZoneDropDown selectedZone={selectedZone} onValueChange={handleSelectionChange} />
         </div>
@@ -37,13 +37,16 @@ const Zone = () => {
 
       <div class="w3-row w3-padding-16"></div>
 
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray ">
-          <div className={toggleState === 1 ? " w3-bar-item w3-button w3-white  w3-hover-white  " : " w3-bar-item w3-button w3-gray  w3-hover-white  "} onClick={() => toggleTab(1)} >
-            <span className=" h6  w3-text-gray" > Depots  Monthly  Plan  </span>
+      <div class="card-box">
+        <div className="w3-bar tab-container">
+          <div className={toggleState === 1 
+            ? "w3-button tab tab-active"
+            : "w3-button tab"
+            } onClick={() => toggleTab(1)} >
+            <span className="h6" > Depots  Monthly  Plan  </span>
           </div>
         </div>
-        <div class="w3-row w3-padding " style={{ minheight: "300px" }}>
+        <div class="w3-row w-100" style={{ minheight: "300px" }}>
           <div>
             <h3>Depot Wise Monthly Plan / Achievement</h3>
           </div>
