@@ -334,7 +334,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
 
   return (
     <div id="mom-north" className="w3-row">
-      <div id="mom-bar-north" className=" ">
+      <div id="mom-bar-north" className="w-100">
         <table className="table-bordered table-striped">
           <thead>
             <tr>
