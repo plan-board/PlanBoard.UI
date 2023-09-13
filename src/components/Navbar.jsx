@@ -28,8 +28,8 @@ const Navbar = ({ isAuth }) => {
     });
   };
 
-  return (
-    <div className="w3-bar w3-top top-navbar h5" style={{ zIndex: 10 }}>
+  return ( 
+    <div className="w3-bar w3-top top-navbar h5" style={{ zIndex: 10 }}> 
       {isAuth ? (
         <div className="">
           <button

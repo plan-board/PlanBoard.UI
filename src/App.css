@@ -1740,7 +1740,7 @@ th {
 
 .main {
   margin-left: 88px;
-  padding: 50px 20px;
+  padding: 75px 20px 50px;
   color: #333;
   background: var(--main-background);
 }
@@ -1979,16 +1979,19 @@ th {
 }
 
 .datatable .rdt_TableHeadRow {
-  color: #000 !important;
-  background-color: #ffeb3b !important;
-  min-height: 30px;
+  background-color: var(--red);
+  padding: 10px !important;
+  color:#fff;
 }
 
 .colrdrow {
   background-color: #ffeb3b;
   color: #000;
 }
-.-header .rt-tr .rt-th {
+.table-col-fix{
+  width:100%;
+}
+.table-col-fix thead th {
   background-color: var(--red);
   padding: 10px !important;
   color:#fff;
@@ -1996,6 +1999,7 @@ th {
 
 table,.datatable{
   font-size:14px;
+  width:100%;
 }
 
 table thead{
@@ -2009,7 +2013,8 @@ table thead .hr0 {
   border-top: 1px solid #fff;
   margin:7px 0;
 }
-table.table-striped tbody tr td{
+table.table-striped tbody tr td,
+table.table-striped thead tr th{
   padding:8px 12px;
 }
 table.table-striped tbody tr:nth-child(even){
@@ -2033,9 +2038,16 @@ table.table-striped tbody tr:nth-child(odd){
   background:#fff;
   border:1px solid #ccc;
   border-radius: 5px 5px 0 0;
+  transition:0.3s;
+}
+.tab:hover{
+  background:var(--red) !important;
+  color:#fff !important;
+  transition:0.3s;
 }
 .tab-active{
-  background:var(--main-background);
+  background:var(--red);
+  color:#fff;
 }
 .tab-container{
   position: relative;
@@ -2044,8 +2056,19 @@ table.table-striped tbody tr:nth-child(odd){
   margin-bottom:20px;
 }
 
-
-
+@media(max-width:992px){
+  .one-fifth{
+    width:50%;
+  }
+  .main{
+    margin: 0;
+  }
+}
+@media(max-width:480px){
+  .one-fifth{
+    width:100%;
+  }
+}
 
 .filterInput{
   width: 20%;
@@ -2068,14 +2091,4 @@ table.table-striped tbody tr:nth-child(odd){
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.3s ease;
-
-  /* Hover effect */
-  &:hover {
-    background-color: #0056b3; /* Slightly darker blue on hover */
-  }
-
-  /* Active page */
-  &.active {
-    background-color: #0056b3; /* Slightly darker blue for the active page */
-  }
 }

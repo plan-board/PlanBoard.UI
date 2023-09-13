@@ -17,6 +17,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
 
+ 
   const [selectedRow, setSelectedRow] = useState(null); 
   const [sumValue, setSumValue] = useState(0);
   const [modalData, setModalData] = useState(null);
@@ -622,7 +623,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                         defaultValue={item?.Aug_Month_Value_v1}
                         readOnly={true} 
                         name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
+                        onChange={(e) => onchangeInputs(e, item?.id)} 
                       /><div  style={{ padding: "5px", cursor: "pointer" }} onClick={() => getMonthTarget(item)}>
                         <i style={{ fontSize: "20px"}} className="fa fa-pencil" title="Click to update" ></i></div>
                     </td>
@@ -1010,8 +1011,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 <td><input type="text" value={sumValue} disabled={true} className="inp40" /></td>
               </tr>
             </>
-          </table>
-
+          </table> 
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
               <td colspan="30"> Net  Sales Plan ( Aug ) Total Sale  A + B   </td>

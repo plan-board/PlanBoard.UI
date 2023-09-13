@@ -57,58 +57,54 @@ const National = () => {
   };
 
   return (
-    <div className=" main ">
-      <div className="w3-clear w3-padding-16"></div>
-
-      <div className="w3-row ">
-        <span className="w3-large">Shalimar Paints Limited</span>
+    <div className="main">
+      <div className="w3-row">
+        <span className="main-title">Shalimar Paints Limited</span>
       </div>
 
       <CommonTopSales actionType="hod" selectedZone={0} />
-
-      <div
-        id="Wgt_Zone_Id"
-        className=" w3-leftbar w3-border-red Wgt_Zone_Class w3-row w3-row-padding w3-margin-bottom w3-white "
-      >
-        <div><h3>Zone Wise Monthly Plan / Achievement</h3></div>
-        <NationalZoneMonthSale selectedZone={selectedZone} />
+      <div id="Wgt_Zone_Id" className="card-box">
+        <h4>Zone Wise Monthly Plan / Achievement</h4>
+        <div className="tbl-container">
+          <NationalZoneMonthSale selectedZone={selectedZone} />
+        </div>
       </div>
       <div className="w3-clear w3-padding-16"> </div>
 
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray">
+      <div class="card-box">
+        <div className="w3-bar tab-container">
           <div
             className={
               toggleState === 1
-                ? " w3-bar-item w3-button w3-white  w3-hover-white  "
-                : " w3-bar-item w3-button w3-gray  w3-hover-white  "
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
-            <span className=" h6  w3-text-gray "> Depot Monthly Plan </span>
+            <span className="h6"> Depot Monthly Plan </span>
           </div>
           <div
             className={
               toggleState === 2
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
             }
             onClick={() => toggleTab(2)}
           >
-            <span className=" h6  w3-text-gray "> Territory Monthly Plan </span>
+            <span className="h6"> Territory Monthly Plan </span>
           </div>
           <div
             className={
               toggleState === 3
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
             }
             onClick={() => toggleTab(3)}
           >
-            <span className=" h6 w3-text-gray "> Dealer Monthly Plan </span>
+            <span className="h6"> Dealer Monthly Plan </span>
           </div>
         </div>
-        <div class="w3-row w3-padding ">
+        <div class="tbl-container">
           <div>
             <div className="w3-row">
               {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
@@ -154,6 +150,14 @@ const National = () => {
               selectedZone={selectedZoneDrop}
               selectedDepot={0}
             />
+            {/* <div style={{ marginTop: "12px" }}>
+              <h3>Depot Month Wise Report V1</h3>
+            </div>
+            <DepoMonthWiseSalesReport
+              selectedZone={selectedZoneDrop}
+              selectedDepot={0}
+              forVersion={"v1"}
+            /> */}
           </div>
           <div
             className={toggleState === 2 ? "  " : " w3-hide  "}

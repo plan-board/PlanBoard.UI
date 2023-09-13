@@ -11,7 +11,7 @@ const Sidebar = ({ isAuth, rolId }) => {
     setToggleState(index);
   };
 
-  return (
+  return ( 
     <div className="w3-sidebar w3-bar-block w3-hide-small sidebar-nav" style={{ zIndex: 20 }}>
       <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
         <img src={logo} className="" style={{ width: "50px" }} />

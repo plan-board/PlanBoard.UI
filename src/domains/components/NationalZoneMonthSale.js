@@ -335,58 +335,53 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
   return (
     <div id="mom-north" className="w3-row">
       <div id="mom-bar-north" className=" ">
-        <table className="w3-table w3-stripped table-bordered table-striped">
-          <tr>
-            <td className="w3-red" rowspan="2">
-              S.No
-            </td>
-            <th className="w3-red" rowspan="2" onClick={() => handleSort('Zone')}>
+        <table className="table-bordered table-striped">
+          <thead>
+            <tr>
+              <th rowspan="2"> S.No </th>
+              <th rowspan="2" onClick={() => handleSort('Zone')}>
               Zone {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}
             </th>
-            <th className="w3-red" rowspan="2" onClick={() => handleSort('LY 22-23')}>
+            <th rowspan="2" onClick={() => handleSort('LY 22-23')}>
               LY 22-23 {sortField === 'LY 22-23' && (sortDirection === 'asc' ? '▲' : '▼')}
             </th>
-            <td className="w3-red" rowspan="2">
-              {" "}
-              Plan 2023 <hr className="hr0" /> YTD{" "}
-            </td>
-
-            <td className="w3-gray" colspan="12">
-              {" "}
-              Month Wise Plan{" "}
-            </td>
-          </tr>
-          <tr>
-            <td className="w3-gray"> Apr </td>
-            <td className="w3-gray"> May </td>
-            <td className="w3-gray"> Jun </td>
-            <td className="w3-gray"> Jul </td>
-            <td className="w3-gray"> Aug </td>
-            <td className="w3-gray"> Sep </td>
-            <td className="w3-gray"> Oct </td>
-            <td className="w3-gray"> Nov </td>
-            <td className="w3-gray"> Dec </td>
-            <td className="w3-gray"> Jan </td>
-            <td className="w3-gray"> Feb </td>
-            <td className="w3-gray"> Mar </td>
-          </tr>
-          {isLoading ? (
-            <tr>
-              <td colSpan="16">
-                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-              </td>
+              <th rowspan="2"> Plan 2023 <hr className="hr0" /> YTD </th>
+              <th colspan="12"> Month Wise Plan </th>
             </tr>
-          ) : (
-            <>
-              {sortedData?.length === 0 ? (
-                <tr>
-                  <td colSpan="16">No data found</td>
-                </tr>
-              ) : (
-                tableWithTotalRow
-              )}
-            </>
-          )}
+            <tr>
+              <th> Apr </th>
+              <th> May </th>
+              <th> Jun </th>
+              <th> Jul </th>
+              <th> Aug </th>
+              <th> Sep </th>
+              <th> Oct </th>
+              <th> Nov </th>
+              <th> Dec </th>
+              <th> Jan </th>
+              <th> Feb </th>
+              <th> Mar </th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="16">
+                  <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+                </td>
+              </tr>
+            ) : (
+              <>
+                {zoneMonthPlan?.length === 0 ? (
+                  <tr>
+                    <td colSpan="16">No data found</td>
+                  </tr>
+                ) : (
+                  tableWithTotalRow
+                )}
+              </>
+            )}
+          </tbody>
         </table>
       </div>
     </div>
