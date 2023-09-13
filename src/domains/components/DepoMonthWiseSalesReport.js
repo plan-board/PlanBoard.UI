@@ -14,6 +14,8 @@ import "react-table-hoc-fixed-columns/lib/styles.css";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
+const itemsPerPage = 10; // Number of items to display per page
+
 
 const DepoMonthWiseSalesReport = ({
   selectedZone,
@@ -24,8 +26,12 @@ const DepoMonthWiseSalesReport = ({
   const dispatch = useDispatch();
   const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
   const [isLoading, setLoading] = useState(true);
-
   const [filterText, setFilterText] = useState("");
+  const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
+
+  const [currentPage, setCurrentPage] = useState(0);  
+ 
 
   useEffect(() => {
     console.log("-calling DepotMonthPlan api from dpo mon wise re");
@@ -54,129 +60,189 @@ const DepoMonthWiseSalesReport = ({
     fetchDepotSalesPlan();
   }, [selectedZone]);
 
-  // builkd table colunms
+  
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // If the same column is clicked again, toggle the sort direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // If a different column is clicked, set the new sort field and direction
+      setSortField(field);
+      setSortDirection('asc'); // Default to ascending order
+    }
+  };
 
-  const filteredItems = monthWiseSalesData.filter(
-    (item) =>
-      item.depot_name &&
-      item.depot_name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  // Sort the data based on the current sorting field and direction
+  let sortedData = [...monthWiseSalesData];
+  if (sortField === 'Zone') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.zone_name?.localeCompare(b.zone_name);
+      } else {
+        return b.zone_name?.localeCompare(a.zone_name);
+      }
+    });
+  } else if (sortField === 'Depot') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.depot_name?.localeCompare(b.depot_name);
+      } else {
+        return b.depot_name?.localeCompare(a.depot_name);
+      }
+    });
+  } else if (sortField === 'LLY') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return (a.LLY_Value || 0) - (b.LLY_Value || 0);
+      } else {
+        return (b.LLY_Value || 0) - (a.LLY_Value || 0);
+      }
+    });
+  }
+  else if (sortField === 'LY') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return (a.LY_Value || 0) - (b.LY_Value || 0);
+      } else {
+        return (b.LY_Value || 0) - (a.LY_Value || 0);
+      }
+    });
+  }
+
+   
+  const filteredItems = sortedData.filter((item) => {
+    const filterTextLowerCase = filterText.toLowerCase();
+    return (
+      (item?.zone_name && item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
+      (item?.depot_name && item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
+      (!isNaN(item.LLY_Value) && item?.LLY_Value.toString().toLowerCase().includes(filterTextLowerCase)) ||
+      (!isNaN(item.LY_Value) && item?.LY_Value.toString()?.toLowerCase().includes(filterTextLowerCase))
+    );
+  });
+
+  const pageCount = Math.ceil(filteredItems.length / itemsPerPage);
+  const offset = currentPage * itemsPerPage;
+  const dataToShow = filteredItems.slice(offset, offset + itemsPerPage);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
 
-  const totalLYValue = filteredItems.reduce(
+  const totalLYValue = dataToShow.reduce(
     (acc, item) => acc + (item.LY_Value || 0),
     0
   );
-  const totalLLYValue = filteredItems.reduce(
+  const totalLLYValue = dataToShow.reduce(
     (acc, item) => acc + (item.LLY_Value || 0),
     0
   );
-  const totalCYValue = filteredItems.reduce(
+  const totalCYValue = dataToShow.reduce(
     (acc, item) => acc + (item.CY_Value || 0),
     0
   );
-  const totalYTDValue = filteredItems.reduce(
+  const totalYTDValue = dataToShow.reduce(
     (acc, item) => acc + (item.YTD_Value || 0),
     0
   );
-  const totalAprValue = filteredItems?.reduce(
+  const totalAprValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
     0
   );
-  const totalAprValue_v1 = filteredItems?.reduce(
+  const totalAprValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Sale || 0),
     0
   );
-  const totalMayValue = filteredItems?.reduce(
+  const totalMayValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
     0
   );
-  const totalMayValue_v1 = filteredItems?.reduce(
+  const totalMayValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.May_Month_Sale || 0),
     0
   );
-  const totalJunValue = filteredItems?.reduce(
+  const totalJunValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
     0
   );
-  const totalJunValue_v1 = filteredItems?.reduce(
+  const totalJunValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Sale || 0),
     0
   );
-  const totalJulValue = filteredItems?.reduce(
+  const totalJulValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
     0
   );
-  const totalJulValue_v1 = filteredItems?.reduce(
+  const totalJulValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Sale || 0),
     0
   );
-  const totalAugValue = filteredItems?.reduce(
+  const totalAugValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
     0
   );
-  const totalAugValue_v1 = filteredItems?.reduce(
+  const totalAugValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Sale || 0),
     0
   );
-  const totalSepValue = filteredItems?.reduce(
+  const totalSepValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
     0
   );
-  const totalSepValue_v1 = filteredItems?.reduce(
+  const totalSepValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Sale || 0),
     0
   );
-  const totalOctValue = filteredItems?.reduce(
+  const totalOctValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
     0
   );
-  const totalOctValue_v1 = filteredItems?.reduce(
+  const totalOctValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Sale || 0),
     0
   );
-  const totalNovValue = filteredItems?.reduce(
+  const totalNovValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
     0
   );
-  const totalNovValue_v1 = filteredItems?.reduce(
+  const totalNovValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Sale || 0),
     0
   );
-  const totalDecValue = filteredItems?.reduce(
+  const totalDecValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
     0
   );
-  const totalDecValue_v1 = filteredItems?.reduce(
+  const totalDecValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Sale || 0),
     0
   );
-  const totalJanValue = filteredItems?.reduce(
+  const totalJanValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
     0
   );
-  const totalJanValue_v1 = filteredItems?.reduce(
+  const totalJanValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Sale || 0),
     0
   );
-  const totalFebValue = filteredItems?.reduce(
+  const totalFebValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
     0
   );
-  const totalFebValue_v1 = filteredItems?.reduce(
+  const totalFebValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Sale || 0),
     0
   );
-  const totalMarValue = filteredItems?.reduce(
+  const totalMarValue = dataToShow?.reduce(
     (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
     0
   );
-  const totalMarValue_v1 = filteredItems?.reduce(
+  const totalMarValue_v1 = dataToShow?.reduce(
     (acc, item) => acc + (item?.Mar_Month_Sale || 0),
     0
   );
 
-  const tableRows = filteredItems.map((item, index) => (
+  const tableRows = dataToShow.map((item, index) => (
     <tr key={index}> 
       <td>{++index}</td> 
       <td>{item?.zone_name}</td>
@@ -335,7 +401,7 @@ const DepoMonthWiseSalesReport = ({
         <div className="form-group filterInput">
           <input className="w3-margin-bottom w3-input w3-border "
             type="text"
-            placeholder="Filter By Depot  Name"
+            placeholder="Filter By Zone, Depot, LLY, LY "
             aria-label="Search Input"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
@@ -345,10 +411,10 @@ const DepoMonthWiseSalesReport = ({
            <thead>
               <tr>
                 <th>S.No</th>
-                <th>Zone</th>
-                <th>Depot</th>
-                <th>LLY</th>
-                <th>LY</th>
+                <th onClick={() => handleSort('Zone')}>Zone  {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                <th onClick={() => handleSort('Depot')}>Depot  {sortField === 'Depot' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
                 <th>CY Plan / YTD</th>
                 <th> Apr </th>
                 <th> May </th>
@@ -373,7 +439,7 @@ const DepoMonthWiseSalesReport = ({
               </tr>
             ) : (
               <>
-                {filteredItems?.length === 0 ? (
+                {dataToShow?.length === 0 ? (
                   <tr>
                     <td colSpan="18">No data found</td>
                   </tr>
@@ -384,6 +450,18 @@ const DepoMonthWiseSalesReport = ({
             )}
           </tbody>
         </table>
+        {/* Pagination */}
+        <div className="pagination">
+          {Array.from({ length: pageCount }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index)}
+              className={`page-button ${currentPage === index ? "active" : ""}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

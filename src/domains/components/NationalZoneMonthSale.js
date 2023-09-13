@@ -10,6 +10,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
 
   const [isLoading, setLoading] = useState(true);
   const [zoneMonthPlan, setZoneMonthPlan] = useState([]);
+  const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
 
   useEffect(() => {
     const payload = {
@@ -37,116 +39,147 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
     getZoneMonthPlan();
   }, [selectedZone]);
 
-  const totalLYValue = zoneMonthPlan.reduce(
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // If the same column is clicked again, toggle the sort direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // If a different column is clicked, set the new sort field and direction
+      setSortField(field);
+      setSortDirection('asc'); // Default to ascending order
+    }
+  };
+
+  // Sort the data based on the current sorting field and direction
+  let sortedData = [...zoneMonthPlan];
+  if (sortField === 'Zone') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.zone_name.localeCompare(b.zone_name);
+      } else {
+        return b.zone_name.localeCompare(a.zone_name);
+      }
+    });
+  } else if (sortField === 'LY 22-23') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return (a.LY_Value || 0) - (b.LY_Value || 0);
+      } else {
+        return (b.LY_Value || 0) - (a.LY_Value || 0);
+      }
+    });
+  }
+
+  const totalLYValue = sortedData.reduce(
     (acc, item) => acc + (item.LY_Value || 0),
     0
   );
-  const totalCYValue = zoneMonthPlan.reduce(
+  const totalCYValue = sortedData.reduce(
     (acc, item) => acc + (item.CY_Value || 0),
     0
   );
-  const totalYTDValue = zoneMonthPlan.reduce(
+  const totalYTDValue = sortedData.reduce(
     (acc, item) => acc + (item.YTD_Value || 0),
     0
   );
-  const totalAprValue = zoneMonthPlan?.reduce(
+  const totalAprValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
     0
   );
-  const totalAprValue_v1 = zoneMonthPlan?.reduce(
+  const totalAprValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Sale || 0),
     0
   );
-  const totalMayValue = zoneMonthPlan?.reduce(
+  const totalMayValue = sortedData?.reduce(
     (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
     0
   );
-  const totalMayValue_v1 = zoneMonthPlan?.reduce(
+  const totalMayValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.May_Month_Sale || 0),
     0
   );
-  const totalJunValue = zoneMonthPlan?.reduce(
+  const totalJunValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
     0
   );
-  const totalJunValue_v1 = zoneMonthPlan?.reduce(
+  const totalJunValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Sale || 0),
     0
   );
-  const totalJulValue = zoneMonthPlan?.reduce(
+  const totalJulValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
     0
   );
-  const totalJulValue_v1 = zoneMonthPlan?.reduce(
+  const totalJulValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Sale || 0),
     0
   );
-  const totalAugValue = zoneMonthPlan?.reduce(
+  const totalAugValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
     0
   );
-  const totalAugValue_v1 = zoneMonthPlan?.reduce(
+  const totalAugValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Sale || 0),
     0
   );
-  const totalSepValue = zoneMonthPlan?.reduce(
+  const totalSepValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
     0
   );
-  const totalSepValue_v1 = zoneMonthPlan?.reduce(
+  const totalSepValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Sale || 0),
     0
   );
-  const totalOctValue = zoneMonthPlan?.reduce(
+  const totalOctValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
     0
   );
-  const totalOctValue_v1 = zoneMonthPlan?.reduce(
+  const totalOctValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Sale || 0),
     0
   );
-  const totalNovValue = zoneMonthPlan?.reduce(
+  const totalNovValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
     0
   );
-  const totalNovValue_v1 = zoneMonthPlan?.reduce(
+  const totalNovValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Sale || 0),
     0
   );
-  const totalDecValue = zoneMonthPlan?.reduce(
+  const totalDecValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
     0
   );
-  const totalDecValue_v1 = zoneMonthPlan?.reduce(
+  const totalDecValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Sale || 0),
     0
   );
-  const totalJanValue = zoneMonthPlan?.reduce(
+  const totalJanValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
     0
   );
-  const totalJanValue_v1 = zoneMonthPlan?.reduce(
+  const totalJanValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Sale || 0),
     0
   );
-  const totalFebValue = zoneMonthPlan?.reduce(
+  const totalFebValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
     0
   );
-  const totalFebValue_v1 = zoneMonthPlan?.reduce(
+  const totalFebValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Sale || 0),
     0
   );
-  const totalMarValue = zoneMonthPlan?.reduce(
+  const totalMarValue = sortedData?.reduce(
     (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
     0
   );
-  const totalMarValue_v1 = zoneMonthPlan?.reduce(
+  const totalMarValue_v1 = sortedData?.reduce(
     (acc, item) => acc + (item?.Mar_Month_Sale || 0),
     0
   );
 
-  const tableRows = zoneMonthPlan.map((item, index) => (
+  const tableRows = sortedData.map((item, index) => (
     <tr key={index}>
       <td className="">{++index}</td>
       <td className="">{item?.zone_name}</td>
@@ -227,7 +260,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <td className="" colSpan={2}>
         Total
       </td>
-      <td className="">{totalLYValue}</td>
+      <td className="">{totalLYValue.toFixed(2)}</td>
       <td className="">
         {totalCYValue.toFixed(2)} <hr className="hr0" />
         {totalYTDValue.toFixed(2)}
@@ -306,8 +339,12 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
           <thead>
             <tr>
               <th rowspan="2"> S.No </th>
-              <th rowspan="2"> Zone </th>
-              <th rowspan="2"> LY 22-23 </th>
+              <th rowspan="2" onClick={() => handleSort('Zone')}>
+              Zone {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th rowspan="2" onClick={() => handleSort('LY 22-23')}>
+              LY 22-23 {sortField === 'LY 22-23' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
               <th rowspan="2"> Plan 2023 <hr className="hr0" /> YTD </th>
               <th colspan="12"> Month Wise Plan </th>
             </tr>
