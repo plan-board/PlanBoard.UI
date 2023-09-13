@@ -13,11 +13,13 @@ const FocusSectorMaster = () => {
   const [monthId, setMonth] = useState(0);
   const [fyId, setFYear] = useState(0);
   const [mSectorId, setMSector] = useState(0);
+  const [productId, setProductId] = useState(0);
 
   const [fyList, setFYlist] = useState([]);
   const [monthList, setMonthList] = useState([]);
   const [mSectorList, setMSectorList] = useState([]);
   const [sectorMaster, setSectorMaster] = useState([]);
+  const [productsList, setProductDropdown] = useState([]);
 
   const payload = {
     Token: localStorage.getItem("access_token"),
@@ -100,6 +102,30 @@ const FocusSectorMaster = () => {
     fetchMSList();
   }, []);
 
+  const fetchProductList = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        Token: localStorage.getItem("access_token"),
+        MarketSectorId: mSectorId,
+      };
+      const response = await axiosInstance.post("ProductByMarketSectorData", payload);
+      if (response?.status === 200) {
+        setProductDropdown(response.data.Data != null ? response.data.Data : []);
+      }
+      setLoading(false);
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  }
+
+  useEffect(() => {
+    if(mSectorId){
+      fetchProductList();
+    }
+  }, [mSectorId]);
+
   const fyDropdown = () => {
     return fyList.map((item, index) => (
       <option key={item?.fy_id} value={item?.fy_id}>
@@ -112,6 +138,16 @@ const FocusSectorMaster = () => {
     return mSectorList.map((item, index) => (
       <option key={item?.marketsectorid} value={item?.marketsectorid}>
         {item?.marketsectorname}
+      </option>
+    ));
+  };
+
+  const productDropdown = () => {
+    return productsList.map((item, index) => (
+      <option key={item?.Productid} value={item?.Productid}>
+        {item?.productdesc}
+        <br/>
+        {item?.productcode}
       </option>
     ));
   };
@@ -135,7 +171,8 @@ const FocusSectorMaster = () => {
         {
           FYId: fyId,
           Month: monthId,
-          ProductMarketSectorId: mSectorId,
+          ProductMarketSectorId: parseInt(mSectorId),
+          ProductId: parseInt(productId),
         },
       ],
     };
@@ -147,6 +184,7 @@ const FocusSectorMaster = () => {
         alert(response?.data?.Data?.[0]?.MESSAGE);
         fetchFocusSector();
         setMSector(0)
+        setProductId(0)
       }
       setLoading(false);
     } catch (error) {
@@ -172,8 +210,19 @@ const FocusSectorMaster = () => {
       sortable: true,
     },
     {
-      name: "Focus Sector",
+      name: "Market Sector",
       selector: (row) => row.MarketSectorName,
+      sortable: true,
+    },
+    {
+      name: "Product Name",
+      selector: (row) => (
+        <>
+          {row.ProductName}
+          <br />
+          {row.ProductCode}
+        </>
+      ),
       sortable: true,
     },
   ];
@@ -253,20 +302,28 @@ const FocusSectorMaster = () => {
               </select>
             </td>
             <td className=" ">
-              {" "}
               <label htmlFor="selectionBox">Market Sector</label>
               <select
                 className="w3-select"
                 value={mSectorId}
                 onChange={handleSectorChange}
               >
-                {" "}
-                <option value={0}>All</option>
+                <option value={0}>Select Market Sector</option>
                 {marketSecDropdown()}
               </select>
             </td>
+            <td className=" ">
+              <label htmlFor="selectionBox">Product</label>
+              <select
+                className="w3-select"
+                value={productId}
+                onChange={(e)=>setProductId(e.target.value)}
+              >
+                <option value={0}>Select Product</option>
+                {productDropdown()}
+              </select>
+            </td>
             <td className=" " style={{ width: "30px" }}>
-              {" "}
               <br />
               <button
                 type="button"
