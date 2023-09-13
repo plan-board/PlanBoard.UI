@@ -47,12 +47,12 @@ const Sidebar = ({ isAuth, rolId }) => {
             <p className="w3-small h6">Schedule</p>
         </NavLink>
       )}
-      {hasPermission(rolId, "national") && (
+      {/* {hasPermission(rolId, "national") && ( */}
         <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="settings">
             <i className="fa fa-gear"></i>
             <p className="w3-small h6">Settings</p>
         </NavLink>
-      )}
+      {/* )} */}
     </div>
   );
 };

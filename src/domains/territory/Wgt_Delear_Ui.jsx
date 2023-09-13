@@ -43,7 +43,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   }
 
   const fetchMonthDataById = async (dataObj) => {
-    const cMonth = new Date().getMonth();
+    const cMonth = new Date().getMonth() + 1;
     const date = new Date();
     setMonthName(date.toLocaleString('default', { month: 'long' }));
      
@@ -137,9 +137,9 @@ const Wgt_Delear_Ui = ({ data }) => {
 
     try {
       const payArr = selectedRow.map((item) => ({
-        "FYId": item.FYId,
-        "Month": item.Month,
-        "FocusedProductId": item.tableid,
+        "FYId": parseInt(item.FYId),
+        "Month": parseInt(item.Month),
+        "FocusedProductId": item.ProductId,
         "DealerId": modalData.dealerid,
         "Value": item.Value,
         "Volume": item.Volume
@@ -969,16 +969,17 @@ const Wgt_Delear_Ui = ({ data }) => {
               <td colspan="30"> B ( Focus Sector List for Month of Aug )  * Add values / volume  </td>
             </tr>
             <tr className="w3-yellow">
-              <th style={{ width: "5%" }}>#</th>
-              <th style={{ width: "5%" }}>Focus Product Sector </th>
+              <th style={{ width: "2%" }}>#</th>
+              <th style={{ width: "10%" }}>Focus Product Sector </th>
+              <th style={{ width: "10%" }}>Product Name </th>
               <th style={{ width: "5%" }}>LLY</th>
               <th style={{ width: "5%" }}>LY</th>
               <th style={{ width: "5%" }}>YTD</th>
               <th style={{ width: "5%" }}> 6 Mo. Avg </th>
               <th style={{ width: "5%" }}>LY (Aug) Vol.</th>
               <th style={{ width: "5%" }}>LY (Aug) Val.</th>
-              <th style={{ width: "10%" }}>Volume (Ltrs.) </th>
-              <th style={{ width: "10%" }}>Value (Lacs)</th>
+              <th style={{ width: "5%" }}>Volume (Ltrs.) </th>
+              <th style={{ width: "5%" }}>Value (Lacs)</th>
             </tr>
             <>
               {selectedRow?.length === 0 ? (
@@ -990,6 +991,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                   <tr className="" key={index}>
                     <td>{index + 1}</td>
                     <td>{item?.MarketSectorName}</td>
+                    <td>{item?.ProductName} <br/> ({item?.ProductCode}) </td>
                     <td>{item?.LLY}</td>
                     <td>{item?.LY}</td>
                     <td>{item?.YTD}</td>
@@ -998,10 +1000,10 @@ const Wgt_Delear_Ui = ({ data }) => {
                     <td>{item?.SameMonthLY}</td>
                     <td>
 
-                      <input type="text" value={item?.Volume} className="inp40" name="Volume" onChange={(e) => handleInputChange(item.tableid, 'Volume', e.target.value)} />
+                      <input type="number" pattern="[0-9]*[.]?[0-9]*" value={item?.Volume} className="inp40" name="Volume" onChange={(e) => handleInputChange(item.tableid, 'Volume', e.target.value)} />
                     </td>
                     <td>
-                      <input type="text" value={item?.Value} className="inp40" name="Value" onChange={(e) => handleInputChange(item.tableid, 'Value', e.target.value)} />
+                      <input type="number" pattern="[0-9]*[.]?[0-9]*" value={item?.Value} className="inp40" name="Value" onChange={(e) => handleInputChange(item.tableid, 'Value', e.target.value)} />
                     </td>
                   </tr>
                 ))
