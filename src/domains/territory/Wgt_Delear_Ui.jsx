@@ -52,7 +52,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   }
 
   const fetchMonthDataById = async (dataObj) => {
-    const cMonth = new Date().getMonth();
+    const cMonth = new Date().getMonth() + 1;
     const date = new Date();
     setMonthName(date.toLocaleString('default', { month: 'long' }));
 
@@ -962,8 +962,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                 selectedRow?.map((item, index) => (
                   <tr className="" key={index}>
                     <td>{index + 1}</td>
-                    <td>{item?.MarketSectorName}</td>
-                    <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td>
+                    <td>{item?.MarketSectorName}</td> 
+                    <td>{item?.ProductName} <br/> ({item?.ProductCode}) </td> 
                     <td>{item?.LLY}</td>
                     <td>{item?.LY}</td>
                     <td>{item?.YTD}</td>
