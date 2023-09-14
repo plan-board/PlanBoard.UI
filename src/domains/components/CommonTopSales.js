@@ -53,7 +53,7 @@ const CommonTopSales = ({
 
   return (
     <>
-      <div className="card-box common-top-sales">
+      <div className="card-box lightyellow">
         {actionType == 'hod' ? (
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">

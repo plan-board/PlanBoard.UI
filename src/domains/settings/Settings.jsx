@@ -10,63 +10,45 @@ const Settings = () => {
     setToggleState(index);
   };
   return (
-    <div className="main  w3-border">
-
-      <div class="w3-row w3-padding-16"></div>
-
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray">
-          <div
-            className={
-              toggleState === 1
-                ? " w3-bar-item w3-button w3-white  w3-hover-white  "
-                : " w3-bar-item w3-button w3-gray  w3-hover-white  "
-            }
-            onClick={() => toggleTab(1)}
-          >
-            <span className=" h6  w3-text-gray "> <i className="fa fa-gear" ></i> Focus Sector Master  </span>
+    <div className="main">
+      <div className="w3-row">
+        <span className="main-title">Shalimar Paints Limited</span>
+      </div>
+      <div class="card-box lightgreen">
+        <div className="w3-bar tab-container">
+          <div className={ toggleState === 1
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
+            } onClick={() => toggleTab(1)} >
+            <span className="h6"> <i className="fa fa-gear" ></i> Focus Sector Master  </span>
           </div>
-          <div
-            className={
-              toggleState === 2
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
-            }
-            onClick={() => toggleTab(2)}
-          >
-            <span className=" h6  w3-text-gray "> <i className="fa fa-gear" ></i>  </span>
+          <div className={ toggleState === 2
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
+            } onClick={() => toggleTab(2)} >
+            <span className="h6"> <i className="fa fa-gear" ></i>  </span>
           </div>
-          <div
-            className={
-              toggleState === 3
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
-            }
-            onClick={() => toggleTab(3)}
-          >
-            <span className=" h6 w3-text-gray "> <i className="fa fa-gear" ></i> </span>
+          <div className={ toggleState === 3
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
+            } onClick={() => toggleTab(3)} >
+            <span className="h6"> <i className="fa fa-gear" ></i> </span>
           </div>
         </div>
-        <div class="w3-row w3-padding ">
-          <div
-            className={toggleState === 1 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(1)}
-          >
-            <FocusSectorMaster />
+        <div class="row w-100">
+          <div className="full">
+            <div className={toggleState === 1 ? "  " : " w3-hide  "} onClick={() => toggleTab(1)} >
+              <FocusSectorMaster />
+            </div>
+            <div className={toggleState === 2 ? "  " : " w3-hide  "} onClick={() => toggleTab(2)} >
+            
+            </div>
+            <div className={toggleState === 3 ? "  " : " w3-hide  "} onClick={() => toggleTab(3)} >
+            
+            </div>
           </div>
-          <div
-            className={toggleState === 2 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(2)}
-          >
-
-          </div>
-          <div
-            className={toggleState === 3 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(3)}
-          ></div>
         </div>
       </div>
-
     </div>
   )
 }

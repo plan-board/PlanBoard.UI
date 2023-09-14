@@ -26,7 +26,7 @@ const Zone = () => {
       <div className="w3-row">
         <span className="main-title">Shalimar Paints Limited</span>
       </div>
-      <div className="card-box px-0">
+      <div className="card-box px-0 lightgreen">
         <div className="row justify-content-between w-100 align-items-center m-0">
           <div className="one-fourth">
             <ZoneDropDown selectedZone={selectedZone} onValueChange={handleSelectionChange} />
@@ -38,7 +38,7 @@ const Zone = () => {
       </div>
 
       <CommonTopSales actionType="Zone" selectedZone={selectedZone} />
-      <div class="card-box">
+      <div class="card-box lightblue">
         <div className="w3-bar tab-container">
           <div className={toggleState === 1 
             ? "w3-button tab tab-active"
@@ -56,12 +56,6 @@ const Zone = () => {
           </div>
         </div>
       </div>
-
-      <div class="w3-row w3-padding-16"> </div>
-
-
-
-
     </div>
   );
 };

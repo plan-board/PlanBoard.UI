@@ -252,16 +252,18 @@ const Wgt_Delear_Ui = ({ data }) => {
 
   return (
     <>
-      <div className="tbl-container">
-        <div className="one-half">
-          <input className="w3-margin-bottom w3-input w3-border "
-            type="text"
-            placeholder="Filter By Dealer Name, code, category, LY and YTD "
-            aria-label="Search Input"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
+        <div className="row w-100 mt-3">
+          <div className="one-half">
+            <input className="w3-margin-bottom w3-input w3-border "
+              type="text"
+              placeholder="Filter By Dealer Name, code, category, LY and YTD "
+              aria-label="Search Input"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+          </div>
         </div>
+      <div className="tbl-container">
         <table className="table-bordered table-striped">
           <thead>
             <tr>
@@ -312,12 +314,12 @@ const Wgt_Delear_Ui = ({ data }) => {
               )}
               {currentMonth <= 8 ? (
                 currentMonth == 8 ? (
-                  <th className="bg-red" colSpan={4}> Aug <i className=" fa fa-unlock"> </i> </th>
+                  <th className="bg-green text-dark" colSpan={4}> Aug <i className=" fa fa-unlock"> </i> </th>
                 ) : (
-                  <th className="bg-red" rowSpan={2}> Aug </th>
+                  <th className="bg-green text-dark" rowSpan={2}> Aug </th>
                 )
               ) : (
-                <th className=" " rowSpan={2}> Aug </th>
+                <th className="bg-green text-dark" rowSpan={2}> Aug </th>
               )}
               {currentMonth <= 9 ? (
                 currentMonth == 9 ? (
@@ -386,12 +388,12 @@ const Wgt_Delear_Ui = ({ data }) => {
           </thead>
           <tbody>
             <tr>
-              <td className="bg-red text-white" colSpan={11}> </td>
-              <td className="bg-red text-white"> OS </td>
-              <td className="bg-red text-white"> OD </td>
-              <td className="bg-red text-white"> Sales </td>
-              <td className="bg-red text-white"> Collection </td>
-              <td className="bg-red text-white" colSpan={14}>  </td>
+              <th className="p-2 bg-blue" colSpan={11}> </th>
+              <th className="p-2 bg-green text-dark"> OS </th>
+              <th className="p-2 bg-green text-dark"> OD </th>
+              <th className="p-2 bg-green text-dark"> Sales </th>
+              <th className="p-2 bg-green text-dark"> Collection </th>
+              <th className="p-2 bg-blue" colSpan={14}>  </th>
             </tr>
             {filteredItems?.sort((a, b) => a.Aug_Month_Value_v1.toString()?.localeCompare(b.Aug_Month_Value_v1.toString())).map((item, index) => {
               return (
@@ -418,8 +420,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Apr_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -427,8 +429,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Apr_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -452,8 +454,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.May_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -461,8 +463,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.May_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -492,8 +494,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Jun_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -501,8 +503,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Jun_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -533,8 +535,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Jul_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -542,8 +544,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Jul_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -574,9 +576,9 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td className="bg-green">{item?.OS}</td>
                         <td align="center" className="bg-green nowrap">
                           {item?.Aug_Month_Value}
-                          <input
+                          <input type="text"
                             style={{ width: "50px", marginLeft: "3px" }}
-                            className="mx-2"
+                            className="mx-2 text-center"
                             defaultValue={item?.Aug_Month_Value_v1}
                             readOnly={true}
                             name={item?.id + `_sales`}
@@ -587,8 +589,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td className="bg-green">
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
                           />
@@ -617,8 +619,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Sep_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -626,8 +628,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Sep_Month_Value_1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -657,8 +659,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Oct_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -666,8 +668,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Oct_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -697,8 +699,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Nov_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -706,8 +708,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Nov_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -738,8 +740,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Dec_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -747,8 +749,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Dec_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -778,8 +780,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Jan_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -787,8 +789,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Jan_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -819,8 +821,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_outstand}</td>
                         <td>{item?.current_overdue}</td>
                         <td>
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Feb_Month_Value}
                             name={item?.id + `_sales`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -828,8 +830,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
-                            className="inp40"
+                          <input type="text"
+                            className="inp40 text-center"
                             defaultValue={item?.Feb_Month_Value_v1}
                             name={item?.id + `_coll`}
                             onChange={(e) => onchangeInputs(e, item?.id)}
@@ -860,7 +862,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                         <td>{item?.current_overdue}</td>
                         <td>
 
-                          <input
+                          <input type="text"
                             class="inp40"
                             defaultValue={item?.Mar_Month_Value}
                             name={item?.id + `_sales`}
@@ -869,7 +871,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                         </td>
                         <td>
 
-                          <input
+                          <input type="text"
                             class="inp40"
                             defaultValue={item?.Mar_Month_Value_v1}
                             name={item?.id + `_coll`}
@@ -899,18 +901,18 @@ const Wgt_Delear_Ui = ({ data }) => {
             })}
           </tbody>
         </table>
-        {/* Pagination */}
-        <div className="pagination">
-          {Array.from({ length: pageCount }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index)}
-              className={`page-button ${currentPage === index ? "active" : ""}`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+      </div>
+      {/* Pagination */}
+      <div className="pagination">
+        {Array.from({ length: pageCount }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageChange(index)}
+            className={`page-button ${currentPage === index ? "active" : ""}`}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
 
       <CustomPopup
@@ -930,7 +932,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 Rule 1 : Active Dealer <br />
                 Rule 2 : Category based % impact  <br />
               </td>
-              <td style={{ width: "10%" }}><input type="text" value={modalData?.Aug_Month_Value_v1} className="inp40" readOnly={true} />
+              <td style={{ width: "10%" }}><input type="text" value={modalData?.Aug_Month_Value_v1} className="inp40 text-center" readOnly={true} />
               </td>
             </tr>
 
@@ -972,17 +974,17 @@ const Wgt_Delear_Ui = ({ data }) => {
                     <td>{item?.SameMonthLY}</td>
                     <td>
 
-                      <input type="number" pattern="[0-9]*[.]?[0-9]*" value={item?.Volume} className="inp40" name="Volume" onChange={(e) => handleInputChange(item.tableid, 'Volume', e.target.value)} />
+                      <input type="number" pattern="[0-9]*[.]?[0-9]*" value={item?.Volume} className="inp40 text-center" name="Volume" onChange={(e) => handleInputChange(item.tableid, 'Volume', e.target.value)} />
                     </td>
                     <td>
-                      <input type="number" pattern="[0-9]*[.]?[0-9]*" value={item?.Value} className="inp40" name="Value" onChange={(e) => handleInputChange(item.tableid, 'Value', e.target.value)} />
+                      <input type="number" pattern="[0-9]*[.]?[0-9]*" value={item?.Value} className="inp40 text-center" name="Value" onChange={(e) => handleInputChange(item.tableid, 'Value', e.target.value)} />
                     </td>
                   </tr>
                 ))
               )}
               <tr>
                 <td colSpan={9}></td>
-                <td><input type="text" value={sumValue} disabled={true} className="inp40" /></td>
+                <td><input type="text" value={sumValue} disabled={true} className="inp40 text-center" /></td>
               </tr>
             </>
           </table>

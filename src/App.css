@@ -6,7 +6,8 @@
   --blue:#4bcbeb;
   --red:#fe9496;
   --border-radius:2px;
-  --main-background:#e9ecef;
+  /* --main-background:#e9ecef; */
+  --main-background:#f7fbff;
   --sidebar-nav:#052846;
   --top-nav:#007ad1;
 }
@@ -23,10 +24,13 @@
 }
 body{
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
 }
 p{
-  font-size: 16px;
+  font-size: 14px;
+}
+.form-control{
+  font-size: 14px;
 }
 .w-25 {
   width: 25% !important;
@@ -1901,6 +1905,7 @@ th {
   background: #fff;
   margin: 10px 0 20px;
   border-radius:7px;
+  justify-content: space-around;
   box-shadow: 0 0 15px rgb(0 0 0 / 10%);
 }
 .tbl-container{
@@ -2017,7 +2022,9 @@ th {
   padding: 10px !important;
   color:#fff;
 }
-
+.h6, h6 {
+  font-size: 14px;
+}
 table,.datatable{
   font-size:14px;
   width:100%;
@@ -2037,6 +2044,19 @@ table thead .hr0 {
 table.table-striped tbody tr td,
 table.table-striped thead tr th{
   padding:8px 12px;
+  white-space: nowrap;
+  text-align: center;
+}
+table.table-striped tbody tr td input[type="text"]{
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  height: 35px;
+}
+input[type="text"]:focus-visible,
+select:focus-visible{
+  outline: none;
+  box-shadow: none;
 }
 table.table-striped tbody tr:nth-child(even){
   background: #f9f5fb;
@@ -2056,7 +2076,7 @@ table.table-striped tbody tr:nth-child(odd){
 .tab{
   position: relative;
   display: inline-block;
-  background: #fbfbfb;
+  background: #fff;
   border-radius: 5px 5px 0 0;
   transition: 0.3s;
   margin: 0 4px 0 0;
@@ -2121,14 +2141,26 @@ table.table-striped tbody tr:nth-child(odd){
   border-radius: 4px;
   transition: background-color 0.3s ease;
 }
-.common-top-sales{
+.lightgreen{
+  background: #f6fff3;
+}
+.lightyellow{
   background: #fffdf3;
+}
+.lightblue{
+  background: #f6fdff;
+}
+.lightred{
+  background: #fffbfb;
 }
 .bg-green{
   background:#f6fffa;
 }
 .bg-red{
   background:var(--red);
+}
+.bg-blue{
+  background:var(--top-nav);
 }
 .nowrap{
   white-space: nowrap;

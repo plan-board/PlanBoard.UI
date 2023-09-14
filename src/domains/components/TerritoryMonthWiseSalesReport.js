@@ -392,9 +392,9 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const tableWithTotalRow = [...tableRows, totalRow];
 
   return (
-    <div id="mom-north" className="w3-row w3-margin-top ">
+    <div id="mom-north" className="w-100">
       <div id="mom-bar-north" className="row">
-        <div className="one-half">
+        <div className="one-half mt-3">
           <input className="w3-margin-bottom w3-input w3-border "
             type="text"
             placeholder="Filter By Territory, Depot, LLY and LY"
@@ -448,6 +448,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                 )}
               </tbody>
             </table>
+          </div>
             {/* Pagination */}
             <div className="pagination">
               {Array.from({ length: pageCount }, (_, index) => (
@@ -460,7 +461,6 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                 </button>
               ))}
             </div>
-          </div>
         </div>
       </div>
     </div>

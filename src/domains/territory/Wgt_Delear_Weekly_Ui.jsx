@@ -138,15 +138,17 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
     <>
       <div className="w-100"> 
         <div className="tbl-container">
-        <div className="one-half" >
-          <input className="w3-margin-bottom w3-input w3-border "
-            type="text"
-            placeholder="Filter By Dealer Name or code "
-            aria-label="Search Input"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-        </div>
+          <div className="row w-100 mt-3">
+              <div className="one-half" >
+                <input className="w3-margin-bottom w3-input w3-border "
+                  type="text"
+                  placeholder="Filter By Dealer Name or code "
+                  aria-label="Search Input"
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                />
+              </div>
+          </div>
           <table className="table-bordered table-striped">
             <thead>
               <tr>

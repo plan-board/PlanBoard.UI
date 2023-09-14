@@ -44,11 +44,11 @@ const Depot = () => {
   }, []);
 
   return (
-    <div className=" main ">
+    <div className="main">
       <div className="w3-row">
         <span className="main-title">Shalimar Paints Limited</span>
       </div>
-      <div className="card-box">
+      <div className="card-box lightgreen">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||
         AuthData?.Data[0].EmployeeTpye === "ZM" ? (
           <div className="row w-100">
@@ -82,7 +82,7 @@ const Depot = () => {
         selectedZone={selectedZone}
         selectedDepot={selectedDepot}
       />
-      <div class="card-box">
+      <div class="card-box lightblue">
         <div className="w3-bar tab-container">
           <div
             className={
@@ -106,8 +106,6 @@ const Depot = () => {
           </div>
         </div>
       </div>
-
-      <div class="w3-row w3-padding-16"> </div>
     </div>
   );
 };

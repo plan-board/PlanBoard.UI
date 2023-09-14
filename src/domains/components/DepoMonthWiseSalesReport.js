@@ -394,7 +394,7 @@ const DepoMonthWiseSalesReport = ({
   return (
     <div id="mom-north" className="row">
       <div id="mom-bar-north" className="w-100">
-        <div className="one-half">
+        <div className="one-half mt-3">
           <input className="w3-margin-bottom w3-input w3-border "
             type="text"
             placeholder="Filter By Zone, Depot, LLY, LY "
@@ -450,6 +450,7 @@ const DepoMonthWiseSalesReport = ({
             </table>
           </div>
         </div>
+        <div className="full">
           {/* Pagination */}
           <div className="pagination">
             {Array.from({ length: pageCount }, (_, index) => (
@@ -461,6 +462,7 @@ const DepoMonthWiseSalesReport = ({
                 {index + 1}
               </button>
             ))}
+          </div>
         </div>
       </div>
     </div>
