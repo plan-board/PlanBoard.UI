@@ -20,6 +20,10 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const [isLoading, setLoading] = useState(true);
 
   const [filterText, setFilterText] = useState("");
+  const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     const payload = {
@@ -51,135 +55,190 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
     fetchTerritoryMonthPlan();
   }, [selectedDepot]);
 
-  const filteredItems = territoryMonthPlan.filter(
-    (item) =>
-      item.territory_name &&
-      item.territory_name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // If the same column is clicked again, toggle the sort direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // If a different column is clicked, set the new sort field and direction
+      setSortField(field);
+      setSortDirection('asc'); // Default to ascending order
+    }
+  };
 
-  const [currentPage, setCurrentPage] = useState(0);  
-  const pageCount = Math.ceil(filteredItems.length / itemsPerPage);
+  // Sort the data based on the current sorting field and direction
+  let sortedData = [...territoryMonthPlan, ];
+  if (sortField === 'Depot') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.depot_name?.localeCompare(b.depot_name);
+      } else {
+        return b.depot_name?.localeCompare(a.depot_name);
+      }
+    });
+  } else if (sortField === 'Territory') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.territory_name?.localeCompare(b.territory_name);
+      } else {
+        return b.territory_name?.localeCompare(a.territory_name);
+      }
+    });
+  } else if (sortField === 'LLY') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return (a.LLY_Value || 0) - (b.LLY_Value || 0);
+      } else {
+        return (b.LLY_Value || 0) - (a.LLY_Value || 0);
+      }
+    });
+  }
+  else if (sortField === 'LY') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return (a.LY_Value || 0) - (b.LY_Value || 0);
+      } else {
+        return (b.LY_Value || 0) - (a.LY_Value || 0);
+      }
+    });
+  }
+
+  const filterData = (data) => {
+    const filterTextLowerCase = filterText.toLowerCase();
+    return data.filter((item) => (
+      (item?.zone_name && item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
+      (item?.depot_name && item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
+      (!isNaN(item.LLY_Value) && item?.LLY_Value.toString().toLowerCase().includes(filterTextLowerCase)) ||
+      (!isNaN(item.LY_Value) && item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
+    ));
+  };
+
+  // Paginate the sorted data
+  const pageCount = Math.ceil(sortedData.length / itemsPerPage);
   const offset = currentPage * itemsPerPage;
-  const dataToShow = filteredItems.slice(offset, offset + itemsPerPage);
+  const dataToShow = sortedData.slice(offset, offset + itemsPerPage);
+
+  // Filter the paginated and sorted data
+  const filteredItems = filterData(dataToShow);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
-  const totalLYValue = dataToShow.reduce(
+  const totalLYValue = filteredItems.reduce(
     (acc, item) => acc + (item.LY_Value || 0),
     0
   );
-  const totalLLYValue = dataToShow.reduce(
+  const totalLLYValue = filteredItems.reduce(
     (acc, item) => acc + (item.LLY_Value || 0),
     0
   );
-  const totalCYValue = dataToShow.reduce(
+  const totalCYValue = filteredItems.reduce(
     (acc, item) => acc + (item.CY_Value || 0),
     0
   );
-  const totalYTDValue = dataToShow.reduce(
+  const totalYTDValue = filteredItems.reduce(
     (acc, item) => acc + (item.YTD_Value || 0),
     0
   );
-  const totalAprValue = dataToShow?.reduce(
+  const totalAprValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
     0
   );
-  const totalAprValue_v1 = dataToShow?.reduce(
+  const totalAprValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Apr_Month_Sale || 0),
     0
   );
-  const totalMayValue = dataToShow?.reduce(
+  const totalMayValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
     0
   );
-  const totalMayValue_v1 = dataToShow?.reduce(
+  const totalMayValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.May_Month_Sale || 0),
     0
   );
-  const totalJunValue = dataToShow?.reduce(
+  const totalJunValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
     0
   );
-  const totalJunValue_v1 = dataToShow?.reduce(
+  const totalJunValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Jun_Month_Sale || 0),
     0
   );
-  const totalJulValue = dataToShow?.reduce(
+  const totalJulValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
     0
   );
-  const totalJulValue_v1 = dataToShow?.reduce(
+  const totalJulValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Jul_Month_Sale || 0),
     0
   );
-  const totalAugValue = dataToShow?.reduce(
+  const totalAugValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
     0
   );
-  const totalAugValue_v1 = dataToShow?.reduce(
+  const totalAugValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Aug_Month_Sale || 0),
     0
   );
-  const totalSepValue = dataToShow?.reduce(
+  const totalSepValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
     0
   );
-  const totalSepValue_v1 = dataToShow?.reduce(
+  const totalSepValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Sep_Month_Sale || 0),
     0
   );
-  const totalOctValue = dataToShow?.reduce(
+  const totalOctValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
     0
   );
-  const totalOctValue_v1 = dataToShow?.reduce(
+  const totalOctValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Oct_Month_Sale || 0),
     0
   );
-  const totalNovValue = dataToShow?.reduce(
+  const totalNovValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
     0
   );
-  const totalNovValue_v1 = dataToShow?.reduce(
+  const totalNovValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Nov_Month_Sale || 0),
     0
   );
-  const totalDecValue = dataToShow?.reduce(
+  const totalDecValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
     0
   );
-  const totalDecValue_v1 = dataToShow?.reduce(
+  const totalDecValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Dec_Month_Sale || 0),
     0
   );
-  const totalJanValue = dataToShow?.reduce(
+  const totalJanValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
     0
   );
-  const totalJanValue_v1 = dataToShow?.reduce(
+  const totalJanValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Jan_Month_Sale || 0),
     0
   );
-  const totalFebValue = dataToShow?.reduce(
+  const totalFebValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
     0
   );
-  const totalFebValue_v1 = dataToShow?.reduce(
+  const totalFebValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Feb_Month_Sale || 0),
     0
   );
-  const totalMarValue = dataToShow?.reduce(
+  const totalMarValue = filteredItems?.reduce(
     (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
     0
   );
-  const totalMarValue_v1 = dataToShow?.reduce(
+  const totalMarValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (item?.Mar_Month_Sale || 0),
     0
   );
 
-  const tableRows = dataToShow.map((item, index) => (
+  const tableRows = filteredItems.map((item, index) => (
     <tr key={index}>
       <td>{++index}</td>
       <td>{item?.depot_name}</td>
@@ -338,7 +397,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         <div className="one-half">
           <input className="w3-margin-bottom w3-input w3-border "
             type="text"
-            placeholder="Filter By Territory  Name"
+            placeholder="Filter By Territory, Depot, LLY and LY"
             aria-label="Search Input"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
@@ -350,10 +409,10 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
               <thead>
                 <tr>
                   <th> S.No </th>
-                  <th> Depot </th>
-                  <th> Territory </th>
-                  <th> LLY </th>
-                  <th> LY </th>
+                  <th onClick={() => handleSort('Depot')}>Depot  {sortField === 'Depot' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                  <th onClick={() => handleSort('Territory')}>Zone  {sortField === 'Territory' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                  <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                  <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
                   <th> CY Plan / YTD </th>
                   <th> Apr </th>
                   <th> May </th>
@@ -378,7 +437,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                   </tr>
                 ) : (
                   <>
-                    {dataToShow?.length === 0 ? (
+                    {filteredItems?.length === 0 ? (
                       <tr>
                         <td colSpan="18">No data found</td>
                       </tr>

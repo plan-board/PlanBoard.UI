@@ -12,6 +12,7 @@ import TerritorySelectionBox from "../components/TerritorySelectionBox";
 import { useParams } from "react-router";
 import TerritoryMonthSale from "../components/TerritoryMonthSale";
 import CustomPopup from "../CustomPopup";
+import DelearActivityPlan from "./DelearActivityPlan";
 
 const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
@@ -172,7 +173,8 @@ const Territory = () => {
             {selectedTerritory ? (<Wgt_Delear_Weekly_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
           <div className={toggleState === 3 ? "  " : "w3-hide"} onClick={() => toggleTab(3)}>
-            <h3>Dealer Wise Monthly Plan / Achievement</h3>
+            <h3>Dealer Wise Monthly Activity Plan </h3>
+            {selectedTerritory ? (<DelearActivityPlan data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
         </div>
       </div>

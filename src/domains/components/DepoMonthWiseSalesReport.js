@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
-import { useDispatch } from "react-redux";
-// import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
-// import ZoneDropDown from "./ZoneDropDown";
+import { useDispatch } from "react-redux"; 
 
-import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
-import withFixedColumns from "react-table-hoc-fixed-columns";
 import "react-table-hoc-fixed-columns/lib/styles.css";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 
-const ReactTableFixedColumns = withFixedColumns(ReactTable);
 const itemsPerPage = 10; // Number of items to display per page
 
 
@@ -109,16 +102,6 @@ const DepoMonthWiseSalesReport = ({
     });
   }
 
-
-  // const filteredItems = sortedData.filter((item) => {
-  //   const filterTextLowerCase = filterText.toLowerCase();
-  //   return (
-  //     (item?.zone_name && item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
-  //     (item?.depot_name && item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
-  //     (!isNaN(item.LLY_Value) && item?.LLY_Value.toString().toLowerCase().includes(filterTextLowerCase)) ||
-  //     (!isNaN(item.LY_Value) && item?.LY_Value.toString()?.toLowerCase().includes(filterTextLowerCase))
-  //   );
-  // });
   const filterData = (data) => {
     const filterTextLowerCase = filterText.toLowerCase();
     return data.filter((item) => (
@@ -128,10 +111,6 @@ const DepoMonthWiseSalesReport = ({
       (!isNaN(item.LY_Value) && item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
     ));
   };
-
-  // const pageCount = Math.ceil(filteredItems.length / itemsPerPage);
-  // const offset = currentPage * itemsPerPage;
-  // const dataToShow = filteredItems.slice(offset, offset + itemsPerPage);
 
   // Paginate the sorted data
   const pageCount = Math.ceil(sortedData.length / itemsPerPage);

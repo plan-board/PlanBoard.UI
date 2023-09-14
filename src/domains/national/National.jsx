@@ -8,11 +8,13 @@ import DepoSelectionBox from "../components/DepoSelectionBox";
 
 import NationalZoneMonthSale from "../components/NationalZoneMonthSale";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
-import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport"; 
-import TerritorySelectionBox from "../components/TerritorySelectionBox"; 
+import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport";
+import TerritorySelectionBox from "../components/TerritorySelectionBox";
 import DealerMonthSale from "../components/DealerMonthSale";
 
 const National = () => {
+  const tabs = ['Depot Monthly Plan', 'Territory Monthly Plan', 'Dealer Monthly Plan'];
+
   const { AuthData } = useSelector((state) => state.auth);
   // console.log("====auth====", AuthData);
   // Set Select Zone
@@ -22,12 +24,8 @@ const National = () => {
   );
   const [filteredZones, setFilteredZones] = useState([]);
   const [filteredZonesData, setFilteredZonesData] = useState([]);
-  // console.log(
-  //   "🚀 ~ file: National.jsx:27 ~ National ~ filteredZonesData:",
-  //   filteredZonesData
-  // );
+
   const [data, setData] = useState(null);
-  // console.log("🚀 ~ file: National.jsx:28 ~ National ~ id:", data);
 
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
@@ -71,104 +69,164 @@ const National = () => {
       </div>
       <div className="w3-clear w3-padding-16"> </div>
 
-      <div class="card-box">
-        <div className="w3-bar tab-container">
+      <div class="w3-row w3-white w3-border w3-border-gray">
+        {/* <div className="w3-bar w3-gray">
           <div
             className={
               toggleState === 1
-              ? "w3-button tab tab-active"
-              : "w3-button tab"
+                ? " w3-bar-item w3-button w3-white  w3-hover-white  "
+                : " w3-bar-item w3-button w3-gray  w3-hover-white  "
             }
             onClick={() => toggleTab(1)}
           >
-            <span className="h6"> Depot Monthly Plan </span>
+            <span className=" h6  w3-text-gray "> Depot Monthly Plan </span>
           </div>
           <div
             className={
               toggleState === 2
-              ? "w3-button tab tab-active"
-              : "w3-button tab"
+                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
+                : " w3-bar-item w3-button w3-gray w3-hover-white "
             }
             onClick={() => toggleTab(2)}
           >
-            <span className="h6"> Territory Monthly Plan </span>
+            <span className=" h6  w3-text-gray "> Territory Monthly Plan </span>
           </div>
           <div
             className={
               toggleState === 3
-              ? "w3-button tab tab-active"
-              : "w3-button tab"
+                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
+                : " w3-bar-item w3-button w3-gray w3-hover-white "
             }
             onClick={() => toggleTab(3)}
           >
-            <span className="h6"> Dealer Monthly Plan </span>
+            <span className=" h6 w3-text-gray "> Dealer Monthly Plan </span>
           </div>
-        </div>
-        <div className={toggleState === 1 ? " w-100 " : " w3-hide "} onClick={() => toggleTab(1)}>
-          <div className="row align-items-center">
-            <div className="one-half">
-              <h3>Depot Wise Monthly Plan / Achievement</h3> 
+        </div> */}
+        <div class="w3-row w3-padding ">
+          <div>
+            <div className="w3-row">
+              {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
+                <div className="w3-col l3 m4 s6">
+                  <ZoneDropDown
+                    selectedZone={selectedZoneDrop}
+                    onValueChange={handleSelectionChangeDrop}
+                  />
+                </div>
+              ) : null}
+
+              {toggleState === 2 || toggleState === 3 ? (
+                <div className="w3-col l3 m4 s6">
+                  <DepoSelectionBox
+                    selectedZone={selectedZoneDrop}
+                    selectedDepot={selectedDepot}
+                    onSelectedDepoChange={onSelectedDepoChange}
+                  />
+                </div>
+              ) : null}
+
+              {toggleState === 3 ? (
+                <div className="w3-col l3 m4 s6">
+                  <TerritorySelectionBox
+                    selectedZone={selectedZoneDrop}
+                    selectedDepot={selectedDepot}
+                    selectedTerritory={selectedTerritory}
+                    onSelectedTerritoryChange={onSelectedTerritoryChange}
+                  />
+                </div>
+              ) : null}
             </div>
-            <div className="one-half">
-              <div className="row justify-content-end">
-                {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
-                  <div className="one-half m4 s6">
-                    <ZoneDropDown
-                      selectedZone={selectedZoneDrop}
-                      onValueChange={handleSelectionChangeDrop}
-                    />
-                  </div>
-                ) : null}
-              
-                {toggleState === 2 || toggleState === 3 ? (
-                  <div className="one-half m4 s6">
-                    <DepoSelectionBox
-                      selectedZone={selectedZoneDrop}
-                      selectedDepot={selectedDepot}
-                      onSelectedDepoChange={onSelectedDepoChange}
-                    />
-                  </div>
-                ) : null}
-              
-                {toggleState === 3 ? (
-                  <div className="one-half m4 s6">
-                    <TerritorySelectionBox
-                      selectedZone={selectedZoneDrop}
-                      selectedDepot={selectedDepot}
-                      selectedTerritory={selectedTerritory}
-                      onSelectedTerritoryChange={onSelectedTerritoryChange}
-                    />
-                  </div>
-                ) : null}
+          </div>
+          <div className="w3-clear w3-padding-16"> </div>
+
+          <div className="card-box">
+            {/* <div className="w3-bar tab-container">
+              {tabs.map((tab, index) => (
+                <div
+                  key={index}
+                  className={
+                    toggleState === 1
+                      ? " w3-bar-item w3-button w3-white  w3-hover-white  "
+                      : " w3-bar-item w3-button w3-gray  w3-hover-white  "
+                  }
+                   
+                  onClick={() => setToggleState(++index)}
+                >
+                  {tab}
+                </div>
+              ))}
+            </div> */}
+            <div className="w3-bar tab-container">
+              <div
+                className={
+                  toggleState === 1
+                    ? "w3-button tab tab-active"
+                    : "w3-button tab"
+                }
+                onClick={() => toggleTab(1)}
+              >
+                <span className="h6"> Dealer Monthly Plan </span>
+              </div>
+              <div
+                className={
+                  toggleState === 2
+                    ? "w3-button tab tab-active"
+                    : "w3-button tab"
+                }
+                onClick={() => toggleTab(2)}
+              >
+                <span className="h6"> Dealer Weakly Plan </span>
+              </div>
+              <div
+                className={
+                  toggleState === 3
+                    ? "w3-button tab tab-active"
+                    : "w3-button tab"
+                }
+                onClick={() => toggleTab(3)}
+              >
+                <span className="h6"> Dealer Activity Plan </span>
               </div>
             </div>
-          </div>
-          <div class="mt-3">
-            <DepoMonthWiseSalesReport
-              selectedZone={selectedZoneDrop}
-              selectedDepot={0}
-            />
-          </div>
-          <div className={toggleState === 2 ? "  " : " w3-hide  "} onClick={() => toggleTab(2)}>
-            <h3>Territory Wise Monthly Plan / Achievement</h3>
-            <div class="tbl-container">
-                <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+            <div class="w-100"> 
+            {/* <div className="table-container"> */}
+              {toggleState === 1 && (
+                <>
+                  <div>
+                    <h3>Depot Wise Monthly Plan / Achievement</h3>
+                  </div>
+                  <DepoMonthWiseSalesReport
+                    selectedZone={selectedZoneDrop}
+                    selectedDepot={0}
+                  />
+                </>
+              )}
+              {toggleState === 2 && (
+                <>
+                  <div>
+                    <h3>Territory Wise Monthly Plan / Achievement</h3>
+                  </div>
+                  <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+                </>
+              )}
+              {toggleState === 3 && (
+                <>
+                  <div>
+                    <h3>Dealer Wise Monthly Plan / Achievement</h3>
+                  </div>
+                  {selectedTerritory ? (
+                    <DealerMonthSale selectedTerritory={selectedTerritory} />
+                  ) : (
+                    <div>Please select a territory</div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
-        <div className={toggleState === 3 ? "  " : " w3-hide  "} onClick={() => toggleTab(3)}>
-          <div>
-            <h3>Dealer Wise Monthly Plan / Achievement</h3>
-          </div> 
-          {selectedTerritory ? (
-            <DealerMonthSale selectedTerritory={selectedTerritory} />
-          ) : (
-            <div>Please select a territory</div>
-          )}
-        </div>
+
+        <div className="w3-clear w3-padding-16"></div>
       </div>
 
-      <div className="w3-clear w3-padding-16"></div>
     </div>
   );
 };
