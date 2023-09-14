@@ -45,26 +45,29 @@ const Depot = () => {
 
   return (
     <div className=" main ">
-      <div className="w3-row w3-padding-16">
+      <div className="w3-row">
+        <span className="main-title">Shalimar Paints Limited</span>
+      </div>
+      <div className="card-box">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||
         AuthData?.Data[0].EmployeeTpye === "ZM" ? (
-          <>
-            <div className="w3-col l3 m3 s6">
+          <div className="row w-100">
+            <div className="one-fourth">
               <ZoneSelectionBox
                 selectedZone={selectedZone}
                 onValueChange={handleSelectionChange}
               />
             </div>
-            <div className="w3-col l3 m3 s6">
+            <div className="one-fourth">
               <DepoSelectionBox
                 selectedZone={selectedZone}
                 selectedDepot={selectedDepot}
                 onSelectedDepoChange={onSelectedDepoChange}
               />
             </div>
-          </>
+          </div>
         ) : AuthData?.Data[0].EmployeeTpye === "DM" ? (
-          <div className="w3-col l3 m3 s6">
+          <div className="one-fourth">
             <DepoSelectionBox
               selectedZone={selectedZone}
               selectedDepot={selectedDepot}
@@ -79,9 +82,6 @@ const Depot = () => {
         selectedZone={selectedZone}
         selectedDepot={selectedDepot}
       />
-
-      <div class="w3-row w3-padding-16"></div>
-
       <div class="card-box">
         <div className="w3-bar tab-container">
           <div

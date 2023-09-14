@@ -334,8 +334,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
 
   return (
     <div id="mom-north" className="w3-row w3-margin-top ">
-      <div id="mom-bar-north" >
-        <div className="form-group filterInput">
+      <div id="mom-bar-north" className="row">
+        <div className="one-half">
           <input className="w3-margin-bottom w3-input w3-border "
             type="text"
             placeholder="Filter By Territory  Name"
@@ -344,60 +344,64 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
             onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <table className="table-bordered table-striped">
-          <thead>
-            <tr>
-              <th> S.No </th>
-              <th> Depot </th>
-              <th> Territory </th>
-              <th> LLY </th>
-              <th> LY </th>
-              <th> CY Plan / YTD </th>
-              <th> Apr </th>
-              <th> May </th>
-              <th> Jun </th>
-              <th> Jul </th>
-              <th> Aug </th>
-              <th> Sep </th>
-              <th> Oct </th>
-              <th> Nov </th>
-              <th> Dec </th>
-              <th> Jan </th>
-              <th> Feb </th>
-              <th> Mar </th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan="18">
-                  <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-                </td>
-              </tr>
-            ) : (
-              <>
-                {dataToShow?.length === 0 ? (
+        <div className="full">
+          <div className="tbl-container">
+            <table className="table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th> S.No </th>
+                  <th> Depot </th>
+                  <th> Territory </th>
+                  <th> LLY </th>
+                  <th> LY </th>
+                  <th> CY Plan / YTD </th>
+                  <th> Apr </th>
+                  <th> May </th>
+                  <th> Jun </th>
+                  <th> Jul </th>
+                  <th> Aug </th>
+                  <th> Sep </th>
+                  <th> Oct </th>
+                  <th> Nov </th>
+                  <th> Dec </th>
+                  <th> Jan </th>
+                  <th> Feb </th>
+                  <th> Mar </th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
                   <tr>
-                    <td colSpan="18">No data found</td>
+                    <td colSpan="18">
+                      <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+                    </td>
                   </tr>
                 ) : (
-                  tableWithTotalRow
+                  <>
+                    {dataToShow?.length === 0 ? (
+                      <tr>
+                        <td colSpan="18">No data found</td>
+                      </tr>
+                    ) : (
+                      tableWithTotalRow
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </tbody>
-        </table>
-         {/* Pagination */}
-        <div className="pagination">
-          {Array.from({ length: pageCount }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index)}
-              className={`page-button ${currentPage === index ? "active" : ""}`}
-            >
-              {index + 1}
-            </button>
-          ))}
+              </tbody>
+            </table>
+            {/* Pagination */}
+            <div className="pagination">
+              {Array.from({ length: pageCount }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(index)}
+                  className={`page-button ${currentPage === index ? "active" : ""}`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

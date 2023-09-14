@@ -104,75 +104,67 @@ const National = () => {
             <span className="h6"> Dealer Monthly Plan </span>
           </div>
         </div>
-        <div class="tbl-container">
-          <div>
-            <div className="w3-row">
-              {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
-                <div className="w3-col l3 m4 s6">
-                  <ZoneDropDown
-                    selectedZone={selectedZoneDrop}
-                    onValueChange={handleSelectionChangeDrop}
-                  />
-                </div>
-              ) : null}
-
-              {toggleState === 2 || toggleState === 3 ? (
-                <div className="w3-col l3 m4 s6">
-                  <DepoSelectionBox
-                    selectedZone={selectedZoneDrop}
-                    selectedDepot={selectedDepot}
-                    onSelectedDepoChange={onSelectedDepoChange}
-                  />
-                </div>
-              ) : null}
-
-              {toggleState === 3 ? (
-                <div className="w3-col l3 m4 s6">
-                  <TerritorySelectionBox
-                    selectedZone={selectedZoneDrop}
-                    selectedDepot={selectedDepot}
-                    selectedTerritory={selectedTerritory}
-                    onSelectedTerritoryChange={onSelectedTerritoryChange}
-                  />
-                </div>
-              ) : null}
+        <div className={toggleState === 1 ? " w-100 " : " w3-hide "} onClick={() => toggleTab(1)}>
+          <div className="row align-items-center">
+            <div className="one-half">
+              <h3>Depot Wise Monthly Plan / Achievement</h3> 
+            </div>
+            <div className="one-half">
+              <div className="row justify-content-end">
+                {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
+                  <div className="one-half m4 s6">
+                    <ZoneDropDown
+                      selectedZone={selectedZoneDrop}
+                      onValueChange={handleSelectionChangeDrop}
+                    />
+                  </div>
+                ) : null}
+              
+                {toggleState === 2 || toggleState === 3 ? (
+                  <div className="one-half m4 s6">
+                    <DepoSelectionBox
+                      selectedZone={selectedZoneDrop}
+                      selectedDepot={selectedDepot}
+                      onSelectedDepoChange={onSelectedDepoChange}
+                    />
+                  </div>
+                ) : null}
+              
+                {toggleState === 3 ? (
+                  <div className="one-half m4 s6">
+                    <TerritorySelectionBox
+                      selectedZone={selectedZoneDrop}
+                      selectedDepot={selectedDepot}
+                      selectedTerritory={selectedTerritory}
+                      onSelectedTerritoryChange={onSelectedTerritoryChange}
+                    />
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
-          <div className="w3-clear w3-padding-16"> </div>
-          <div
-            className={toggleState === 1 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(1)}
-          >
-            <div>
-              <h3>Depot Wise Monthly Plan / Achievement</h3>
-            </div>
+          <div class="mt-3">
             <DepoMonthWiseSalesReport
               selectedZone={selectedZoneDrop}
               selectedDepot={0}
-            /> 
+            />
           </div>
-          <div
-            className={toggleState === 2 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(2)}
-          >
-            <div>
-              <h3>Territory Wise Monthly Plan / Achievement</h3>
+          <div className={toggleState === 2 ? "  " : " w3-hide  "} onClick={() => toggleTab(2)}>
+            <h3>Territory Wise Monthly Plan / Achievement</h3>
+            <div class="tbl-container">
+                <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
             </div>
-            <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
           </div>
-          <div
-            className={toggleState === 3 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(3)}
-          >
-            <div>
-              <h3>Dealer Wise Monthly Plan / Achievement</h3>
-            </div> 
-            {selectedTerritory ? (
-              <DealerMonthSale selectedTerritory={selectedTerritory} />
-            ) : (
-              <div>Please select a territory</div>
-            )}
-          </div>
+        </div>
+        <div className={toggleState === 3 ? "  " : " w3-hide  "} onClick={() => toggleTab(3)}>
+          <div>
+            <h3>Dealer Wise Monthly Plan / Achievement</h3>
+          </div> 
+          {selectedTerritory ? (
+            <DealerMonthSale selectedTerritory={selectedTerritory} />
+          ) : (
+            <div>Please select a territory</div>
+          )}
         </div>
       </div>
 

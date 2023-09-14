@@ -23,20 +23,21 @@ const Zone = () => {
 
   return (
     <div className="main">
-
-      <div className="w3-row w3-margin-bottom">
-        <div className="w3-col l3 m3 s6 ">
-          <ZoneDropDown selectedZone={selectedZone} onValueChange={handleSelectionChange} />
-        </div>
-        <div className="w3-col l3 m3 s6 w3-right ">
-          <span className=" w3-small w3-text-gray w3-right" > * All figures are in Lacs (INR)  </span>
+      <div className="w3-row">
+        <span className="main-title">Shalimar Paints Limited</span>
+      </div>
+      <div className="card-box px-0">
+        <div className="row justify-content-between w-100 align-items-center m-0">
+          <div className="one-fourth">
+            <ZoneDropDown selectedZone={selectedZone} onValueChange={handleSelectionChange} />
+          </div>
+          <div className="one-fourth">
+            <span className="w3-small w3-text-gray w3-right" > * All figures are in Lacs (INR)  </span>
+          </div>
         </div>
       </div>
 
       <CommonTopSales actionType="Zone" selectedZone={selectedZone} />
-
-      <div class="w3-row w3-padding-16"></div>
-
       <div class="card-box">
         <div className="w3-bar tab-container">
           <div className={toggleState === 1 
