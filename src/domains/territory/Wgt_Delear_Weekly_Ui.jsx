@@ -3,6 +3,8 @@ import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 
+const itemsPerPage = 10;
+
 const Wgt_Delear_Weekly_Ui = ({ data }) => {
   const dispatch = useDispatch();
 
@@ -11,6 +13,12 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
   const [reload, setReload] = useState(false);
   // const currentDate = new Date("2023-10-22");
   const currentDate = new Date();
+
+  const [filterText, setFilterText] = useState("");
+  const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   const monthNames = [
     "January",
@@ -75,79 +83,131 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
       fetchDepotSalesPlan();
     }
   }, [reload]);
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // If the same column is clicked again, toggle the sort direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // If a different column is clicked, set the new sort field and direction
+      setSortField(field);
+      setSortDirection('asc'); // Default to ascending order
+    }
+  };
+  // Sort the data based on the current sorting field and direction
+  let sortedData = [...weekdata];
+  if (sortField === 'DelearName') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.dealer_name?.localeCompare(b.dealer_name);
+      } else {
+        return b.dealer_name?.localeCompare(a.dealer_name);
+      }
+    });
+  } else if (sortField === 'DelearCode') {
+    sortedData.sort((a, b) => {
+      if (sortDirection === 'asc') {
+        return a.dealer_code?.localeCompare(b.dealer_code);
+      } else {
+        return b.dealer_code?.localeCompare(a.dealer_code);
+      }
+    });
+  }
+
+  const filterData = (data) => {
+    const filterTextLowerCase = filterText.toLowerCase();
+    return data.filter((item) => (
+      (item?.dealer_name && item?.dealer_name?.toLowerCase().includes(filterTextLowerCase)) ||
+      (item?.dealer_code && item?.dealer_code?.toLowerCase().includes(filterTextLowerCase))
+    ));
+  };
+
+  // Paginate the sorted data
+  const pageCount = Math.ceil(sortedData.length / itemsPerPage);
+  const offset = currentPage * itemsPerPage;
+  const dataToShow = sortedData.slice(offset, offset + itemsPerPage);
+
+  // Filter the paginated and sorted data
+  const filteredItems = filterData(dataToShow);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
   return (
     <>
-      <div className="w3-col l12 m12 s12  ">
-        <span className="w3-large w3-hide ">
-          <b> [ H05 ] Dealers </b> Weekly (Targets){" "}
-          <i className="w3-text-red fa fa-lock"> </i>{" "}
-        </span>
-        <br />
-
-        <table className="tbl_grid w3-table table-bordered h6 w3-small">
-          {/* <tr className="w3-gray">
-            <td colSpan="30" className=" h5 w3-padding  text-left ">
-              Dealers Weekly Plan ({weekdata?.length})
-
-            </td>
-          </tr> */}
-
-          <tr className=" w3-yellow h6 w3-small">
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "4%" }}>
-              S. NO
-            </td>
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "16%" }}>
-              Delear{" "}
-            </td>
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "7%" }}>
-              Delear Code
-            </td>{" "}
-            <td className="" colSpan={4}>
-              {month}
-            </td>
-            <td className="" colspan={12}>
-              Week{" "}
-            </td>{" "}
-          </tr>
-
-          <tr className=" w3-yellow h6 w3-small">
-
-            <td className="" colSpan={1}>
-              Sales{" "}
-            </td>{" "}
-            <td className="">Week-1 </td> <td className="">Week-2 </td>{" "}
-            <td className="">Week-3 </td> <td className="">Week-4 </td>{" "}
-          </tr>
-          {weekdata?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => (
-           
-            <tr className="h6 w3-small" key={item?.dealerid}>
-              <td className="">
-                {++index}
-              </td>
-              <td className="" colSpan={1} style={{ width: "15%" }}>
-                {item?.dealer_name}
-              </td>
-              <td className="" colSpan={1} style={{ width: "15%" }}>
-                {item?.dealer_code}
-              </td>
-              <td className="" colSpan={1}>
-                {item?.month_value}
-              </td>
-              <td className="">
-                {item?.week1}
-              </td>
-              <td className="">
-                {item?.week2}
-              </td>
-              <td className="">
-                {item?.week3}
-              </td>
-              <td className="">
-                {item?.week4}
-              </td>
-            </tr>
-          ))}
-        </table>
+      <div className="w-100"> 
+        <div className="tbl-container">
+        <div className="one-half" >
+          <input className="w3-margin-bottom w3-input w3-border "
+            type="text"
+            placeholder="Filter By Dealer Name or code "
+            aria-label="Search Input"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
+        </div>
+          <table className="table-bordered table-striped">
+            <thead>
+              <tr>
+                <th colSpan={1} rowSpan={2} style={{ width: "4%" }}> S. NO </th>
+                <th style={{ width: "16%" }} rowSpan={2} onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                <th style={{ width: "10%" }} rowSpan={2} onClick={() => handleSort('DelearCode')}>Delear Code  {sortField === 'DelearCode' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                <th colSpan={4}> {month} </th>
+                <th colspan={12}> Week </th>
+              </tr>
+              <tr>
+                <th className="bg-red" colSpan={1}> Sales </th>
+                <th className="bg-red">Week-1 </th>
+                <th className="bg-red">Week-2 </th>
+                <th className="bg-red">Week-3 </th>
+                <th className="bg-red">Week-4 </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredItems?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => (
+                <tr className="h6 w3-small" key={item?.dealerid}>
+                  <td className="">
+                    {++index}
+                  </td>
+                  <td className="" colSpan={1} style={{ width: "15%" }}>
+                    {item?.dealer_name}
+                  </td>
+                  <td className="" colSpan={1} style={{ width: "15%" }}>
+                    {item?.dealer_code}
+                  </td>
+                  <td className="" colSpan={1}>
+                    {item?.month_value}
+                  </td>
+                  <td className="">
+                    {item?.week1}
+                  </td>
+                  <td className="">
+                    {item?.week2}
+                  </td>
+                  <td className="">
+                    {item?.week3}
+                  </td>
+                  <td className="">
+                    {item?.week4}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Pagination */}
+          <div className="pagination">
+            {Array.from({ length: pageCount }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index)}
+                className={`page-button ${currentPage === index ? "active" : ""}`}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );

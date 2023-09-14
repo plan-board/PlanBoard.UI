@@ -18,7 +18,9 @@
 ::-webkit-scrollbar-thumb{
   background-color: var(--top-nav);
 }
-
+.text-primary{
+  color:var(--top-nav);
+}
 body{
   font-family: 'Nunito Sans', sans-serif;
   font-size: 16px;
@@ -1789,8 +1791,6 @@ th {
 .main-title{
   position: relative;
   display: block;
-  padding:10px 0;
-  margin:15px 0 0;
   font-size: 28px;
   font-weight:600;
 }
@@ -1909,11 +1909,32 @@ th {
   display: block;
   width:100%;
 }
-.one-fifth{
+.one-fifth,.one-fourth,.one-third,.one-half,.full{
   position: relative;
   display: block;
-  width: 20%;
   padding:0 15px;
+}
+.one-fourth{
+  width: 20%;
+}
+.one-fourth{
+  width: 25%;
+}
+.one-third{
+  width: 33.33%;
+}
+.one-half{
+  width: 50%;
+}
+.one-eirth{
+  width: 75%;
+}
+.full{
+  width:100%;
+}
+.w3-input {
+  padding: 5px 8px;
+  border-radius: 0.25rem;
 }
 
 .text-center{
@@ -2035,10 +2056,10 @@ table.table-striped tbody tr:nth-child(odd){
 .tab{
   position: relative;
   display: inline-block;
-  background:#fff;
-  border:1px solid #ccc;
+  background: #fbfbfb;
   border-radius: 5px 5px 0 0;
-  transition:0.3s;
+  transition: 0.3s;
+  margin: 0 4px 0 0;
 }
 .tab:hover{
   background:var(--red) !important;
@@ -2060,13 +2081,21 @@ table.table-striped tbody tr:nth-child(odd){
   .one-fifth{
     width:50%;
   }
+  .one-fifth,.one-fourth,.one-third,.one-half,.one-eirth{
+    width:50%;
+    margin-bottom:15px;
+  }
+}
+@media(max-width:600px){
+  .one-fifth,.one-fourth,.one-third,.one-half,.one-eirth{
+    width:100%;
+  }
   .main{
     margin: 0;
   }
-}
-@media(max-width:480px){
-  .one-fifth{
-    width:100%;
+  .row{
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 
@@ -2077,8 +2106,8 @@ table.table-striped tbody tr:nth-child(odd){
 /* Pagination container */
 .pagination {
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  justify-content: end;
+  margin: 20px 0;
 }
 
 /* Pagination button */
@@ -2091,4 +2120,19 @@ table.table-striped tbody tr:nth-child(odd){
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.3s ease;
+}
+.common-top-sales{
+  background: #fffdf3;
+}
+.bg-green{
+  background:#f6fffa;
+}
+.bg-red{
+  background:var(--red);
+}
+.nowrap{
+  white-space: nowrap;
+}
+.c-pointer{
+  cursor: pointer;
 }
