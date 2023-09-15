@@ -3,6 +3,7 @@ import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
+import ExportExcel from "../ExportExcel";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -59,7 +60,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   };
 
   // Sort the data based on the current sorting field and direction
-  let sortedData = [...territoryMonthPlan, ];
+  let sortedData = [...territoryMonthPlan,];
   if (sortField === 'Depot') {
     sortedData.sort((a, b) => {
       if (sortDirection === 'asc') {
@@ -117,115 +118,115 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
     setCurrentPage(newPage);
   };
 
-  const totalLYValue = filteredItems.reduce(
-    (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
-    0
-  );
   const totalLLYValue = filteredItems.reduce(
     (acc, item) => acc + (parseInt(item.LLY_Value.toFixed(0)) || 0),
     0
   );
-  const totalCYValue = sortedData.reduce(
+  const totalLYValue = filteredItems.reduce(
+    (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
+    0
+  );
+  const totalCYValue = filteredItems.reduce(
     (acc, item) => acc + (parseInt(item.CY_Value.toFixed(0)) || 0),
     0
   );
-  const totalYTDValue = sortedData.reduce(
+  const totalYTDValue = filteredItems.reduce(
     (acc, item) => acc + (parseInt(item.YTD_Value.toFixed(0)) || 0),
     0
   );
-  const totalAprValue = sortedData?.reduce(
+  const totalAprValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Apr_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalAprValue_v1 = sortedData?.reduce(
+  const totalAprValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Apr_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalMayValue = sortedData?.reduce(
+  const totalMayValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.May_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalMayValue_v1 = sortedData?.reduce(
+  const totalMayValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.May_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJunValue = sortedData?.reduce(
+  const totalJunValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Jun_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJunValue_v1 = sortedData?.reduce(
+  const totalJunValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Jun_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJulValue = sortedData?.reduce(
+  const totalJulValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Jul_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJulValue_v1 = sortedData?.reduce(
+  const totalJulValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Jul_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalAugValue = sortedData?.reduce(
+  const totalAugValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Aug_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalAugValue_v1 = sortedData?.reduce(
+  const totalAugValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Aug_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalSepValue = sortedData?.reduce(
+  const totalSepValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Sep_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalSepValue_v1 = sortedData?.reduce(
+  const totalSepValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Sep_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalOctValue = sortedData?.reduce(
+  const totalOctValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Oct_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalOctValue_v1 = sortedData?.reduce(
+  const totalOctValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Oct_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalNovValue = sortedData?.reduce(
+  const totalNovValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Nov_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalNovValue_v1 = sortedData?.reduce(
+  const totalNovValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Nov_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalDecValue = sortedData?.reduce(
+  const totalDecValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Dec_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalDecValue_v1 = sortedData?.reduce(
+  const totalDecValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Dec_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJanValue = sortedData?.reduce(
+  const totalJanValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Jan_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJanValue_v1 = sortedData?.reduce(
+  const totalJanValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Jan_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalFebValue = sortedData?.reduce(
+  const totalFebValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Feb_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalFebValue_v1 = sortedData?.reduce(
+  const totalFebValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Feb_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalMarValue = sortedData?.reduce(
+  const totalMarValue = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Mar_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalMarValue_v1 = sortedData?.reduce(
+  const totalMarValue_v1 = filteredItems?.reduce(
     (acc, item) => acc + (parseInt(item?.Mar_Month_Sale.toFixed(0)) || 0),
     0
   );
@@ -383,8 +384,48 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
 
   const tableWithTotalRow = [...tableRows, totalRow];
 
+  const handleExportClick = () => {
+    const arrObj = sortedData.map((element, index) => ({
+      "S.No": index + 1,
+      "Depot": element.depot_name,
+      "Zone": element.zone_name,
+      "LLY": element.LLY_Value,
+      "LY": element.LY_Value,
+      "CY Plan": element.CY_Value,
+      "YTD": element.YTD_Value,
+      "Apr": element.Apr_Month_Value_v1,
+      "Apr Sale": element.Apr_Month_Sale,
+      "May": element.May_Month_Value_v1,
+      "May Sale": element.May_Month_Sale,
+      "Jun": element.Jun_Month_Value_v1,
+      "Jun Sale": element.Jun_Month_Sale,
+      "Jul": element.Jul_Month_Value_v1,
+      "Jul Sale": element.Jul_Month_Sale,
+      "Aug": element.Aug_Month_Value_v1,
+      "Aug Sale": element.Aug_Month_Sale,
+      "Sep": element.Sep_Month_Value_v1,
+      "Sep Sale": element.Sep_Month_Sale,
+      "Oct": element.Oct_Month_Value_v1,
+      "Oct Sale": element.Oct_Month_Sale,
+      "Nov": element.Nov_Month_Value_v1,
+      "Nov Sale": element.Nov_Month_Sale,
+      "Dec": element.Dec_Month_Value_v1,
+      "Dec Sale": element.Dec_Month_Sale,
+      "Jan": element.Jan_Month_Value_v1,
+      "Jan Sale": element.Feb_Month_Sale,
+      "Feb": element.Feb_Month_Value_v1,
+      "Feb Sale": element.Feb_Month_Sale,
+      "Mar": element.Mar_Month_Value_v1,
+      "Mar Sale": element.Mar_Month_Sale
+    }));
+    console.log("-arrObj", arrObj)
+    ExportExcel('Territory-Wise-Monthly-Plan-Achievement', arrObj)
+  };
+
   return (
     <div id="mom-north" className="w-100">
+      {filteredItems?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+
       <div id="mom-bar-north" className="row">
         <div className="one-half mt-3">
           <input className="w3-margin-bottom w3-input w3-border "
@@ -441,18 +482,18 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
               </tbody>
             </table>
           </div>
-            {/* Pagination */}
-            <div className="pagination">
-              {Array.from({ length: pageCount }, (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => handlePageChange(index)}
-                  className={`page-button ${currentPage === index ? "active" : ""}`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
+          {/* Pagination */}
+          <div className="pagination">
+            {Array.from({ length: pageCount }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index)}
+                className={`page-button ${currentPage === index ? "active" : ""}`}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

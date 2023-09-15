@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
+import ExportExcel from "../ExportExcel";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -391,8 +392,48 @@ const DealerMonthSale = ({ selectedTerritory }) => {
 
     const tableWithTotalRow = [...tableRows, totalRow];
 
+    const handleExportClick = () => {
+        const arrObj = sortedData.map((element, index) => ({
+            "S.No": index + 1,
+            "Territory": element.territory_name,
+            "Dealer Name": element.dealer_name,
+            "LLY": element.LLY_Value,
+            "LY": element.LY_Value,
+            "CY Plan": element.CY_Value,
+            "YTD": element.YTD_Value,
+            "Apr": element.Apr_Month_Value_v1,
+            "Apr Sale": element.Apr_Month_Sale,
+            "May": element.May_Month_Value_v1,
+            "May Sale": element.May_Month_Sale,
+            "Jun": element.Jun_Month_Value_v1,
+            "Jun Sale": element.Jun_Month_Sale,
+            "Jul": element.Jul_Month_Value_v1,
+            "Jul Sale": element.Jul_Month_Sale,
+            "Aug": element.Aug_Month_Value_v1,
+            "Aug Sale": element.Aug_Month_Sale,
+            "Sep": element.Sep_Month_Value_v1,
+            "Sep Sale": element.Sep_Month_Sale,
+            "Oct": element.Oct_Month_Value_v1,
+            "Oct Sale": element.Oct_Month_Sale,
+            "Nov": element.Nov_Month_Value_v1,
+            "Nov Sale": element.Nov_Month_Sale,
+            "Dec": element.Dec_Month_Value_v1,
+            "Dec Sale": element.Dec_Month_Sale,
+            "Jan": element.Jan_Month_Value_v1,
+            "Jan Sale": element.Feb_Month_Sale,
+            "Feb": element.Feb_Month_Value_v1,
+            "Feb Sale": element.Feb_Month_Sale,
+            "Mar": element.Mar_Month_Value_v1,
+            "Mar Sale": element.Mar_Month_Sale
+        }));
+        console.log("-arrObj", arrObj)
+        ExportExcel('Dealer-Wise-Monthly-Plan-Achievement', arrObj)
+    };
+
     return (
         <div id="mom-north" className="row w-100">
+            {sortedData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+
             <div id="mom-bar-north" className="full">
                 <div className="row mt-2">
                     <div className="one-half">

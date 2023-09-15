@@ -10,11 +10,9 @@ import NationalZoneMonthSale from "../components/NationalZoneMonthSale";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
 import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport";
 import TerritorySelectionBox from "../components/TerritorySelectionBox";
-import DealerMonthSale from "../components/DealerMonthSale";
-
-const National = () => {
-  const tabs = ['Depot Monthly Plan', 'Territory Monthly Plan', 'Dealer Monthly Plan'];
-
+import DealerMonthSale from "../components/DealerMonthSale"; 
+ 
+const National = () => { 
   const { AuthData } = useSelector((state) => state.auth);
   // console.log("====auth====", AuthData);
   // Set Select Zone
@@ -44,20 +42,17 @@ const National = () => {
   const [selectedDepot, setSelectedDepot] = useState(0);
 
   const onSelectedTerritoryChange = (newValue) => {
-    setSelectedTerritory(newValue);
-    // console.log("45-setselectedTerritory", newValue);
+    setSelectedTerritory(newValue); 
   };
 
-  const onSelectedDepoChange = (newValue) => {
-    // console.log("79-onSelectedDepoChange", newValue);
-
+  const onSelectedDepoChange = (newValue) => { 
     setSelectedDepot(newValue);
-  };
+  }; 
 
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited</span>
+        <span className="main-title">Shalimar Paints Limited  </span>
       </div>
       <CommonTopSales actionType="hod" selectedZone={0} />
       <div id="Wgt_Zone_Id" className="card-box lightblue">
