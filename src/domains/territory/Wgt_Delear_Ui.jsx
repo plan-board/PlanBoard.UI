@@ -11,6 +11,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
   const currentDate = new Date("2023-08-30");
+  // const currentDate = new Date();
 
   const currentMonthCount =
     currentDate.getMonth() < 3
@@ -276,11 +277,12 @@ const Wgt_Delear_Ui = ({ data }) => {
 
 
               <th className="" rowSpan={2}> 6 month </th>
+              
               {currentMonth <= 4 ? (
                 currentMonth == 4 ? (
                   <th className=" " colSpan={4}> Apr </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Apr </th>
+                  <th className=" w3-hide " rowSpan={2}> Apr </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Apr </th>
@@ -289,7 +291,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 5 ? (
                   <th className=" " colSpan={4}> May </th>
                 ) : (
-                  <th className=" " rowSpan={2}> May </th>
+                  <th className="w3-hide " rowSpan={2}> May </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> May </th>
@@ -298,7 +300,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 6 ? (
                   <th className=" " colSpan={4}> Jun </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Jun </th>
+                  <th className=" w3-hide" rowSpan={2}> Jun </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Jun </th>
@@ -307,7 +309,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 7 ? (
                   <th className=" " colSpan={4}> Jul </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Jul </th>
+                  <th className="w3-hide " rowSpan={2}> Jul </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Jul </th>
@@ -316,7 +318,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 8 ? (
                   <th className="bg-green text-dark" colSpan={4}> Aug <i className=" fa fa-unlock"> </i> </th>
                 ) : (
-                  <th className="bg-green text-dark" rowSpan={2}> Aug </th>
+                  <th className="bg-green text-dark w3-hide" rowSpan={2}> Aug </th>
                 )
               ) : (
                 <th className="bg-green text-dark" rowSpan={2}> Aug </th>
@@ -325,7 +327,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 9 ? (
                   <th className="bg-green" colSpan={4}> Sep </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Sep </th>
+                  <th className="w3-hide " rowSpan={2}> Sep </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Sep </th>
@@ -334,7 +336,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 10 ? (
                   <th className="  w3-blue  " colSpan={4}> Oct </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Oct </th>
+                  <th className="w3-hide " rowSpan={2}> Oct </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Oct </th>
@@ -343,7 +345,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 11 ? (
                   <th className=" " colSpan={4}> Nov </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Nov </th>
+                  <th className="w3-hide " rowSpan={2}> Nov </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Nov </th>
@@ -352,7 +354,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 12 ? (
                   <th className=" " colSpan={4}> Dec </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Dec </th>
+                  <th className=" w3-hide" rowSpan={2}> Dec </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Dec </th>
@@ -361,7 +363,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 13 ? (
                   <th className=" " colSpan={4}> Jan </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Jan </th>
+                  <th className=" w3-hide" rowSpan={2}> Jan </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Jan </th>
@@ -370,7 +372,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 14 ? (
                   <th className=" " colSpan={4}> Feb </th>
                 ) : (
-                  <th className=" " rowSpan={2}> Feb </th>
+                  <th className="w3-hide " rowSpan={2}> Feb </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> Feb </th>
@@ -379,7 +381,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 currentMonth == 15 ? (
                   <th className=" " colSpan={4}> March </th>
                 ) : (
-                  <th className=" " rowSpan={2}> March </th>
+                  <th className="w3-hide " rowSpan={2}> March </th>
                 )
               ) : (
                 <th className=" " rowSpan={2}> March </th>

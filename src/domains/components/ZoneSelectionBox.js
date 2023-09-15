@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-// { filteredZones, selectedZone, onValueChange }
 const ZoneSelectionBox = ({selectedZone, onValueChange}) => {
   const { AuthData } = useSelector((state) => state.auth);
   const [selectedZones, setSelctedZone] = useState(0);

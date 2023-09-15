@@ -3,8 +3,6 @@ import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux"; 
 
-import "react-table-6/react-table.css";
-import "react-table-hoc-fixed-columns/lib/styles.css";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 
 const itemsPerPage = 10; // Number of items to display per page
@@ -126,115 +124,115 @@ const DepoMonthWiseSalesReport = ({
 
 
   const totalLYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.LY_Value || 0),
+    (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
     0
   );
   const totalLLYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.LLY_Value || 0),
+    (acc, item) => acc + (parseInt(item.LLY_Value.toFixed(0)) || 0),
     0
   );
-  const totalCYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.CY_Value || 0),
+  const totalCYValue = sortedData.reduce(
+    (acc, item) => acc + (parseInt(item.CY_Value.toFixed(0)) || 0),
     0
   );
-  const totalYTDValue = filteredItems.reduce(
-    (acc, item) => acc + (item.YTD_Value || 0),
+  const totalYTDValue = sortedData.reduce(
+    (acc, item) => acc + (parseInt(item.YTD_Value.toFixed(0)) || 0),
     0
   );
-  const totalAprValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
+  const totalAprValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Apr_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalAprValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Sale || 0),
+  const totalAprValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Apr_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalMayValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
+  const totalMayValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.May_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalMayValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.May_Month_Sale || 0),
+  const totalMayValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.May_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJunValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
+  const totalJunValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jun_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJunValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Sale || 0),
+  const totalJunValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jun_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJulValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
+  const totalJulValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jul_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJulValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Sale || 0),
+  const totalJulValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jul_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalAugValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
+  const totalAugValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Aug_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalAugValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Sale || 0),
+  const totalAugValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Aug_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalSepValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
+  const totalSepValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Sep_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalSepValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Sale || 0),
+  const totalSepValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Sep_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalOctValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
+  const totalOctValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Oct_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalOctValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Sale || 0),
+  const totalOctValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Oct_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalNovValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
+  const totalNovValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Nov_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalNovValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Sale || 0),
+  const totalNovValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Nov_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalDecValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
+  const totalDecValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Dec_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalDecValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Sale || 0),
+  const totalDecValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Dec_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJanValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
+  const totalJanValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jan_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJanValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Sale || 0),
+  const totalJanValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jan_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalFebValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
+  const totalFebValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Feb_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalFebValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Sale || 0),
+  const totalFebValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Feb_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalMarValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
+  const totalMarValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Mar_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalMarValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Sale || 0),
+  const totalMarValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Mar_Month_Sale.toFixed(0)) || 0),
     0
   );
 
@@ -243,68 +241,68 @@ const DepoMonthWiseSalesReport = ({
       <td>{++index}</td>
       <td>{item?.zone_name}</td>
       <td>{item?.depot_name}</td>
-      <td>{item?.LY_Value}</td>
-      <td>{item?.LLY_Value}</td>
-      <td>{item?.CY_Value} <hr className="hr0" />{item?.YTD_Value}</td>
+      <td>{item?.LY_Value?.toFixed(0)}</td>
+      <td>{item?.LLY_Value?.toFixed(0)}</td>
+      <td>{item?.CY_Value?.toFixed(0)} <hr className="hr0" />{item?.YTD_Value?.toFixed(0)}</td>
       <td>
-        {item?.Apr_Month_Value_v1}
+        {item?.Apr_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Apr_Month_Sale}
+        {item?.Apr_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.May_Month_Value_v1}
+        {item?.May_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.May_Month_Sale}
+        {item?.May_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Jun_Month_Value_v1}
+        {item?.Jun_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Jun_Month_Sale}
+        {item?.Jun_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Jul_Month_Value_v1}
+        {item?.Jul_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Jul_Month_Sale}
+        {item?.Jul_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Aug_Month_Value_v1}
+        {item?.Aug_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Aug_Month_Sale}
+        {item?.Aug_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Sep_Month_Value_v1}
+        {item?.Sep_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Sep_Month_Sale}
+        {item?.Sep_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Oct_Month_Value_v1}
+        {item?.Oct_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Oct_Month_Sale}
+        {item?.Oct_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Nov_Month_Value_v1}
+        {item?.Nov_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Nov_Month_Sale}
+        {item?.Nov_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Dec_Month_Value_v1}
+        {item?.Dec_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Dec_Month_Sale}
+        {item?.Dec_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Jan_Month_Value_v1}
+        {item?.Jan_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Jan_Month_Sale}
+        {item?.Jan_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Feb_Month_Value_v1}
+        {item?.Feb_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Feb_Month_Sale}
+        {item?.Feb_Month_Sale?.toFixed(0)}
       </td>
       <td>
-        {item?.Mar_Month_Value_v1}
+        {item?.Mar_Month_Value_v1?.toFixed(0)}
         <hr className="hr0" />
-        {item?.Mar_Month_Sale}
+        {item?.Mar_Month_Sale?.toFixed(0)}
       </td>
     </tr>
   ));
@@ -316,75 +314,75 @@ const DepoMonthWiseSalesReport = ({
         Total
       </td>
       <td>
-        {totalLLYValue.toFixed(2)}
+        {totalLLYValue}
       </td>
       <td>
-        {totalLYValue.toFixed(2)}
+        {totalLYValue}
       </td>
       <td>
-        {totalCYValue.toFixed(2)}
+        {totalCYValue}
         <hr className="hr0" />
-        {totalYTDValue.toFixed(2)}
+        {totalYTDValue}
       </td>
       <td>
-        {totalAprValue?.toFixed(2)}
+        {totalAprValue}
         <hr className="hr0" />
-        {totalAprValue_v1?.toFixed(2)}
+        {totalAprValue_v1}
       </td>
       <td>
-        {totalMayValue?.toFixed(2)}
+        {totalMayValue}
         <hr className="hr0" />
-        {totalMayValue_v1?.toFixed(2)}
+        {totalMayValue_v1}
       </td>
       <td>
-        {totalJunValue?.toFixed(2)}
+        {totalJunValue}
         <hr className="hr0" />
-        {totalJunValue_v1?.toFixed(2)}
+        {totalJunValue_v1}
       </td>
       <td>
-        {totalJulValue?.toFixed(2)}
+        {totalJulValue}
         <hr className="hr0" />
-        {totalJulValue_v1?.toFixed(2)}
+        {totalJulValue_v1}
       </td>
       <td>
-        {totalAugValue?.toFixed(2)}
+        {totalAugValue}
         <hr className="hr0" />
-        {totalAugValue_v1?.toFixed(2)}
+        {totalAugValue_v1}
       </td>
       <td>
-        {totalSepValue?.toFixed(2)}
+        {totalSepValue}
         <hr className="hr0" />
-        {totalSepValue_v1?.toFixed(2)}
+        {totalSepValue_v1}
       </td>
       <td>
-        {totalOctValue?.toFixed(2)}
+        {totalOctValue}
         <hr className="hr0" />
-        {totalOctValue_v1?.toFixed(2)}
+        {totalOctValue_v1}
       </td>
       <td>
-        {totalNovValue?.toFixed(2)}
+        {totalNovValue}
         <hr className="hr0" />
-        {totalNovValue_v1?.toFixed(2)}
+        {totalNovValue_v1}
       </td>
       <td>
-        {totalDecValue?.toFixed(2)}
+        {totalDecValue}
         <hr className="hr0" />
-        {totalDecValue_v1?.toFixed(2)}
+        {totalDecValue_v1}
       </td>
       <td>
-        {totalJanValue?.toFixed(2)}
+        {totalJanValue}
         <hr className="hr0" />
-        {totalJanValue_v1?.toFixed(2)}
+        {totalJanValue_v1}
       </td>
       <td>
-        {totalFebValue?.toFixed(2)}
+        {totalFebValue}
         <hr className="hr0" />
-        {totalFebValue_v1?.toFixed(2)}
+        {totalFebValue_v1}
       </td>
       <td>
-        {totalMarValue?.toFixed(2)}
+        {totalMarValue}
         <hr className="hr0" />
-        {totalMarValue_v1?.toFixed(2)}
+        {totalMarValue_v1}
       </td>
     </tr>
   );
