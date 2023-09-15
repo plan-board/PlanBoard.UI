@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import DataTable from "react-data-table-component";
-
-
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-import { Link } from "react-router-dom";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -396,56 +392,64 @@ const DealerMonthSale = ({ selectedTerritory }) => {
     const tableWithTotalRow = [...tableRows, totalRow];
 
     return (
-        <div id="mom-north" className="w3-row w3-margin-top ">
-            <div id="mom-bar-north" >
-                <div className="form-group filterInput">
-                    <input className="w3-margin-bottom w3-input w3-border "
-                        type="text"
-                        placeholder="Filter By Dealer Name"
-                        aria-label="Search Input"
-                        value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
-                    />
+        <div id="mom-north" className="row w-100">
+            <div id="mom-bar-north" className="full">
+                <div className="row mt-2">
+                    <div className="one-half">
+                        <input className="w3-margin-bottom w3-input w3-border "
+                            type="text"
+                            placeholder="Filter By Dealer Name"
+                            aria-label="Search Input"
+                            value={filterText}
+                            onChange={(e) => setFilterText(e.target.value)}
+                        />
+                    </div>
                 </div>
-                <table className="w3-table w3-stripped table-bordered">
-                    <tr className="colrdrow">
-                        <td>S.No</td>
-                        <th onClick={() => handleSort('Territory')}>Territory  {sortField === 'Territory' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                        <th onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                        <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                        <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                        <th onClick={() => handleSort('YTD')}>CY Plan / YTD  {sortField === 'YTD' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                        <td className="w3-gray"> Apr </td>
-                        <td className="w3-gray"> May </td>
-                        <td className="w3-gray"> Jun </td>
-                        <td className="w3-gray"> Jul </td>
-                        <td className="w3-gray"> Aug </td>
-                        <td className="w3-gray"> Sep </td>
-                        <td className="w3-gray"> Oct </td>
-                        <td className="w3-gray"> Nov </td>
-                        <td className="w3-gray"> Dec </td>
-                        <td className="w3-gray"> Jan </td>
-                        <td className="w3-gray"> Feb </td>
-                        <td className="w3-gray"> Mar </td>
-                    </tr>
-                    {isLoading ? (
-                        <tr>
-                            <td colSpan="18">
-                                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-                            </td>
-                        </tr>
-                    ) : (
-                        <>
-                            {filteredItems?.length === 0 ? (
+                <div className="tbl-container">
+                    <table className="table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th onClick={() => handleSort('Territory')}>Territory  {sortField === 'Territory' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                                <th onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                                <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                                <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                                <th onClick={() => handleSort('YTD')}>CY Plan / YTD  {sortField === 'YTD' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                                <th> Apr </th>
+                                <th> May </th>
+                                <th> Jun </th>
+                                <th> Jul </th>
+                                <th> Aug </th>
+                                <th> Sep </th>
+                                <th> Oct </th>
+                                <th> Nov </th>
+                                <th> Dec </th>
+                                <th> Jan </th>
+                                <th> Feb </th>
+                                <th> Mar </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isLoading ? (
                                 <tr>
-                                    <td colSpan="18">No data found</td>
+                                    <td colSpan="18">
+                                        <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+                                    </td>
                                 </tr>
                             ) : (
-                                tableWithTotalRow
+                                <>
+                                    {filteredItems?.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="18">No data found</td>
+                                        </tr>
+                                    ) : (
+                                        tableWithTotalRow
+                                    )}
+                                </>
                             )}
-                        </>
-                    )}
-                </table>
+                        </tbody>
+                    </table>
+                </div>
                 {/* Pagination */}
                 <div className="pagination">
                     {Array.from({ length: pageCount }, (_, index) => (

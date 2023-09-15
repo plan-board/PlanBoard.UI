@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SHOW_TOAST } from "../../store/constant/types";
 import axiosInstance from "./../../auth/api";
 
@@ -53,14 +53,14 @@ const CommonTopSales = ({
 
   return (
     <>
-      <div className="card-box common-top-sales">
+      <div className="card-box lightyellow">
         {actionType == 'hod' ? (
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
             All Zone{" "}
           </span>
           <hr className="hr1" />
-          <span className=" "> Shalimar</span>
+          <span className=" "> Shalimar 6</span>
         </div>) : (
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
@@ -75,8 +75,8 @@ const CommonTopSales = ({
               {" "}
               LLY {summaryData[0]?.summ_lly_fy}{" "}
             </span>
-            <hr className="hr1" />
-            <span className=" ">{summaryData[0]?.summ_lly_sale_value}</span>
+            <hr className="hr1" /> 6
+            <span className=" ">{summaryData[0]?.summ_lly_sale_value.toFixed(0)}</span>
           </div>
 
           <div className="one-fifth text-center">
@@ -85,7 +85,7 @@ const CommonTopSales = ({
               LY {summaryData[0]?.summ_ly_fy}{" "}
             </span>
             <hr className="hr1" />
-            <span className=" "> {summaryData[0]?.summ_ly_sale_value} </span>
+            <span className=" "> {summaryData[0]?.summ_ly_sale_value.toFixed(0)} </span>
           </div>
 
           <div className="one-fifth text-center">
@@ -100,7 +100,7 @@ const CommonTopSales = ({
               [v.0 :{" "}
               <u className=" w3-text-red">
                 {" "}
-                {summaryData[0]?.summ_cy_plan_value} (
+                {summaryData[0]?.summ_cy_plan_value.toFixed(0)} (
                 {summaryData[0]?.summ_cy_sale_percentage}%){" "}
               </u>{" "}
               ]{" "}
@@ -108,7 +108,7 @@ const CommonTopSales = ({
               [v.1 :{" "}
               <u className=" w3-text-red">
                 {" "}
-                {summaryData[0]?.summ_cy_plan_value_v1} (
+                {summaryData[0]?.summ_cy_plan_value_v1.toFixed(0)} (
                 {summaryData[0]?.summ_cy_sale_percentage}%){" "}
               </u>{" "}
               ]{" "}
@@ -142,7 +142,7 @@ const CommonTopSales = ({
           <div className="one-fifth text-center">
             <span className="w3-text-gray h6"> YTD </span>
             <hr className="hr1" />
-            <span className=" "> {summaryData[0]?.summ_cy_sale_value} </span>
+            <span className=" "> {summaryData[0]?.summ_cy_sale_value.toFixed(0)} </span>
             <i className="w3-text-gray">
               {" "}
               ( {summaryData[0]?.summ_cy_plan_percentage} %){" "}

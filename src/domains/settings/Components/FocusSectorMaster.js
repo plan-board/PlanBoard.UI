@@ -251,7 +251,7 @@ const FocusSectorMaster = () => {
   );
 
   const subHeaderComponent = (
-    <input className="w3-margin-bottom w3-input w3-border filterInput"
+    <input className="w3-input w3-border filterInput w-100"
       type="text"
       placeholder="Filter By Sector  Name"
       aria-label="Search Input"
@@ -262,99 +262,87 @@ const FocusSectorMaster = () => {
 
   return (
     <>
-      <p className="w3-small h6 ">Manage Monthly Focus Sectors </p>
+      <h5>Manage Monthly Focus Sectors </h5>
       <hr />
-      <form className=" ">
-        <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
-          <tr className=" w3-light-gray  h6">
-            <td className=" ">
-              <label htmlFor="selectionBox">FY</label>
-              <select
-                className="w3-select"
-                value={fyId}
-                onChange={handleYearChange}
-              >
-                <option value={0}>Select</option>
-                {fyDropdown()}
-              </select>
-            </td>
-            <td className=" ">
-              {" "}
-              <label htmlFor="selectionBox">Month</label>
-              <select
-                className="w3-select"
-                value={monthId}
-                onChange={handleMonthChange}
-              >
-                <option value="0">Select</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
-            </td>
-            <td className=" ">
-              <label htmlFor="selectionBox">Market Sector</label>
-              <select
-                className="w3-select"
-                value={mSectorId}
-                onChange={handleSectorChange}
-              >
-                <option value={0}>Select Market Sector</option>
-                {marketSecDropdown()}
-              </select>
-            </td>
-            <td className=" ">
-              <label htmlFor="selectionBox">Product</label>
-              <select
-                className="w3-select"
-                value={productId}
-                onChange={(e)=>setProductId(e.target.value)}
-              >
-                <option value={0}>Select Product</option>
-                {productDropdown()}
-              </select>
-            </td>
-            <td className=" " style={{ width: "30px" }}>
-              <br />
-              <button
-                type="button"
-                className="w3-button w3-indigo"
-                disabled={mSectorId && monthId && fyId ? false : true}
-                onClick={() => handleSetFocusProduct()}
-                style={{ marginTop: "10px" }}
-              >
-                <i className="fa fa-plus"></i> Save
-              </button>
-            </td>
-          </tr>
+      <form>
+        <table className="table-bordered table-striped">
+          <thead>
+            <tr>
+              <th><label htmlFor="selectionBox">FY</label></th>
+              <th><label htmlFor="selectionBox">Month</label></th>
+              <th><label htmlFor="selectionBox">Market Sector</label></th>
+              <th><label htmlFor="selectionBox">Product</label></th>
+              <th colSpan={2}></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select className="form-control" value={fyId} onChange={handleYearChange}>
+                  <option value={0}>Select</option>
+                  {fyDropdown()}
+                </select>
+              </td>
+              <td>
+                <select className="form-control" value={monthId} onChange={handleMonthChange}>
+                  <option value="0">Select</option>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </td>
+              <td>
+                <select className="form-control" value={mSectorId} onChange={handleSectorChange}>
+                  <option value={0}>Select Market Sector</option>
+                  {marketSecDropdown()}
+                </select>
+              </td>
+              <td>
+                <select className="form-control" value={productId} onChange={(e)=>setProductId(e.target.value)}>
+                  <option value={0}>Select Product</option>
+                  {productDropdown()}
+                </select>
+              </td>
+              <td style={{width:"30px"}}>
+                <button type="button" className="btn btn-primary"
+                  disabled={mSectorId && monthId && fyId ? false : true}
+                  onClick={() => handleSetFocusProduct()}>
+                  <i className="fa fa-plus"></i> Save
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </form>
-      <div className="w3-row w3-padding-16"> </div>
-      <div>
-      {subHeaderComponent}
+      <div className="row w-100 my-4">
+        <div className="one-third">
+          {subHeaderComponent}
+        </div>
       </div>
-      <DataTable
-        columns={columns}
-        data={filteredItems}
-        pagination
-        className="datatable"
-        fixedHeader={true}
-        fixedHeaderScrollHeight="400px" subHeader
-        subHeaderComponent={
-          <CustomSubHeaderComponent align="left">
-            {additionalComponent}
-          </CustomSubHeaderComponent>
-        }
-      />
+      <div className="tbl-container">
+        <DataTable
+          columns={columns}
+          data={filteredItems}
+          pagination
+          className="datatable"
+          fixedHeader={true}
+          fixedHeaderScrollHeight="400px" subHeader
+          subHeaderComponent={
+            <CustomSubHeaderComponent align="left">
+              {additionalComponent}
+            </CustomSubHeaderComponent>
+          }
+        />
+      </div>
 
       {/* <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
         <tr className=" w3-light-gray  h6">
