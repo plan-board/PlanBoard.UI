@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
+import ExportExcel from "../ExportExcel";
 
 const NationalZoneMonthSale = ({ selectedZone }) => {
   const dispatch = useDispatch();
@@ -332,19 +333,58 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
 
   const tableWithTotalRow = [...tableRows, totalRow];
 
+  const handleExportClick = () => {
+    const headArr = ["S.No", "Zone", "LY 22-23", "Plan 2023", "YTD", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+    const arrObj = sortedData.map((element, index) => ({
+      "S.No": index + 1,
+      "Zone": element.zone_name,
+      "LY 22-23": element.LY_Value,
+      "Plan 2023": element.CY_Value,
+      "YTD": element.YTD_Value,
+      "Apr": element.Apr_Month_Value_v1,
+      "Apr Sale": element.Apr_Month_Sale,
+      "May": element.May_Month_Value_v1,
+      "May Sale": element.May_Month_Sale,
+      "Jun": element.Jun_Month_Value_v1,
+      "Jun Sale": element.Jun_Month_Sale,
+      "Jul": element.Jul_Month_Value_v1,
+      "Jul Sale": element.Jul_Month_Sale,
+      "Aug": element.Aug_Month_Value_v1,
+      "Aug Sale": element.Aug_Month_Sale,
+      "Sep": element.Sep_Month_Value_v1,
+      "Sep Sale": element.Sep_Month_Sale,
+      "Oct": element.Oct_Month_Value_v1,
+      "Oct Sale": element.Oct_Month_Sale,
+      "Nov": element.Nov_Month_Value_v1,
+      "Nov Sale": element.Nov_Month_Sale,
+      "Dec": element.Dec_Month_Value_v1,
+      "Dec Sale": element.Dec_Month_Sale,
+      "Jan": element.Jan_Month_Value_v1,
+      "Jan Sale": element.Feb_Month_Sale,
+      "Feb": element.Feb_Month_Value_v1,
+      "Feb Sale": element.Feb_Month_Sale,
+      "Mar": element.Mar_Month_Value_v1,
+      "Mar Sale": element.Mar_Month_Sale
+    }));
+    console.log("-arrObj", arrObj)
+    ExportExcel('Zone-Wise-Monthly-Plan-Achievement', arrObj)
+  };
+
   return (
     <div id="mom-north" className="w3-row">
       <div id="mom-bar-north" className="w-100">
+        {sortedData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+
         <table className="table-bordered table-striped">
           <thead>
             <tr>
               <th rowspan="2"> S.No </th>
               <th rowspan="2" onClick={() => handleSort('Zone')}>
-              Zone {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}
-            </th>
-            <th rowspan="2" onClick={() => handleSort('LY 22-23')}>
-              LY 22-23 {sortField === 'LY 22-23' && (sortDirection === 'asc' ? '▲' : '▼')}
-            </th>
+                Zone {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}
+              </th>
+              <th rowspan="2" onClick={() => handleSort('LY 22-23')}>
+                LY 22-23 {sortField === 'LY 22-23' && (sortDirection === 'asc' ? '▲' : '▼')}
+              </th>
               <th rowspan="2"> Plan 2023 <hr className="hr0" /> YTD </th>
               <th colspan="12"> Month Wise Plan </th>
             </tr>
