@@ -11,6 +11,7 @@ import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
 import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport";
 import TerritorySelectionBox from "../components/TerritorySelectionBox";
 import DealerMonthSale from "../components/DealerMonthSale"; 
+import AllFigureText from "../components/AllFigureText";
  
 const National = () => { 
   const { AuthData } = useSelector((state) => state.auth);
@@ -52,7 +53,7 @@ const National = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited  </span>
+        <span className="main-title">Shalimar Paints Limited   <AllFigureText /></span>
       </div>
       <CommonTopSales actionType="hod" selectedZone={0} />
       <div id="Wgt_Zone_Id" className="card-box lightblue">

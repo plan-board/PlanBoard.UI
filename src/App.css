@@ -2168,3 +2168,7 @@ table.table-striped tbody tr:nth-child(odd){
 .c-pointer{
   cursor: pointer;
 }
+
+.allFigr{
+  font-size: 20px;
+}

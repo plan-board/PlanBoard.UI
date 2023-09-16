@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import CustomPopup from "../CustomPopup";
+import ExportExcel from "../ExportExcel";
 
 const itemsPerPage = 10;
+const monthArr = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+const date = new Date();
+const cMName = date.toLocaleString('default', { month: 'long' });
+const mStartName = cMName.substring(0,3);
 
 const Wgt_Delear_Ui = ({ data }) => {
+  console.log("-cMName",cMName)
   const dispatch = useDispatch();
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
@@ -250,657 +256,174 @@ const Wgt_Delear_Ui = ({ data }) => {
     setCurrentPage(newPage);
   };
 
+  const handleExportClick = () => {
+    const arrObj = dealerlist.map((element, index) => ({
+      "S.No": index + 1,
+      "Dealer Name": element.dealer_name,
+      "Dealer Code": element.dealer_code,
+      "Category": element.dealer_category,
+      "LY": element.LY_Value,
+      "CY Plan": element.CY_Value,
+      "YTD": element.YTD_Value,
+      "6 month": 0,
+      "Apr": element.Apr_Month_Value_v1,
+      "Apr Sale": element.Apr_Month_Sale,
+      "May": element.May_Month_Value_v1,
+      "May Sale": element.May_Month_Sale,
+      "Jun": element.Jun_Month_Value_v1,
+      "Jun Sale": element.Jun_Month_Sale,
+      "Jul": element.Jul_Month_Value_v1,
+      "Jul Sale": element.Jul_Month_Sale,
+      "Aug": element.Aug_Month_Value_v1,
+      "Aug Sale": element.Aug_Month_Sale,
+      "Sep": element.Sep_Month_Value_v1,
+      "Sep Sale": element.Sep_Month_Sale,
+      "Oct": element.Oct_Month_Value_v1,
+      "Oct Sale": element.Oct_Month_Sale,
+      "Nov": element.Nov_Month_Value_v1,
+      "Nov Sale": element.Nov_Month_Sale,
+      "Dec": element.Dec_Month_Value_v1,
+      "Dec Sale": element.Dec_Month_Sale,
+      "Jan": element.Jan_Month_Value_v1,
+      "Jan Sale": element.Feb_Month_Sale,
+      "Feb": element.Feb_Month_Value_v1,
+      "Feb Sale": element.Feb_Month_Sale,
+      "Mar": element.Mar_Month_Value_v1,
+      "Mar Sale": element.Mar_Month_Sale
+    }));
+    console.log("-arrObj", arrObj)
+    ExportExcel('ssDealer-Wise-Monthly-Plan-Achievement', arrObj)
+  };
+
+   
+  const generateTableRows = (item) => {
+    const headers = []; 
+    for (let i = 0; i < monthArr.length; i++) {
+      const monName = monthArr[i];
+      if (monName == mStartName) {
+        headers.push(
+          <Fragment key={`header_${monName}`}>
+            <td>{item?.OS}</td>
+            <td>{item?.OD}</td>
+            <td>
+              <input
+                type="text"
+                className="inp40 text-center"
+                defaultValue={item[`${monName}_Month_Value`]}
+                name={`${item.id}_sales`}
+                onChange={(e) => onchangeInputs(e, item.id)}
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                className="inp40 text-center"
+                defaultValue={item[`${monName}_Month_Value_v1`]}
+                name={`${item.id}_coll`}
+                onChange={(e) => onchangeInputs(e, item.id)}
+              />
+            </td>
+          </Fragment>
+        );
+        break;
+      } else {
+        headers.push(
+          <Fragment key={`header_${monName}`}>
+            <td>
+              {item[`${monName}_Month_Value_v1`]}
+              <hr className="hr0" />
+              {item[`${monName}_Month_Value_v1`]}
+            </td>
+          </Fragment>
+        );
+      }
+    }
+    return headers;
+  };
+
+  // Function to render a single row
+  const renderTableRow = (item, index) => {
+    return (
+      <tr key={index}>
+        <td>{index + 1}</td>
+        <td className="">{item.dealer_name}</td>
+        <td className="">{item.dealer_code}</td>
+        <td className="">{item.dealer_category}</td>
+        <td className="">{item.LY_Value}</td>
+        <td className="">{item.CY_Value} <hr className="hr0" /> {item.YTD_Value}</td>
+        <td className="">0</td>
+        {generateTableRows(item)}
+      </tr>
+    );
+  };
+
+  const generateTableHeaders = () => {
+    const headers = [];
+     
+    for (let i = 0; i < monthArr.length; i++) {
+      const monName = monthArr[i];
+      if (monName === mStartName) {
+        headers.push(<Fragment key={`header_${monName}`}>
+          <td colSpan={4} key={`header_${monName}`}>{monName}</td></Fragment>
+        );
+        break;
+      } else {
+        headers.push(
+          <Fragment key={`header_${monName}`}>
+            <td rowSpan={2} >{monName}</td>
+          </Fragment>
+        );
+      }
+    }
+    return headers;
+  };
 
   return (
     <>
-        <div className="row w-100 mt-3">
-          <div className="one-half">
-            <input className="w3-margin-bottom w3-input w3-border "
-              type="text"
-              placeholder="Filter By Dealer Name, code, category, LY and YTD "
-              aria-label="Search Input"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-            />
-          </div>
+      <div className="row w-100 mt-3">
+        {dealerlist?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+
+        <div className="one-half">
+          <input className="w3-margin-bottom w3-input w3-border "
+            type="text"
+            placeholder="Filter By Dealer Name, code, category, LY and YTD "
+            aria-label="Search Input"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
         </div>
+      </div>
       <div className="tbl-container">
         <table className="table-bordered table-striped">
           <thead>
             <tr>
+              
               <th className="" rowSpan={2}> S.No </th>
               <th style={{ width: "15%" }} onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th style={{ width: "15%" }} onClick={() => handleSort('DelearCode')}>Delear Code  {sortField === 'DelearCode' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('Category')}>Category  {sortField === 'Category' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('YTD')}>CY / YTD  {sortField === 'YTD' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-
-
               <th className="" rowSpan={2}> 6 month </th>
-              
-              {currentMonth <= 4 ? (
-                currentMonth == 4 ? (
-                  <th className=" " colSpan={4}> Apr </th>
-                ) : (
-                  <th className=" w3-hide " rowSpan={2}> Apr </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Apr </th>
-              )}
-              {currentMonth <= 5 ? (
-                currentMonth == 5 ? (
-                  <th className=" " colSpan={4}> May </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> May </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> May </th>
-              )}
-              {currentMonth <= 6 ? (
-                currentMonth == 6 ? (
-                  <th className=" " colSpan={4}> Jun </th>
-                ) : (
-                  <th className=" w3-hide" rowSpan={2}> Jun </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Jun </th>
-              )}
-              {currentMonth <= 7 ? (
-                currentMonth == 7 ? (
-                  <th className=" " colSpan={4}> Jul </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> Jul </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Jul </th>
-              )}
-              {currentMonth <= 8 ? (
-                currentMonth == 8 ? (
-                  <th className="bg-green text-dark" colSpan={4}> Aug <i className=" fa fa-unlock"> </i> </th>
-                ) : (
-                  <th className="bg-green text-dark w3-hide" rowSpan={2}> Aug </th>
-                )
-              ) : (
-                <th className="bg-green text-dark" rowSpan={2}> Aug </th>
-              )}
-              {currentMonth <= 9 ? (
-                currentMonth == 9 ? (
-                  <th className="bg-green" colSpan={4}> Sep </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> Sep </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Sep </th>
-              )}
-              {currentMonth <= 10 ? (
-                currentMonth == 10 ? (
-                  <th className="  w3-blue  " colSpan={4}> Oct </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> Oct </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Oct </th>
-              )}
-              {currentMonth <= 11 ? (
-                currentMonth == 11 ? (
-                  <th className=" " colSpan={4}> Nov </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> Nov </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Nov </th>
-              )}
-              {currentMonth <= 12 ? (
-                currentMonth == 12 ? (
-                  <th className=" " colSpan={4}> Dec </th>
-                ) : (
-                  <th className=" w3-hide" rowSpan={2}> Dec </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Dec </th>
-              )}
-              {currentMonth <= 13 ? (
-                currentMonth == 13 ? (
-                  <th className=" " colSpan={4}> Jan </th>
-                ) : (
-                  <th className=" w3-hide" rowSpan={2}> Jan </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Jan </th>
-              )}
-              {currentMonth <= 14 ? (
-                currentMonth == 14 ? (
-                  <th className=" " colSpan={4}> Feb </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> Feb </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> Feb </th>
-              )}
-              {currentMonth <= 15 ? (
-                currentMonth == 15 ? (
-                  <th className=" " colSpan={4}> March </th>
-                ) : (
-                  <th className="w3-hide " rowSpan={2}> March </th>
-                )
-              ) : (
-                <th className=" " rowSpan={2}> March </th>
-              )}
+              {generateTableHeaders()}
+               
             </tr>
           </thead>
           <tbody>
             <tr>
-              <th className="p-2 bg-blue" colSpan={11}> </th>
+              {/* here colSpan should according to month count */}
+              <th className="p-2 bg-blue" colSpan={12}> </th>
               <th className="p-2 bg-green text-dark"> OS </th>
               <th className="p-2 bg-green text-dark"> OD </th>
               <th className="p-2 bg-green text-dark"> Sales </th>
               <th className="p-2 bg-green text-dark"> Collection </th>
-              <th className="p-2 bg-blue" colSpan={14}>  </th>
+              {/* <th className="p-2 bg-blue" colSpan={2}>  </th> */}
             </tr>
-            {filteredItems?.sort((a, b) => a.Aug_Month_Value_v1.toString()?.localeCompare(b.Aug_Month_Value_v1.toString())).map((item, index) => {
-              return (
-                <tr key={index}>
-                  <td>{++index}</td>
-                  <td className="" colSpan={1}>
-                    {item?.dealer_name}
-                  </td>
-                  <td className="" colSpan={1}>
-
-                    {item?.dealer_code}
-                  </td>
-                  <td className=""> {item?.dealer_category} </td>
-                  <td className="">{item?.LY_Value}</td>
-                  <td className="">
-
-                    {item?.CY_Value} <hr className="hr0" /> {item?.YTD_Value}
-                  </td>
-                  <td className="">0</td>
-                  {currentMonth >= 4 ? (
-                    currentMonth == 4 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Apr_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Apr_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Apr_Month_Value_v1}
-                        <hr className="hr0" />
-                        {item?.Apr_Month_Sale}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 5 ? (
-                    currentMonth == 5 ? (
-                      <>
-                        <td>{item?.May_Month_Value}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.May_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.May_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.May_Month_Value == 0 &&
-                          item?.May_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-                            {item?.May_Month_Value_v1}
-                            <hr className="hr0" /> {item?.May_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 6 ? (
-                    currentMonth == 6 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Jun_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Jun_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Jun_Month_Target == 0 &&
-                          item?.Jun_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-                            {item?.Jun_Month_Value_v1}
-                            <hr className="hr0" />
-                            {item?.Jun_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 7 ? (
-                    currentMonth == 7 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Jul_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Jul_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Jul_Month_Value == 0 &&
-                          item?.Jul_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-
-                            {item?.Jul_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Jul_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 8 ? (
-                    currentMonth == 8 ? (
-                      <>
-                        <td className="bg-green">{item?.OD}</td>
-                        <td className="bg-green">{item?.OS}</td>
-                        <td align="center" className="bg-green nowrap">
-                          {item?.Aug_Month_Value}
-                          <input type="text"
-                            style={{ width: "50px", marginLeft: "3px" }}
-                            className="mx-2 text-center"
-                            defaultValue={item?.Aug_Month_Value_v1}
-                            readOnly={true}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                          <span onClick={() => getMonthTarget(item)}>
-                            <i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></span>
-                        </td>
-                        <td className="bg-green">
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Aug_Month_Target == 0 &&
-                          item?.Aug_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-                            {item?.Aug_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Aug_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 9 ? (
-                    currentMonth == 9 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Sep_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Sep_Month_Value_1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Sep_Month_Target == 0 && item?.Sep_Month_Value ? (
-                          0
-                        ) : (
-                          <>
-                            {item?.Sep_Month_Value_v1}
-                            <hr className="hr0" />
-                            {item?.Sep_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 10 ? (
-                    currentMonth == 10 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Oct_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Oct_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Oct_Month_Target == 0 &&
-                          item?.Oct_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-                            {item?.Oct_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Oct_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 11 ? (
-                    currentMonth == 11 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Nov_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Nov_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Nov_Month_Target == 0 &&
-                          item?.Nov_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-
-                            {item?.Nov_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Nov_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 12 ? (
-                    currentMonth == 12 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Dec_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Dec_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Dec_Month_Target == 0 &&
-                          item?.Dec_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-                            {item?.Dec_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Dec_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 13 ? (
-                    currentMonth == 13 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Jan_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Jan_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Jan_Month_Target == 0 &&
-                          item?.Jan_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-
-                            {item?.Jan_Month_Value_v1}
-                            <hr className="hr0" />
-                            {item?.Jan_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 14 ? (
-                    currentMonth == 14 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Feb_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            className="inp40 text-center"
-                            defaultValue={item?.Feb_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Feb_Month_Target == 0 &&
-                          item?.Feb_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-
-                            {item?.Feb_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Feb_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                  {currentMonth >= 15 ? (
-                    currentMonth == 15 ? (
-                      <>
-                        <td>{item?.current_outstand}</td>
-                        <td>{item?.current_overdue}</td>
-                        <td>
-
-                          <input type="text"
-                            class="inp40"
-                            defaultValue={item?.Mar_Month_Value}
-                            name={item?.id + `_sales`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                        <td>
-
-                          <input type="text"
-                            class="inp40"
-                            defaultValue={item?.Mar_Month_Value_v1}
-                            name={item?.id + `_coll`}
-                            onChange={(e) => onchangeInputs(e, item?.id)}
-                          />
-                        </td>
-                      </>
-                    ) : (
-                      <td>
-                        {item?.Mar_Month_Target == 0 &&
-                          item?.Mar_Month_Value == 0 ? (
-                          0
-                        ) : (
-                          <>
-
-                            {item?.Mar_Month_Value_v1}
-                            <hr className="hr0" /> {item?.Mar_Month_Sale}
-                          </>
-                        )}
-                      </td>
-                    )
-                  ) : (
-                    <td>0</td>
-                  )}
-                </tr>
-              );
+            {/* Render tale rows */}
+            {filteredItems?.map((item, index) => {
+              return renderTableRow(item, index);
             })}
+             
           </tbody>
         </table>
       </div>
@@ -966,8 +489,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                 selectedRow?.map((item, index) => (
                   <tr className="" key={index}>
                     <td>{index + 1}</td>
-                    <td>{item?.MarketSectorName}</td> 
-                    <td>{item?.ProductName} <br/> ({item?.ProductCode}) </td> 
+                    <td>{item?.MarketSectorName}</td>
+                    <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td>
                     <td>{item?.LLY}</td>
                     <td>{item?.LY}</td>
                     <td>{item?.YTD}</td>

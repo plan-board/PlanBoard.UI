@@ -242,8 +242,8 @@ const DepoMonthWiseSalesReport = ({
       <td>{++index}</td>
       <td>{item?.zone_name}</td>
       <td>{item?.depot_name}</td>
-      <td>{item?.LY_Value?.toFixed(0)}</td>
       <td>{item?.LLY_Value?.toFixed(0)}</td>
+      <td>{item?.LY_Value?.toFixed(0)}</td>
       <td>{item?.CY_Value?.toFixed(0)} <hr className="hr0" />{item?.YTD_Value?.toFixed(0)}</td>
       <td>
         {item?.Apr_Month_Value_v1?.toFixed(0)}
@@ -391,38 +391,38 @@ const DepoMonthWiseSalesReport = ({
   const tableWithTotalRow = [...tableRows, totalRow];
 
   const handleExportClick = () => {
-    const arrObj = sortedData.map((element, index) => ({
+    const arrObj = monthWiseSalesData.map((element, index) => ({
       "S.No": index + 1,
       "Zone": element.zone_name,
       "Depot": element.depot_name,
-      "LLY": element.LLY_Value,
-      "LY": element.LY_Value,
-      "CY Plan": element.CY_Value,
-      "YTD": element.YTD_Value,
-      "Apr": element.Apr_Month_Value_v1,
-      "Apr Sale": element.Apr_Month_Sale,
-      "May": element.May_Month_Value_v1,
-      "May Sale": element.May_Month_Sale,
-      "Jun": element.Jun_Month_Value_v1,
-      "Jun Sale": element.Jun_Month_Sale,
-      "Jul": element.Jul_Month_Value_v1,
-      "Jul Sale": element.Jul_Month_Sale,
-      "Aug": element.Aug_Month_Value_v1,
-      "Aug Sale": element.Aug_Month_Sale,
-      "Sep": element.Sep_Month_Value_v1,
-      "Sep Sale": element.Sep_Month_Sale,
-      "Oct": element.Oct_Month_Value_v1,
-      "Oct Sale": element.Oct_Month_Sale,
-      "Nov": element.Nov_Month_Value_v1,
-      "Nov Sale": element.Nov_Month_Sale,
-      "Dec": element.Dec_Month_Value_v1,
-      "Dec Sale": element.Dec_Month_Sale,
-      "Jan": element.Jan_Month_Value_v1,
-      "Jan Sale": element.Feb_Month_Sale,
-      "Feb": element.Feb_Month_Value_v1,
-      "Feb Sale": element.Feb_Month_Sale,
-      "Mar": element.Mar_Month_Value_v1,
-      "Mar Sale": element.Mar_Month_Sale
+      "LLY": parseInt(element.LLY_Value).toFixed(0),
+      "LY": parseInt(element.LY_Value).toFixed(0),
+      "CY Plan": parseInt(element.CY_Value).toFixed(0),
+      "YTD": parseInt(element.YTD_Value).toFixed(0),
+      "Apr": parseInt(element.Apr_Month_Value_v1).toFixed(0),
+      "Apr Sale": parseInt(element.Apr_Month_Sale).toFixed(0),
+      "May": parseInt(element.May_Month_Value_v1).toFixed(0),
+      "May Sale": parseInt(element.May_Month_Sale).toFixed(0),
+      "Jun": parseInt(element.Jun_Month_Value_v1).toFixed(0),
+      "Jun Sale": parseInt(element.Jun_Month_Sale).toFixed(0),
+      "Jul": parseInt(element.Jul_Month_Value_v1).toFixed(0),
+      "Jul Sale": parseInt(element.Jul_Month_Sale).toFixed(0),
+      "Aug": parseInt(element.Aug_Month_Value_v1).toFixed(0),
+      "Aug Sale": parseInt(element.Aug_Month_Sale).toFixed(0),
+      "Sep": parseInt(element.Sep_Month_Value_v1).toFixed(0),
+      "Sep Sale": parseInt(element.Sep_Month_Sale).toFixed(0),
+      "Oct": parseInt(element.Oct_Month_Value_v1).toFixed(0),
+      "Oct Sale": parseInt(element.Oct_Month_Sale).toFixed(0),
+      "Nov": parseInt(element.Nov_Month_Value_v1).toFixed(0),
+      "Nov Sale": parseInt(element.Nov_Month_Sale).toFixed(0),
+      "Dec": parseInt(element.Dec_Month_Value_v1).toFixed(0),
+      "Dec Sale": parseInt(element.Dec_Month_Sale).toFixed(0),
+      "Jan": parseInt(element.Jan_Month_Value_v1).toFixed(0),
+      "Jan Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
+      "Feb":  parseInt(element.Feb_Month_Value_v1).toFixed(0),
+      "Feb Sale":  parseInt(element.Feb_Month_Sale).toFixed(0),
+      "Mar":  parseInt(element.Mar_Month_Value_v1).toFixed(0),
+      "Mar Sale": parseInt(element.Mar_Month_Sale).toFixed(0)
     }));
     console.log("-arrObj", arrObj)
     ExportExcel('Depot-Wise-Monthly-Plan-Achievement', arrObj)
@@ -430,7 +430,7 @@ const DepoMonthWiseSalesReport = ({
 
   return (
     <div id="mom-north" className="row">
-      {sortedData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+      {monthWiseSalesData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
 
       <div id="mom-bar-north" className="w-100">
         <div className="one-half mt-3">
