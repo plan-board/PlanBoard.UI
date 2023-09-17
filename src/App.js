@@ -24,6 +24,7 @@ import {
   Verifyemail,
   Verifyphone,
   Verifyprofile,
+  ChangePassword,
 } from "./profile";
 import {
   Dashboard,
@@ -108,14 +109,9 @@ function App() {
 
             <Route path="/register" element={<Register />} />
             <Route
-              path="/forgotpassword"
-              element={<PrivateRoute element={<Forgotpassword />} />}
-            />
-            {/* <Route
-              path="/forgotpassword"
-              element={isAuth ? <Forgotpassword /> : <Navigate to="/login" />}
-            /> */}
-
+              path="/forgot-password"
+              element={<Forgotpassword />}
+            /> 
             <Route
               path="/account"
               element={<PrivateRoute element={<Account />} />}
@@ -235,6 +231,11 @@ function App() {
                 isAuth ? <About isAuth={isAuth} /> : <Navigate to="/login" />
               }
             />
+            <Route
+              path="/change-password"
+              element={<PrivateRoute element={<ChangePassword />} />}
+            />
+            
           </Routes>
         </div>
       </BrowserRouter>

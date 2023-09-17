@@ -13,6 +13,7 @@ import { useParams } from "react-router";
 import TerritoryMonthSale from "../components/TerritoryMonthSale";
 import CustomPopup from "../CustomPopup";
 import DelearActivityPlan from "./DelearActivityPlan";
+import AllFigureText from "../components/AllFigureText";
 
 const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
@@ -62,7 +63,7 @@ const Territory = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited</span>
+        <span className="main-title">Shalimar Paints Limited <AllFigureText /></span>
       </div>
       <div className="card-box lightgreen">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||

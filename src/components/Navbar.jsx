@@ -38,15 +38,7 @@ const Navbar = ({ isAuth }) => {
           >
             {" "}
             <img src={Exit} className="exit_icon" />
-          </button>
-          {/* <button className=" w3-right w3-button w3-bar-item w3-hover-none">
-            {" "}
-            <i className="fa fa-bell"></i>
-          </button> */}
-
-          {/* <button className=" w3-right w3-button w3-bar-item w3-hover-none">
-        
-          </button> */}
+          </button> 
           <button className=" w3-right w3-button w3-bar-item">
             <img src={Profile} className="w3-circle avatar" />{" "}
             {AuthData?.Data[0].EmployeeName} ({AuthData?.Data[0].EmployeeTpye})

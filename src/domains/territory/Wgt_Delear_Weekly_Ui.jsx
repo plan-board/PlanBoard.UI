@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
+import ExportExcel from "../ExportExcel";
 
 const itemsPerPage = 10;
 
@@ -134,10 +135,26 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
     setCurrentPage(newPage);
   };
 
+  const handleExportClick = () => {
+    const arrObj = weekdata.map((element, index) => ({
+      "S.No": index + 1,
+      "Dealer Name": element.dealer_name,
+      "Dealer Code": element.dealer_code,
+      "Sales": element.month_value, 
+      "Week 1": element.week1,
+      "Week 2": element.week2,
+      "Week 3": element.week3,
+      "Week 4": element.week4
+    }));
+    console.log("-arrObj", arrObj)
+    ExportExcel('Dealer-Week-Wise-Monthly-Plan-Achievement', arrObj)
+  };
   return (
     <>
       <div className="w-100"> 
         <div className="tbl-container">
+        {weekdata?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+
           <div className="row w-100 mt-3">
               <div className="one-half" >
                 <input className="w3-margin-bottom w3-input w3-border "
@@ -155,8 +172,8 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
                 <th colSpan={1} rowSpan={2} style={{ width: "4%" }}> S. NO </th>
                 <th style={{ width: "16%" }} rowSpan={2} onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
                 <th style={{ width: "10%" }} rowSpan={2} onClick={() => handleSort('DelearCode')}>Delear Code  {sortField === 'DelearCode' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                <th colSpan={4}> {month} </th>
-                <th colspan={12}> Week </th>
+                <th colSpan={16}> {month} </th>
+                {/* <th colspan={12}> Week </th> */}
               </tr>
               <tr>
                 <th className="bg-red" colSpan={1}> Sales </th>

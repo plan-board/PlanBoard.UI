@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import CommonTopSales from "../components/CommonTopSales";
 import ZoneDropDown from "../components/ZoneDropDown";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
+import AllFigureText from "../components/AllFigureText";
 
 const Zone = () => {
   const { AuthData } = useSelector((state) => state.auth);
@@ -24,16 +25,13 @@ const Zone = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited</span>
+        <span className="main-title">Shalimar Paints Limited <AllFigureText /></span>
       </div>
       <div className="card-box px-0 lightgreen">
         <div className="row justify-content-between w-100 align-items-center m-0">
           <div className="one-fourth">
             <ZoneDropDown selectedZone={selectedZone} onValueChange={handleSelectionChange} />
-          </div>
-          <div className="one-fourth">
-            <span className="w3-small w3-text-gray w3-right" > * All figures are in Lacs (INR)  </span>
-          </div>
+          </div> 
         </div>
       </div>
 

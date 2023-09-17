@@ -5,6 +5,7 @@ import LoadingPlaceholder from "../../../components/LoadingPlaceholder";
 import axiosInstance from "./../../../auth/api";
 import { SHOW_TOAST } from "../../../store/constant/types";
 import DataTable from "react-data-table-component";
+import ExportExcel from "../../ExportExcel";
 
 const FocusSectorMaster = () => {
   const dispatch = useDispatch();
@@ -260,6 +261,19 @@ const FocusSectorMaster = () => {
     />
   );
 
+  const handleExportClick = () => {
+    const arrObj = sectorMaster.map((element, index) => ({
+      "S.No": index + 1,
+      "FY": element.FYName,
+      "Month": element.Month,
+      "Market Sector Name": element.MarketSectorName,
+      "Product Name": element.ProductName,
+      "Product Code": element.ProductCode
+    }));
+    console.log("-arrObj", arrObj)
+    ExportExcel('Monthly-Focus-Product', arrObj)
+  };
+
   return (
     <>
       <h5>Manage Monthly Focus Sectors </h5>
@@ -329,6 +343,8 @@ const FocusSectorMaster = () => {
         </div>
       </div>
       <div className="tbl-container">
+      {sectorMaster?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+
         <DataTable
           columns={columns}
           data={filteredItems}

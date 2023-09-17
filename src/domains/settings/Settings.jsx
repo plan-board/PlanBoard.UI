@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import FocusSectorMaster from "./Components/FocusSectorMaster";
+import AllFigureText from "../components/AllFigureText";
 
 
 const Settings = () => {
@@ -12,7 +13,7 @@ const Settings = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited</span>
+        <span className="main-title">Shalimar Paints Limited <AllFigureText /></span>
       </div>
       <div class="card-box lightgreen">
         <div className="w3-bar tab-container">

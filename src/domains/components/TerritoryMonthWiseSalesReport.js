@@ -4,6 +4,7 @@ import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
+import { GetPercent, fNWCommas, getMoths } from "../../utils/utils";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -236,148 +237,109 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <td>{++index}</td>
       <td>{item?.depot_name}</td>
       <td>{item?.territory_name}</td>
-      <td>{item?.LY_Value?.toFixed(0)}</td>
-      <td>{item?.LLY_Value?.toFixed(0)}</td>
-      <td>{item?.CY_Value?.toFixed(0)} <hr className="hr0" />{item?.YTD_Value?.toFixed(0)}</td>
-      <td>
-        {item?.Apr_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Apr_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.May_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.May_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Jun_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Jun_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Jul_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Jul_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Aug_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Aug_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Sep_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Sep_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Oct_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Oct_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Nov_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Nov_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Dec_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Dec_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Jan_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Jan_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Feb_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Feb_Month_Sale?.toFixed(0)}
-      </td>
-      <td>
-        {item?.Mar_Month_Value_v1?.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Mar_Month_Sale?.toFixed(0)}
-      </td>
+      <td>{fNWCommas(item?.LY_Value)}</td>
+      <td>{fNWCommas(item?.LLY_Value)}</td>
+      <td>{fNWCommas(item?.CY_Value)} <hr className="hr0" />{fNWCommas(item?.YTD_Value)}</td>
+      {getMoths().map((month) => (
+        <td key={month}>
+          {fNWCommas(item[`${month}_Month_Value_v1`])}
+          <hr className="hr0" />
+          {fNWCommas(item[`${month}_Month_Sale`])}
+          {GetPercent(item[`${month}_Month_Sale`], item[`${month}_Month_Value_v1`])}
+        </td>
+      ))}
     </tr>
   ));
 
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
-    <tr key="total" className="colrdrow">
+    <tr key="total" className="totalRow">
       <td colSpan={3}>
         Total
       </td>
       <td>
-        {totalLLYValue}
+        {fNWCommas(totalLLYValue)}
       </td>
       <td>
-        {totalLYValue}
+        {fNWCommas(totalLYValue)}
       </td>
       <td>
-        {totalCYValue}
+        {fNWCommas(totalCYValue)}
         <hr className="hr0" />
-        {totalYTDValue}
+        {fNWCommas(totalYTDValue)}
+        {GetPercent(totalYTDValue, totalCYValue)}
       </td>
       <td>
-        {totalAprValue}
+        {fNWCommas(totalAprValue)}
         <hr className="hr0" />
-        {totalAprValue_v1}
+        {fNWCommas(totalAprValue_v1)}
+        {GetPercent(totalAprValue_v1, totalAprValue)}
       </td>
       <td>
-        {totalMayValue}
+        {fNWCommas(totalMayValue)}
         <hr className="hr0" />
-        {totalMayValue_v1}
+        {fNWCommas(totalMayValue_v1)}
+        {GetPercent(totalMayValue_v1, totalMayValue)}
       </td>
       <td>
-        {totalJunValue}
+        {fNWCommas(totalJunValue)}
         <hr className="hr0" />
-        {totalJunValue_v1}
+        {fNWCommas(totalJunValue_v1)}
+        {GetPercent(totalJunValue_v1, totalJunValue)}
       </td>
       <td>
-        {totalJulValue}
+        {fNWCommas(totalJulValue)}
         <hr className="hr0" />
-        {totalJulValue_v1}
+        {fNWCommas(totalJulValue_v1)}
+        {GetPercent(totalJulValue_v1, totalJulValue)}
       </td>
       <td>
-        {totalAugValue}
+        {fNWCommas(totalAugValue)}
         <hr className="hr0" />
-        {totalAugValue_v1}
+        {fNWCommas(totalAugValue_v1)}
+        {GetPercent(totalAugValue_v1, totalAugValue)}
       </td>
       <td>
-        {totalSepValue}
+        {fNWCommas(totalSepValue)}
         <hr className="hr0" />
-        {totalSepValue_v1}
+        {fNWCommas(totalSepValue_v1)}
+        {GetPercent(totalSepValue_v1, totalSepValue)}
       </td>
       <td>
-        {totalOctValue}
+        {fNWCommas(totalOctValue)}
         <hr className="hr0" />
-        {totalOctValue_v1}
+        {fNWCommas(totalOctValue_v1)}
+        {GetPercent(totalOctValue_v1, totalOctValue)}
       </td>
       <td>
-        {totalNovValue}
+        {fNWCommas(totalNovValue)}
         <hr className="hr0" />
-        {totalNovValue_v1}
+        {fNWCommas(totalNovValue_v1)}
+        {GetPercent(totalNovValue_v1, totalNovValue)}
       </td>
       <td>
-        {totalDecValue}
+        {fNWCommas(totalDecValue)}
         <hr className="hr0" />
-        {totalDecValue_v1}
+        {fNWCommas(totalDecValue_v1)}
+        {GetPercent(totalDecValue_v1, totalDecValue)}
       </td>
       <td>
-        {totalJanValue}
+        {fNWCommas(totalJanValue)}
         <hr className="hr0" />
-        {totalJanValue_v1}
+        {fNWCommas(totalJanValue_v1)}
+        {GetPercent(totalJanValue_v1, totalJanValue)}
       </td>
       <td>
-        {totalFebValue}
+        {fNWCommas(totalFebValue)}
         <hr className="hr0" />
-        {totalFebValue_v1}
+        {fNWCommas(totalFebValue_v1)}
+        {GetPercent(totalFebValue_v1, totalFebValue)}
       </td>
       <td>
-        {totalMarValue}
+        {fNWCommas(totalMarValue)}
         <hr className="hr0" />
-        {totalMarValue_v1}
+        {fNWCommas(totalMarValue_v1)}
+        {GetPercent(totalMarValue_v1, totalMarValue)}
       </td>
     </tr>
   );

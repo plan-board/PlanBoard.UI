@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
+import { fNWCommas } from "../../utils/utils";
 
 const TerritoryMonthSale = ({ selectedTerritory }) => {
     const dispatch = useDispatch();
@@ -76,18 +77,18 @@ const TerritoryMonthSale = ({ selectedTerritory }) => {
                                 territoryMonthPlan.map((item, index) => (
                                     <tr key={index} >
                                         <td className="h3">{item?.territory_name}</td>
-                                        <td className="">{item?.Apr_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Apr_Month_Sale.toFixed(0)}</td>
-                                        <td className="">{item?.May_Month_Value_v1.toFixed(0)}  <hr className="hr0" /> {item?.May_Month_Sale.toFixed(0)}</td>
-                                        <td className="">{item?.Jun_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Jun_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Jul_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Jul_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Aug_Month_Value_v1.toFixed(0)} <hr className="hr0" />{item?.Aug_Month_Sale.toFixed(0)}  </td>
-                                        <td className="">{item?.Sep_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Sep_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Oct_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Oct_Month_Sale.toFixed(0)}</td>
-                                        <td className="">{item?.Nov_Month_Value_v1.toFixed(0)} <hr className="hr0" />{item?.Nov_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Dec_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Dec_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Jan_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Jan_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Feb_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Feb_Month_Sale.toFixed(0)} </td>
-                                        <td className="">{item?.Mar_Month_Value_v1.toFixed(0)} <hr className="hr0" /> {item?.Mar_Month_Sale.toFixed(0)} </td>
+                                        <td className="">{fNWCommas(item?.Apr_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Apr_Month_Sale)}</td>
+                                        <td className="">{fNWCommas(item?.May_Month_Value_v1)}  <hr className="hr0" /> {fNWCommas(item?.May_Month_Sale)}</td>
+                                        <td className="">{fNWCommas(item?.Jun_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Jun_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Jul_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Jul_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Aug_Month_Value_v1)} <hr className="hr0" />{fNWCommas(item?.Aug_Month_Sale)}  </td>
+                                        <td className="">{fNWCommas(item?.Sep_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Sep_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Oct_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Oct_Month_Sale)}</td>
+                                        <td className="">{fNWCommas(item?.Nov_Month_Value_v1)} <hr className="hr0" />{fNWCommas(item?.Nov_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Dec_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Dec_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Jan_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Jan_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Feb_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Feb_Month_Sale)} </td>
+                                        <td className="">{fNWCommas(item?.Mar_Month_Value_v1)} <hr className="hr0" /> {fNWCommas(item?.Mar_Month_Sale)} </td>
                                     </tr>
 
                                 ))

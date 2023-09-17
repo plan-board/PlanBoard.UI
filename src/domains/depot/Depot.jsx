@@ -6,6 +6,7 @@ import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import ZoneSelectionBox from "../components/ZoneSelectionBox";
 import DepoSelectionBox from "../components/DepoSelectionBox";
+import AllFigureText from "../components/AllFigureText";
 
 const Depot = () => {
   const [toggleState, setToggleState] = useState(1);
@@ -46,7 +47,7 @@ const Depot = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited</span>
+        <span className="main-title">Shalimar Paints Limited <AllFigureText /></span>
       </div>
       <div className="card-box lightgreen">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||

@@ -2168,3 +2168,18 @@ table.table-striped tbody tr:nth-child(odd){
 .c-pointer{
   cursor: pointer;
 }
+
+.allFigr{
+  font-size: 20px;
+}
+
+.totalRow{
+  background: #b9c8e5 !important;
+}
+
+.green-percent{
+  color: rgb(17, 109, 17);
+}
+.red-percent{
+  color: rgb(192, 19, 19);
+}
