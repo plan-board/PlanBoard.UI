@@ -312,7 +312,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
 
     // Add a new row for total CY_Value and YTD_Value
     const totalRow = (
-        <tr key="total" className="colrdrow">
+        <tr key="total" className="totalRow">
             <td colSpan={3}>
                 Total
             </td>

@@ -5,6 +5,7 @@ import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
+import { GetPercent, fNWCommas, getMoths } from "../../utils/utils";
 
 const NationalZoneMonthSale = ({ selectedZone }) => {
   const dispatch = useDispatch();
@@ -180,153 +181,111 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
     0
   );
 
+
+
   const tableRows = sortedData.map((item, index) => (
     <tr key={index}>
       <td className="">{++index}</td>
       <td className="">{item?.zone_name}</td>
-      <td className="">{item?.LY_Value.toFixed(0)}</td>
+      <td className="">{fNWCommas(item?.LY_Value)}</td>
       <td className="">
-        {item?.CY_Value.toFixed(0)} <hr className="hr0" />
-        {item?.YTD_Value.toFixed(0)}
-        <span className="w3-text-gray ">
-          ({((item?.YTD_Value / item?.CY_Value) * 100)?.toFixed(0)}%)
-        </span>
+        {fNWCommas(item?.CY_Value)} <hr className="hr0" />
+        {fNWCommas(item?.YTD_Value)}
+        {GetPercent(item?.YTD_Value, item?.CY_Value)}
       </td>
-      <td className="">
-        {item?.Apr_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Apr_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.May_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.May_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Jun_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Jun_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Jul_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Jul_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Aug_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Aug_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Sep_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Sep_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Oct_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Oct_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Nov_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Nov_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Dec_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Dec_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Jan_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Jan_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Feb_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Feb_Month_Sale.toFixed(0)}
-      </td>
-      <td className="">
-        {item?.Mar_Month_Value_v1.toFixed(0)}
-        <hr className="hr0" />
-        {item?.Mar_Month_Sale.toFixed(0)}
-      </td>
+      {getMoths().map((month) => (
+        <td key={month}>
+          {fNWCommas(item[`${month}_Month_Value_v1`])}
+          <hr className="hr0" />
+          {fNWCommas(item[`${month}_Month_Sale`])}
+          {GetPercent(item[`${month}_Month_Sale`], item[`${month}_Month_Value_v1`])}
+        </td>
+      ))}
     </tr>
   ));
 
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
-    <tr key="total" className="colrdrow">
+    <tr key="total" className="totalRow">
       <td className="" colSpan={2}>
         Total
       </td>
-      <td className="">{totalLYValue}</td>
+      <td className="">{fNWCommas(totalLYValue)}</td>
       <td className="">
         {totalCYValue} <hr className="hr0" />
         {totalYTDValue}
-        <span className="w3-text-gray ">
-          ({((totalYTDValue / totalCYValue) * 100)}%)
-        </span>
+        {GetPercent(totalYTDValue, totalCYValue)}
       </td>
       <td className="">
         {totalAprValue} <hr className="hr0" />
         {totalAprValue_v1}
+        {GetPercent(totalAprValue_v1, totalAprValue)}
       </td>
       <td className="">
         {totalMayValue}
         <hr className="hr0" />
         {totalMayValue_v1}
+        {GetPercent(totalMayValue_v1, totalMayValue)}
       </td>
       <td className="">
         {totalJunValue}
         <hr className="hr0" />
         {totalJunValue_v1}
+        {GetPercent(totalJunValue_v1, totalJunValue)}
       </td>
       <td className="">
         {totalJulValue}
         <hr className="hr0" />
         {totalJulValue_v1}
+        {GetPercent(totalJulValue_v1, totalJulValue)}
       </td>
       <td className="">
         {totalAugValue}
         <hr className="hr0" />
         {totalAugValue_v1}
+        {GetPercent(totalAugValue_v1, totalAugValue)}
       </td>
       <td className="">
         {totalSepValue}
         <hr className="hr0" />
         {totalSepValue_v1}
+        {GetPercent(totalSepValue_v1, totalSepValue)}
       </td>
       <td className="">
         {totalOctValue}
         <hr className="hr0" />
         {totalOctValue_v1}
+        {GetPercent(totalOctValue_v1, totalOctValue)}
       </td>
       <td className="">
         {totalNovValue}
         <hr className="hr0" />
         {totalNovValue_v1}
+        {GetPercent(totalNovValue_v1, totalNovValue)}
       </td>
       <td className="">
         {totalDecValue}
         <hr className="hr0" />
         {totalDecValue_v1}
+        {GetPercent(totalDecValue_v1, totalDecValue)}
       </td>
       <td className="">
         {totalJanValue}
         <hr className="hr0" />
         {totalJanValue_v1}
+        {GetPercent(totalJanValue_v1, totalJanValue)}
       </td>
       <td className="">
         {totalFebValue}
         <hr className="hr0" />
         {totalFebValue_v1}
+        {GetPercent(totalFebValue_v1, totalFebValue)}
       </td>
       <td className="">
         {totalMarValue}
         <hr className="hr0" />
         {totalMarValue_v1}
+        {GetPercent(totalMarValue_v1, totalMarValue)}
       </td>
     </tr>
   );
@@ -361,9 +320,9 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       "Dec Sale": parseInt(element.Dec_Month_Sale).toFixed(0),
       "Jan": parseInt(element.Jan_Month_Value_v1).toFixed(0),
       "Jan Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
-      "Feb":  parseInt(element.Feb_Month_Value_v1).toFixed(0),
-      "Feb Sale":  parseInt(element.Feb_Month_Sale).toFixed(0),
-      "Mar":  parseInt(element.Mar_Month_Value_v1).toFixed(0),
+      "Feb": parseInt(element.Feb_Month_Value_v1).toFixed(0),
+      "Feb Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
+      "Mar": parseInt(element.Mar_Month_Value_v1).toFixed(0),
       "Mar Sale": parseInt(element.Mar_Month_Sale).toFixed(0)
     }));
     console.log("-arrObj", arrObj)

@@ -313,6 +313,9 @@ const Wgt_Delear_Ui = ({ data }) => {
                 name={`${item.id}_sales`}
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
+              <br />
+              <span onClick={() => getMonthTarget(item)}>
+                            <i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></span>
             </td>
             <td>
               <input
