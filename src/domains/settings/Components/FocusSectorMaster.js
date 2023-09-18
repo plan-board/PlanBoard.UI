@@ -14,11 +14,11 @@ const FocusSectorMaster = () => {
   const [isLoading, setLoading] = useState(false);
   const [monthId, setMonth] = useState(0);
   const [fyId, setFYear] = useState(0);
-  const [mSectorId, setMSector] = useState(0); 
+  const [mSectorId, setMSector] = useState(0);
 
-  const [fyList, setFYlist] = useState([]); 
+  const [fyList, setFYlist] = useState([]);
   const [mSectorList, setMSectorList] = useState([]);
-  const [sectorMaster, setSectorMaster] = useState([]); 
+  const [sectorMaster, setSectorMaster] = useState([]);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(0);
 
   const payload = {
@@ -101,7 +101,7 @@ const FocusSectorMaster = () => {
     fetchFY();
     fetchMSList();
   }, []);
-  
+
   const fyDropdown = () => {
     return fyList.map((item, index) => (
       <option key={item?.fy_id} value={item?.fy_id}>
@@ -117,7 +117,7 @@ const FocusSectorMaster = () => {
       </option>
     ));
   };
- 
+
   const handleMonthChange = (event) => {
     setMonth(parseInt(event.target.value));
   };
@@ -137,7 +137,7 @@ const FocusSectorMaster = () => {
         {
           FYId: fyId,
           Month: monthId,
-          ZoneId:parseInt(selectedZoneDrop),
+          ZoneId: parseInt(selectedZoneDrop),
           ProductMarketSectorId: parseInt(mSectorId)
         },
       ],
@@ -178,12 +178,12 @@ const FocusSectorMaster = () => {
       name: "Zone",
       selector: (row) => row.ZoneName,
       sortable: true,
-    }, 
+    },
     {
       name: "Market Sector",
       selector: (row) => row.MarketSectorName,
       sortable: true,
-    }, 
+    },
   ];
   const [filterText, setFilterText] = useState('');
   const filteredItems = sectorMaster.filter(
@@ -225,7 +225,7 @@ const FocusSectorMaster = () => {
       "FY": element.FYName,
       "Month": element.Month,
       "Zone": element.ZoneName,
-      "Market Sector Name": element.MarketSectorName 
+      "Market Sector Name": element.MarketSectorName
     }));
     console.log("-arrObj", arrObj)
     ExportExcel('Monthly-Focus-Product', arrObj)
@@ -276,19 +276,19 @@ const FocusSectorMaster = () => {
                 </select>
               </td>
               <td>
-              <ZoneDropDown
-                selectedZone={selectedZoneDrop}
-                onValueChange={handleSelectionChangeDrop}
-                asDropDown={true}
-              />
+                <ZoneDropDown
+                  selectedZone={selectedZoneDrop}
+                  onValueChange={handleSelectionChangeDrop}
+                  asDropDown={true}
+                />
               </td>
               <td>
                 <select className="form-control" value={mSectorId} onChange={handleSectorChange}>
                   <option value={0}>Select Market Sector</option>
                   {marketSecDropdown()}
                 </select>
-              </td> 
-              <td style={{width:"30px"}}>
+              </td>
+              <td style={{ width: "30px" }}>
                 <button type="button" className="btn btn-primary"
                   disabled={mSectorId && monthId && fyId && selectedZoneDrop ? false : true}
                   onClick={() => handleSetFocusProduct()}>
@@ -305,7 +305,7 @@ const FocusSectorMaster = () => {
         </div>
       </div>
       <div className="tbl-container">
-      {sectorMaster?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+        {sectorMaster?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
 
         <DataTable
           columns={columns}

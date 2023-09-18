@@ -393,9 +393,8 @@ const Wgt_Delear_Ui = ({ data }) => {
   return (
     <>
       <div className="row w-100 mt-3">
-        {dealerlist?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
-
-        <div className="one-half">
+        <div className="one-half">{dealerlist?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}>  Export</button></div>) : null}
+          <br />
           <input className="w3-margin-bottom w3-input w3-border "
             type="text"
             placeholder="Filter By Dealer Name, code, category, LY and YTD "
@@ -484,12 +483,12 @@ const Wgt_Delear_Ui = ({ data }) => {
             <tr className="w3-yellow">
               <th style={{ width: "2%" }}>#</th>
               <th style={{ width: "10%" }}>Focus Product Sector </th>
-              <th style={{ width: "10%" }}>Product Name </th>
+              {/* <th style={{ width: "10%" }}>Product Name </th> */}
               <th style={{ width: "5%" }}>LLY</th>
               <th style={{ width: "5%" }}>LY</th>
               <th style={{ width: "5%" }}>YTD</th>
               <th style={{ width: "5%" }}> 6 Mo. Avg </th>
-              <th style={{ width: "5%" }}>LY (Aug) Vol.</th>
+              {/* <th style={{ width: "5%" }}>LY (Aug) Vol.</th> */}
               <th style={{ width: "5%" }}>LY (Aug) Val.</th>
               <th style={{ width: "5%" }}>Volume (Ltrs.) </th>
               <th style={{ width: "5%" }}>Value (Lacs)</th>
@@ -504,12 +503,12 @@ const Wgt_Delear_Ui = ({ data }) => {
                   <tr className="" key={index}>
                     <td>{index + 1}</td>
                     <td>{item?.MarketSectorName}</td>
-                    <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td>
+                    {/* <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td> */}
                     <td>{item?.LLY}</td>
                     <td>{item?.LY}</td>
                     <td>{item?.YTD}</td>
                     <td>{item?.Last6MonthAvgSales}</td>
-                    <td>{item?.SameMonthLY}</td>
+                    {/* <td>{item?.SameMonthLY}</td> */}
                     <td>{item?.SameMonthLY}</td>
                     <td>
 
@@ -522,7 +521,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 ))
               )}
               <tr>
-                <td colSpan={9}></td>
+                <td colSpan={8}></td>
                 <td><input type="text" value={sumValue} disabled={true} className="inp40 text-center" /></td>
               </tr>
             </>

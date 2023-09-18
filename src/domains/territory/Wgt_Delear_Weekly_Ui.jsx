@@ -140,7 +140,7 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
       "S.No": index + 1,
       "Dealer Name": element.dealer_name,
       "Dealer Code": element.dealer_code,
-      "Sales": element.month_value, 
+      "Sales": element.month_value,
       "Week 1": element.week1,
       "Week 2": element.week2,
       "Week 3": element.week3,
@@ -151,20 +151,20 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
   };
   return (
     <>
-      <div className="w-100"> 
+      <div className="w-100">
         <div className="tbl-container">
-        {weekdata?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+          {weekdata?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
 
           <div className="row w-100 mt-3">
-              <div className="one-half" >
-                <input className="w3-margin-bottom w3-input w3-border "
-                  type="text"
-                  placeholder="Filter By Dealer Name or code "
-                  aria-label="Search Input"
-                  value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
-                />
-              </div>
+            <div className="one-half" >
+              <input className="w3-margin-bottom w3-input w3-border "
+                type="text"
+                placeholder="Filter By Dealer Name or code "
+                aria-label="Search Input"
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
+              />
+            </div>
           </div>
           <table className="table-bordered table-striped">
             <thead>

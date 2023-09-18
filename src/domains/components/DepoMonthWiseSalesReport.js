@@ -392,7 +392,7 @@ const DepoMonthWiseSalesReport = ({
 
   return (
     <div id="mom-north" className="row">
-      {monthWiseSalesData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+      {monthWiseSalesData?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}>  Export</button></div>) : null}
 
       <div id="mom-bar-north" className="w-100">
         <div className="one-half mt-3">
