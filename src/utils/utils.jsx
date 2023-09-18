@@ -1,3 +1,7 @@
+const months = [
+    "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"
+];
+
 export function fNWCommas(number) {
     // Round down the number to remove decimal values
     const integerPart = Math.trunc(number);
@@ -21,16 +25,30 @@ export function GetPercent(firstVal, secondVal) {
 
     const perVal = (firstVal / secondVal) * 100;
     return (
-        <span className={`${perVal > 15 ? 'green-percent' : 'red-percent'}`}>
+        <span className={`${perVal > 50 ? 'green-percent' : 'red-percent'}`}>
             ({perVal.toFixed(0)}%)
         </span>
     )
     // {((totalYTDValue / totalCYValue) * 100).toFixed(0)}%
 }
 
+
 export function getMoths() {
-    const months = [
-        "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"
-    ];
     return months;
 }
+
+export function formatDateTimes(datetimestamp) {
+    const date = new Date(datetimestamp);
+  
+    // Extract day, month, and year components
+    const day = date.getDate();
+    const month = date.getMonth(); // Months are 0-based, so add 1
+    const monthName = months[month];
+    const year = date.getFullYear();
+  
+    const formattedDay = day < 10 ? `0${day}` : day;
+  
+    const formattedDate = `${formattedDay}-${monthName}-${year}`;
+  
+    return formattedDate;
+  }
