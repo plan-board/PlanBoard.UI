@@ -4,15 +4,16 @@ import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import CustomPopup from "../CustomPopup";
 import ExportExcel from "../ExportExcel";
+import { formatDateTimes } from "../../utils/utils";
 
 const itemsPerPage = 10;
 const monthArr = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
 const date = new Date();
 const cMName = date.toLocaleString('default', { month: 'long' });
-const mStartName = cMName.substring(0,3);
+const mStartName = cMName.substring(0, 3);
 
 const Wgt_Delear_Ui = ({ data }) => {
-  console.log("-cMName",cMName)
+  console.log("-cMName", cMName)
   const dispatch = useDispatch();
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
@@ -261,11 +262,15 @@ const Wgt_Delear_Ui = ({ data }) => {
       "S.No": index + 1,
       "Dealer Name": element.dealer_name,
       "Dealer Code": element.dealer_code,
+      "Creation Date": formatDateTimes(element.customer_creationdate),
       "Category": element.dealer_category,
       "LY": element.LY_Value,
       "CY Plan": element.CY_Value,
       "YTD": element.YTD_Value,
       "6 month": 0,
+      "OS": element.OS,
+      "OD": element.OD,
+      "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
       "Apr": element.Apr_Month_Value_v1,
       "Apr Sale": element.Apr_Month_Sale,
       "May": element.May_Month_Value_v1,
@@ -295,9 +300,9 @@ const Wgt_Delear_Ui = ({ data }) => {
     ExportExcel('ssDealer-Wise-Monthly-Plan-Achievement', arrObj)
   };
 
-   
+
   const generateTableRows = (item) => {
-    const headers = []; 
+    const headers = [];
     for (let i = 0; i < monthArr.length; i++) {
       const monName = monthArr[i];
       if (monName == mStartName) {
@@ -305,27 +310,30 @@ const Wgt_Delear_Ui = ({ data }) => {
           <Fragment key={`header_${monName}`}>
             <td>{item?.OS}</td>
             <td>{item?.OD}</td>
+            <td>{item?.creepage_value}</td>
             <td>
+              {item[`${monName}_Month_Value`]}
+              <br />
               <input
-                type="text"
+                type="number"
                 className="inp40 text-center"
-                defaultValue={item[`${monName}_Month_Value`]}
+                defaultValue={item[`${monName}_Month_Value_v1`]}
                 name={`${item.id}_sales`}
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
               <br />
               <span onClick={() => getMonthTarget(item)}>
-                            <i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></span>
+                <i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></span>
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 className="inp40 text-center"
-                defaultValue={item[`${monName}_Month_Value_v1`]}
                 name={`${item.id}_coll`}
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
             </td>
+            <td>{item?.LYYTDvsCYYTD}</td>
           </Fragment>
         );
         break;
@@ -351,6 +359,7 @@ const Wgt_Delear_Ui = ({ data }) => {
         <td>{index + 1}</td>
         <td className="">{item.dealer_name}</td>
         <td className="">{item.dealer_code}</td>
+        <td className="">{formatDateTimes(item.customer_creationdate)}</td>
         <td className="">{item.dealer_category}</td>
         <td className="">{item.LY_Value}</td>
         <td className="">{item.CY_Value} <hr className="hr0" /> {item.YTD_Value}</td>
@@ -362,12 +371,12 @@ const Wgt_Delear_Ui = ({ data }) => {
 
   const generateTableHeaders = () => {
     const headers = [];
-     
+
     for (let i = 0; i < monthArr.length; i++) {
       const monName = monthArr[i];
       if (monName === mStartName) {
         headers.push(<Fragment key={`header_${monName}`}>
-          <td colSpan={4} key={`header_${monName}`}>{monName}</td></Fragment>
+          <td colSpan={6} key={`header_${monName}`}>{monName}</td></Fragment>
         );
         break;
       } else {
@@ -400,33 +409,35 @@ const Wgt_Delear_Ui = ({ data }) => {
         <table className="table-bordered table-striped">
           <thead>
             <tr>
-              
+
               <th className="" rowSpan={2}> S.No </th>
               <th style={{ width: "15%" }} onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th style={{ width: "15%" }} onClick={() => handleSort('DelearCode')}>Delear Code  {sortField === 'DelearCode' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+              <th > Creation Date</th>
               <th onClick={() => handleSort('Category')}>Category  {sortField === 'Category' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('YTD')}>CY / YTD  {sortField === 'YTD' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th className="" rowSpan={2}> 6 month </th>
               {generateTableHeaders()}
-               
+
             </tr>
           </thead>
           <tbody>
             <tr>
               {/* here colSpan should according to month count */}
-              <th className="p-2 bg-blue" colSpan={12}> </th>
+              <th className="p-2 bg-blue" colSpan={13}> </th>
               <th className="p-2 bg-green text-dark"> OS </th>
               <th className="p-2 bg-green text-dark"> OD </th>
+              <th className="p-2 bg-green text-dark"> Cree Page </th>
               <th className="p-2 bg-green text-dark"> Sales </th>
               <th className="p-2 bg-green text-dark"> Collection </th>
-              {/* <th className="p-2 bg-blue" colSpan={2}>  </th> */}
+              <th className="p-2 bg-green text-dark"> LYYTD vs CYYTD </th>
             </tr>
             {/* Render tale rows */}
             {filteredItems?.map((item, index) => {
               return renderTableRow(item, index);
             })}
-             
+
           </tbody>
         </table>
       </div>

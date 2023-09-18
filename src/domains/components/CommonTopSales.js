@@ -126,7 +126,7 @@ const CommonTopSales = ({
           <span className=" "> {fNWCommas(summaryData[0]?.summ_cy_sale_value)} </span>
           <i className="w3-text-gray">
           
-            ( {((summaryData[0]?.summ_cy_plan_value_v1 / summaryData[0]?.summ_cy_sale_value) * 100)?.toFixed(0) } %)
+            ( {((summaryData[0]?.summ_cy_sale_value / summaryData[0]?.summ_cy_plan_value_v1) * 100)?.toFixed(2) } %)
           </i>
         </div>
 

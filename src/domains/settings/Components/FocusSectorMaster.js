@@ -6,6 +6,7 @@ import axiosInstance from "./../../../auth/api";
 import { SHOW_TOAST } from "../../../store/constant/types";
 import DataTable from "react-data-table-component";
 import ExportExcel from "../../ExportExcel";
+import ZoneDropDown from "../../components/ZoneDropDown";
 
 const FocusSectorMaster = () => {
   const dispatch = useDispatch();
@@ -13,14 +14,12 @@ const FocusSectorMaster = () => {
   const [isLoading, setLoading] = useState(false);
   const [monthId, setMonth] = useState(0);
   const [fyId, setFYear] = useState(0);
-  const [mSectorId, setMSector] = useState(0);
-  const [productId, setProductId] = useState(0);
+  const [mSectorId, setMSector] = useState(0); 
 
-  const [fyList, setFYlist] = useState([]);
-  const [monthList, setMonthList] = useState([]);
+  const [fyList, setFYlist] = useState([]); 
   const [mSectorList, setMSectorList] = useState([]);
-  const [sectorMaster, setSectorMaster] = useState([]);
-  const [productsList, setProductDropdown] = useState([]);
+  const [sectorMaster, setSectorMaster] = useState([]); 
+  const [selectedZoneDrop, setSelectedZoneDrop] = useState(0);
 
   const payload = {
     Token: localStorage.getItem("access_token"),
@@ -102,31 +101,7 @@ const FocusSectorMaster = () => {
     fetchFY();
     fetchMSList();
   }, []);
-
-  const fetchProductList = async () => {
-    setLoading(true);
-    try {
-      const payload = {
-        Token: localStorage.getItem("access_token"),
-        MarketSectorId: mSectorId,
-      };
-      const response = await axiosInstance.post("ProductByMarketSectorData", payload);
-      if (response?.status === 200) {
-        setProductDropdown(response.data.Data != null ? response.data.Data : []);
-      }
-      setLoading(false);
-    } catch (error) {
-      // Handle errors
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  }
-
-  useEffect(() => {
-    if(mSectorId){
-      fetchProductList();
-    }
-  }, [mSectorId]);
-
+  
   const fyDropdown = () => {
     return fyList.map((item, index) => (
       <option key={item?.fy_id} value={item?.fy_id}>
@@ -142,17 +117,7 @@ const FocusSectorMaster = () => {
       </option>
     ));
   };
-
-  const productDropdown = () => {
-    return productsList.map((item, index) => (
-      <option key={item?.Productid} value={item?.Productid}>
-        {item?.productdesc}
-        <br/>
-        {item?.productcode}
-      </option>
-    ));
-  };
-
+ 
   const handleMonthChange = (event) => {
     setMonth(parseInt(event.target.value));
   };
@@ -172,8 +137,8 @@ const FocusSectorMaster = () => {
         {
           FYId: fyId,
           Month: monthId,
-          ProductMarketSectorId: parseInt(mSectorId),
-          ProductId: parseInt(productId),
+          ZoneId:parseInt(selectedZoneDrop),
+          ProductMarketSectorId: parseInt(mSectorId)
         },
       ],
     };
@@ -185,7 +150,6 @@ const FocusSectorMaster = () => {
         alert(response?.data?.Data?.[0]?.MESSAGE);
         fetchFocusSector();
         setMSector(0)
-        setProductId(0)
       }
       setLoading(false);
     } catch (error) {
@@ -211,21 +175,15 @@ const FocusSectorMaster = () => {
       sortable: true,
     },
     {
+      name: "Zone",
+      selector: (row) => row.ZoneName,
+      sortable: true,
+    }, 
+    {
       name: "Market Sector",
       selector: (row) => row.MarketSectorName,
       sortable: true,
-    },
-    {
-      name: "Product Name",
-      selector: (row) => (
-        <>
-          {row.ProductName}
-          <br />
-          {row.ProductCode}
-        </>
-      ),
-      sortable: true,
-    },
+    }, 
   ];
   const [filterText, setFilterText] = useState('');
   const filteredItems = sectorMaster.filter(
@@ -266,12 +224,15 @@ const FocusSectorMaster = () => {
       "S.No": index + 1,
       "FY": element.FYName,
       "Month": element.Month,
-      "Market Sector Name": element.MarketSectorName,
-      "Product Name": element.ProductName,
-      "Product Code": element.ProductCode
+      "Zone": element.ZoneName,
+      "Market Sector Name": element.MarketSectorName 
     }));
     console.log("-arrObj", arrObj)
     ExportExcel('Monthly-Focus-Product', arrObj)
+  };
+
+  const handleSelectionChangeDrop = (newValue) => {
+    setSelectedZoneDrop(newValue);
   };
 
   return (
@@ -284,8 +245,8 @@ const FocusSectorMaster = () => {
             <tr>
               <th><label htmlFor="selectionBox">FY</label></th>
               <th><label htmlFor="selectionBox">Month</label></th>
+              <th><label htmlFor="selectionBox">Zone</label></th>
               <th><label htmlFor="selectionBox">Market Sector</label></th>
-              <th><label htmlFor="selectionBox">Product</label></th>
               <th colSpan={2}></th>
             </tr>
           </thead>
@@ -315,20 +276,21 @@ const FocusSectorMaster = () => {
                 </select>
               </td>
               <td>
+              <ZoneDropDown
+                selectedZone={selectedZoneDrop}
+                onValueChange={handleSelectionChangeDrop}
+                asDropDown={true}
+              />
+              </td>
+              <td>
                 <select className="form-control" value={mSectorId} onChange={handleSectorChange}>
                   <option value={0}>Select Market Sector</option>
                   {marketSecDropdown()}
                 </select>
-              </td>
-              <td>
-                <select className="form-control" value={productId} onChange={(e)=>setProductId(e.target.value)}>
-                  <option value={0}>Select Product</option>
-                  {productDropdown()}
-                </select>
-              </td>
+              </td> 
               <td style={{width:"30px"}}>
                 <button type="button" className="btn btn-primary"
-                  disabled={mSectorId && monthId && fyId ? false : true}
+                  disabled={mSectorId && monthId && fyId && selectedZoneDrop ? false : true}
                   onClick={() => handleSetFocusProduct()}>
                   <i className="fa fa-plus"></i> Save
                 </button>

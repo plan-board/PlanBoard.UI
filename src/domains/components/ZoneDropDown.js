@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 
-const ZoneDropDown = ({ selectedZone, onValueChange }) => {
+const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
   const dispatch = useDispatch();
 
   const { AuthData } = useSelector((state) => state.auth)
@@ -48,7 +48,7 @@ const ZoneDropDown = ({ selectedZone, onValueChange }) => {
       value={selectedZone}
       onChange={handleChange}
     >
-      <option value={0} >All Zone</option>
+      <option value={0} >{asDropDown ? "Select Zone" : "All Zone"}</option>
       {filteredZones.map((item) => (
         <option value={item?.zone_id} key={item?.zone_id}>
           {item.zone_name}

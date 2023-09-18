@@ -2,10 +2,38 @@ import { useState } from "react";
 import { Link } from "react-router-dom"
 import logoShalimaar from "../images/logo.png";
 import logoPlanboard from "../images/logo1-white.png";
+import { SHOW_TOAST } from "../store/constant/types";
+import axiosInstance from "./api";
+import { useDispatch } from "react-redux";
 
 const Forgotpassword = () => {
+    const dispatch = useDispatch();
+    
     const [email, setEmail] = useState("");
     const [error, setError] = useState(false);
+    const [msg, setMsg] = useState('');
+
+    const submit = async (e) => {
+        console.log("-ss");
+        e.preventDefault();
+        try {
+            const payload = {username : email}
+            const response = await axiosInstance.post(
+              "api/Summary/forgot-pass",
+              payload
+            );
+            console.log("=====forgot-pass====", response);
+            if (response?.status === 200) {
+                setMsg("Kindly check your email");
+            }else{
+                setError(true)
+            }
+          } catch (error) {
+            // Handle errors
+            setError(true)
+            dispatch({ type: SHOW_TOAST, payload: error.message });
+          }
+    }
 
     return (
         <>
@@ -23,9 +51,9 @@ const Forgotpassword = () => {
                         <div className="w3-content w3-center w3-padding-large mb-3">
                             Enter your email here. We will send your password on it.
                         </div>
-                        <form  >
+                        <form onSubmit={submit}>
                             <div className="form-group h6">
-                                <input className="w3-input w3-border" type="email" required={true} placeholder="Enter Email or Username" onChange={(e) => setEmail(e.target.value)} />
+                                <input className="w3-input w3-border" type="text" required={true} placeholder="Enter Email or Username" onChange={(e) => setEmail(e.target.value)} />
                             </div>
                             <div className="form-group w3-small h6 ">
                                 <Link to="/login">Already have an account?</Link>
