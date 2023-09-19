@@ -386,7 +386,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
 
   return (
     <div id="mom-north" className="w-100">
-      {filteredItems?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+      {filteredItems?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
 
       <div id="mom-bar-north" className="row">
         <div className="one-half mt-3">

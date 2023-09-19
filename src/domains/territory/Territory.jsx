@@ -14,6 +14,7 @@ import TerritoryMonthSale from "../components/TerritoryMonthSale";
 import CustomPopup from "../CustomPopup";
 import DelearActivityPlan from "./DelearActivityPlan";
 import AllFigureText from "../components/AllFigureText";
+import PainterMeet from "./PainterMeet";
 
 const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
@@ -153,7 +154,7 @@ const Territory = () => {
           >
             <span className="h6"> Dealer Weakly Plan </span>
           </div>
-          <div
+          {/* <div
             className={
               toggleState === 3
               ? "w3-button tab tab-active"
@@ -162,20 +163,35 @@ const Territory = () => {
             onClick={() => toggleTab(3)}
           >
             <span className="h6"> Dealer Activity Plan </span>
+          </div> */}
+          <div
+            className={
+              toggleState === 4
+              ? "w3-button tab tab-active"
+              : "w3-button tab"
+            }
+            onClick={() => toggleTab(4)}
+          >
+            <span className="h6"> Painter Meet </span>
           </div>
         </div>
+        <br/>
         <div class="w-100">
-          <div className={toggleState === 1 ? "w-100" : "w3-hide"} onClick={() => toggleTab(1)}>
+          <div className={toggleState === 1 ? "w-100" : "w3-hide"} >
             <h3>Dealer Wise Monthly Plan / Achievement</h3>
             {selectedTerritory ? (<Wgt_Delear_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
-          <div className={toggleState === 2 ? "w-100" : "w3-hide"}  onClick={() => toggleTab(2)} >
+          <div className={toggleState === 2 ? "w-100" : "w3-hide"} >
             <h3>Dealer Wise Weekly Plan / Achievement</h3>
             {selectedTerritory ? (<Wgt_Delear_Weekly_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
-          <div className={toggleState === 3 ? "  " : "w3-hide"} onClick={() => toggleTab(3)}>
+          {/* <div className={toggleState === 3 ? "  " : "w3-hide"} onClick={() => toggleTab(3)}>
             <h3>Dealer Wise Monthly Activity Plan </h3>
             {selectedTerritory ? (<DelearActivityPlan data={selectedTerritory} />) : (<>Select Territory</>)}
+          </div> */}
+          <div className={toggleState === 4 ? "  " : "w3-hide"} >
+            <h3>Painter Meet </h3>
+            {selectedTerritory ? (<PainterMeet data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
         </div>
       </div>
