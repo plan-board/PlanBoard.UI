@@ -432,7 +432,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
 
     return (
         <div id="mom-north" className="row w-100">
-            {sortedData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+            {sortedData?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
 
             <div id="mom-bar-north" className="full">
                 <div className="row mt-2">

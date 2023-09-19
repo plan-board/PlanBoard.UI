@@ -332,7 +332,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
   return (
     <div id="mom-north" className="w3-row">
       <div id="mom-bar-north" className="w-100">
-        {zoneMonthPlan?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+        {zoneMonthPlan?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
 
         <table className="table-bordered table-striped">
           <thead>
