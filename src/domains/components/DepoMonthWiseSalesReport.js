@@ -9,7 +9,6 @@ import { GetPercent, fNWCommas, getMoths } from "../../utils/utils";
 
 const itemsPerPage = 10; // Number of items to display per page
 
-
 const DepoMonthWiseSalesReport = ({
   selectedZone,
   selectedDepot,
@@ -20,11 +19,10 @@ const DepoMonthWiseSalesReport = ({
   const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
-  const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
-  const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
+  const [sortField, setSortField] = useState(""); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(""); // To store the current sorting direction ('asc' or 'desc')
 
   const [currentPage, setCurrentPage] = useState(0);
-
 
   useEffect(() => {
     console.log("-calling DepotMonthPlan api from dpo mon wise re");
@@ -53,48 +51,46 @@ const DepoMonthWiseSalesReport = ({
     fetchDepotSalesPlan();
   }, [selectedZone]);
 
-
   const handleSort = (field) => {
     if (sortField === field) {
       // If the same column is clicked again, toggle the sort direction
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       // If a different column is clicked, set the new sort field and direction
       setSortField(field);
-      setSortDirection('asc'); // Default to ascending order
+      setSortDirection("asc"); // Default to ascending order
     }
   };
 
   // Sort the data based on the current sorting field and direction
   let sortedData = [...monthWiseSalesData];
-  if (sortField === 'Zone') {
+  if (sortField === "Zone") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return a.zone_name?.localeCompare(b.zone_name);
       } else {
         return b.zone_name?.localeCompare(a.zone_name);
       }
     });
-  } else if (sortField === 'Depot') {
+  } else if (sortField === "Depot") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return a.depot_name?.localeCompare(b.depot_name);
       } else {
         return b.depot_name?.localeCompare(a.depot_name);
       }
     });
-  } else if (sortField === 'LLY') {
+  } else if (sortField === "LLY") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return (a.LLY_Value || 0) - (b.LLY_Value || 0);
       } else {
         return (b.LLY_Value || 0) - (a.LLY_Value || 0);
       }
     });
-  }
-  else if (sortField === 'LY') {
+  } else if (sortField === "LY") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return (a.LY_Value || 0) - (b.LY_Value || 0);
       } else {
         return (b.LY_Value || 0) - (a.LY_Value || 0);
@@ -104,12 +100,19 @@ const DepoMonthWiseSalesReport = ({
 
   const filterData = (data) => {
     const filterTextLowerCase = filterText.toLowerCase();
-    return data.filter((item) => (
-      (item?.zone_name && item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
-      (item?.depot_name && item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
-      (!isNaN(item.LLY_Value) && item?.LLY_Value.toString().toLowerCase().includes(filterTextLowerCase)) ||
-      (!isNaN(item.LY_Value) && item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
-    ));
+    return data.filter(
+      (item) =>
+        (item?.zone_name &&
+          item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
+        (item?.depot_name &&
+          item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
+        (!isNaN(item.LLY_Value) &&
+          item?.LLY_Value.toString()
+            .toLowerCase()
+            .includes(filterTextLowerCase)) ||
+        (!isNaN(item.LY_Value) &&
+          item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
+    );
   };
 
   // Paginate the sorted data
@@ -123,7 +126,6 @@ const DepoMonthWiseSalesReport = ({
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
-
 
   const totalLYValue = filteredItems.reduce(
     (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
@@ -245,13 +247,19 @@ const DepoMonthWiseSalesReport = ({
       <td>{item?.depot_name}</td>
       <td>{fNWCommas(item?.LLY_Value)}</td>
       <td>{fNWCommas(item?.LY_Value)}</td>
-      <td>{fNWCommas(item?.CY_Value)} <hr className="hr0" />{fNWCommas(item?.YTD_Value)}</td>
+      <td>
+        {fNWCommas(item?.CY_Value)} <hr className="hr0" />
+        {fNWCommas(item?.YTD_Value)}
+      </td>
       {getMoths().map((month) => (
         <td key={month}>
           {fNWCommas(item[`${month}_Month_Value_v1`])}
           <hr className="hr0" />
           {fNWCommas(item[`${month}_Month_Sale`])}
-          {GetPercent(item[`${month}_Month_Sale`], item[`${month}_Month_Value_v1`])}
+          {GetPercent(
+            item[`${month}_Month_Sale`],
+            item[`${month}_Month_Value_v1`]
+          )}
         </td>
       ))}
     </tr>
@@ -260,15 +268,9 @@ const DepoMonthWiseSalesReport = ({
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
     <tr key="total" className="totalRow">
-      <td colSpan={3}>
-        Total
-      </td>
-      <td>
-        {fNWCommas(totalLLYValue)}
-      </td>
-      <td>
-        {fNWCommas(totalLYValue)}
-      </td>
+      <td colSpan={3}>Total</td>
+      <td>{fNWCommas(totalLLYValue)}</td>
+      <td>{fNWCommas(totalLYValue)}</td>
       <td>
         {fNWCommas(totalCYValue)}
         <hr className="hr0" />
@@ -355,48 +357,56 @@ const DepoMonthWiseSalesReport = ({
   const handleExportClick = () => {
     const arrObj = monthWiseSalesData.map((element, index) => ({
       "S.No": index + 1,
-      "Zone": element.zone_name,
-      "Depot": element.depot_name,
-      "LLY": parseInt(element.LLY_Value).toFixed(0),
-      "LY": parseInt(element.LY_Value).toFixed(0),
+      Zone: element.zone_name,
+      Depot: element.depot_name,
+      LLY: parseInt(element.LLY_Value).toFixed(0),
+      LY: parseInt(element.LY_Value).toFixed(0),
       "CY Plan": parseInt(element.CY_Value).toFixed(0),
-      "YTD": parseInt(element.YTD_Value).toFixed(0),
-      "Apr": parseInt(element.Apr_Month_Value_v1).toFixed(0),
+      YTD: parseInt(element.YTD_Value).toFixed(0),
+      Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
       "Apr Sale": parseInt(element.Apr_Month_Sale).toFixed(0),
-      "May": parseInt(element.May_Month_Value_v1).toFixed(0),
+      May: parseInt(element.May_Month_Value_v1).toFixed(0),
       "May Sale": parseInt(element.May_Month_Sale).toFixed(0),
-      "Jun": parseInt(element.Jun_Month_Value_v1).toFixed(0),
+      Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
       "Jun Sale": parseInt(element.Jun_Month_Sale).toFixed(0),
-      "Jul": parseInt(element.Jul_Month_Value_v1).toFixed(0),
+      Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
       "Jul Sale": parseInt(element.Jul_Month_Sale).toFixed(0),
-      "Aug": parseInt(element.Aug_Month_Value_v1).toFixed(0),
+      Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
       "Aug Sale": parseInt(element.Aug_Month_Sale).toFixed(0),
-      "Sep": parseInt(element.Sep_Month_Value_v1).toFixed(0),
+      Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
       "Sep Sale": parseInt(element.Sep_Month_Sale).toFixed(0),
-      "Oct": parseInt(element.Oct_Month_Value_v1).toFixed(0),
+      Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
       "Oct Sale": parseInt(element.Oct_Month_Sale).toFixed(0),
-      "Nov": parseInt(element.Nov_Month_Value_v1).toFixed(0),
+      Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
       "Nov Sale": parseInt(element.Nov_Month_Sale).toFixed(0),
-      "Dec": parseInt(element.Dec_Month_Value_v1).toFixed(0),
+      Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
       "Dec Sale": parseInt(element.Dec_Month_Sale).toFixed(0),
-      "Jan": parseInt(element.Jan_Month_Value_v1).toFixed(0),
+      Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
       "Jan Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
-      "Feb": parseInt(element.Feb_Month_Value_v1).toFixed(0),
+      Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
       "Feb Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
-      "Mar": parseInt(element.Mar_Month_Value_v1).toFixed(0),
-      "Mar Sale": parseInt(element.Mar_Month_Sale).toFixed(0)
+      Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
+      "Mar Sale": parseInt(element.Mar_Month_Sale).toFixed(0),
     }));
-    console.log("-arrObj", arrObj)
-    ExportExcel('Depot-Wise-Monthly-Plan-Achievement', arrObj)
+    console.log("-arrObj", arrObj);
+    ExportExcel("Depot-Wise-Monthly-Plan-Achievement", arrObj);
   };
 
   return (
     <div id="mom-north" className="row">
-      {monthWiseSalesData?.length ? (<div><button onClick={handleExportClick}> <i className="fa fa-pdf">Export</i></button></div>) : null}
+      {monthWiseSalesData?.length ? (
+        <div style={{ marginLeft: "15px" }}>
+          <button onClick={handleExportClick} className="green_button_css">
+            {" "}
+            <i className="fa fa-pdf">Export</i>
+          </button>
+        </div>
+      ) : null}
 
       <div id="mom-bar-north" className="w-100">
         <div className="one-half mt-3">
-          <input className="w3-margin-bottom w3-input w3-border "
+          <input
+            className="w3-margin-bottom w3-input w3-border "
             type="text"
             placeholder="Filter By Zone, Depot, LLY, LY "
             aria-label="Search Input"
@@ -410,10 +420,26 @@ const DepoMonthWiseSalesReport = ({
               <thead>
                 <tr>
                   <th>S.No</th>
-                  <th onClick={() => handleSort('Zone')}>Zone  {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th onClick={() => handleSort('Depot')}>Depot  {sortField === 'Depot' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                  <th onClick={() => handleSort("Zone")}>
+                    Zone{" "}
+                    {sortField === "Zone" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th onClick={() => handleSort("Depot")}>
+                    Depot{" "}
+                    {sortField === "Depot" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th onClick={() => handleSort("LLY")}>
+                    LLY{" "}
+                    {sortField === "LLY" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th onClick={() => handleSort("LY")}>
+                    LY{" "}
+                    {sortField === "LY" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
                   <th>CY Plan / YTD</th>
                   <th> Apr </th>
                   <th> May </th>
@@ -458,7 +484,9 @@ const DepoMonthWiseSalesReport = ({
               <button
                 key={index}
                 onClick={() => handlePageChange(index)}
-                className={`page-button ${currentPage === index ? "active" : ""}`}
+                className={`page-button ${
+                  currentPage === index ? "active" : ""
+                }`}
               >
                 {index + 1}
               </button>
