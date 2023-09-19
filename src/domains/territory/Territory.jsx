@@ -175,12 +175,13 @@ const Territory = () => {
             <span className="h6"> Painter Meet </span>
           </div>
         </div>
+        <br/>
         <div class="w-100">
-          <div className={toggleState === 1 ? "w-100" : "w3-hide"} onClick={() => toggleTab(1)}>
+          <div className={toggleState === 1 ? "w-100" : "w3-hide"} >
             <h3>Dealer Wise Monthly Plan / Achievement</h3>
             {selectedTerritory ? (<Wgt_Delear_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
-          <div className={toggleState === 2 ? "w-100" : "w3-hide"}  onClick={() => toggleTab(2)} >
+          <div className={toggleState === 2 ? "w-100" : "w3-hide"} >
             <h3>Dealer Wise Weekly Plan / Achievement</h3>
             {selectedTerritory ? (<Wgt_Delear_Weekly_Ui data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>
@@ -188,7 +189,7 @@ const Territory = () => {
             <h3>Dealer Wise Monthly Activity Plan </h3>
             {selectedTerritory ? (<DelearActivityPlan data={selectedTerritory} />) : (<>Select Territory</>)}
           </div> */}
-          <div className={toggleState === 4 ? "  " : "w3-hide"} onClick={() => toggleTab(3)}>
+          <div className={toggleState === 4 ? "  " : "w3-hide"} >
             <h3>Painter Meet </h3>
             {selectedTerritory ? (<PainterMeet data={selectedTerritory} />) : (<>Select Territory</>)}
           </div>

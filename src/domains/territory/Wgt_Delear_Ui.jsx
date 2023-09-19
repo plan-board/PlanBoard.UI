@@ -9,21 +9,19 @@ import { formatDateTimes } from "../../utils/utils";
 const itemsPerPage = 10;
 const monthArr = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
 const date = new Date();
-const cMName = date.toLocaleString('default', { month: 'long' });
+const cMName = date.toLocaleString('default', { month: 'short' });
 const mStartName = cMName.substring(0, 3);
 
 const Wgt_Delear_Ui = ({ data }) => {
   console.log("-cMName", cMName)
   const dispatch = useDispatch();
   const [getinputs, setGetinputs] = useState({});
-  const [dealerlist, setDealerlist] = useState([]);
-  const currentDate = new Date("2023-08-30");
-  // const currentDate = new Date();
+  const [dealerlist, setDealerlist] = useState([]); 
 
   const currentMonthCount =
-    currentDate.getMonth() < 3
-      ? currentDate.getMonth() + 13
-      : currentDate.getMonth() + 1;
+  date.getMonth() < 3
+      ? date.getMonth() + 13
+      : date.getMonth() + 1;
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
 
@@ -39,10 +37,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
 
   const [currentPage, setCurrentPage] = useState(0);
-
-  function getInput() {
-    console.log("🚀 ~ file: Wgt_Delear_Ui.jsx:20 ~ getinputs:", getinputs);
-  }
+  const [monthKey, setMonthKey] = useState(cMName + '_Month_Value_v1');
 
   function onchangeInputs(e, id) {
     setGetinputs({
@@ -125,9 +120,7 @@ const Wgt_Delear_Ui = ({ data }) => {
     setSelectedRow(null);
     setModalData(null);
     setSumValue(0);
-  };
-
-
+  }; 
 
   // Handle input changes for a specific row
   const handleInputChange = (tableid, name, value) => {
@@ -138,25 +131,21 @@ const Wgt_Delear_Ui = ({ data }) => {
     // Update the state with the new form data
     setSelectedRow(updatedFormData);
 
-
     const upValue = updatedFormData.reduce((acc, item) => acc + (parseFloat(item.Value) || 0), 0).toFixed(2);
     const upValueAsNumber = parseFloat(upValue);
 
     setSumValue(parseFloat(upValueAsNumber + modalData?.Aug_Month_Value_v1).toFixed(2))
-
   };
 
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Send formData to your server or perform other actions
     console.log('Form Data:', selectedRow);
-
     try {
       const payArr = selectedRow.map((item) => ({
         "FYId": parseInt(item.FYId),
         "Month": parseInt(item.Month),
-        "FocusedProductId": item.ProductId,
+        "FocusedProductId": item.MarketSectorId,
         "DealerId": modalData.dealerid,
         "Value": item.Value,
         "Volume": item.Volume
@@ -215,8 +204,7 @@ const Wgt_Delear_Ui = ({ data }) => {
         return b.dealer_category?.localeCompare(a.dealer_category);
       }
     });
-  }
-  else if (sortField === 'LY') {
+  } else if (sortField === 'LY') {
     sortedData.sort((a, b) => {
       if (sortDirection === 'asc') {
         return (a.LY_Value || 0) - (b.LY_Value || 0);
@@ -300,6 +288,7 @@ const Wgt_Delear_Ui = ({ data }) => {
     ExportExcel('ssDealer-Wise-Monthly-Plan-Achievement', arrObj)
   };
 
+  console.log("-currentMonth", currentMonth)
 
   const generateTableRows = (item) => {
     const headers = [];
@@ -408,23 +397,21 @@ const Wgt_Delear_Ui = ({ data }) => {
         <table className="table-bordered table-striped">
           <thead>
             <tr>
-
-              <th className="" rowSpan={2}> S.No </th>
+              <th className="" > S.No </th>
               <th style={{ width: "15%" }} onClick={() => handleSort('DelearName')}>Delear Name  {sortField === 'DelearName' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th style={{ width: "15%" }} onClick={() => handleSort('DelearCode')}>Delear Code  {sortField === 'DelearCode' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th > Creation Date</th>
               <th onClick={() => handleSort('Category')}>Category  {sortField === 'Category' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('YTD')}>CY / YTD  {sortField === 'YTD' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-              <th className="" rowSpan={2}> 6 month </th>
+              <th className="" > 6 month </th>
               {generateTableHeaders()}
-
             </tr>
           </thead>
           <tbody>
             <tr>
               {/* here colSpan should according to month count */}
-              <th className="p-2 bg-blue" colSpan={13}> </th>
+              <th className="p-2 bg-blue" colSpan={currentMonth+4}> </th>
               <th className="p-2 bg-green text-dark"> OS </th>
               <th className="p-2 bg-green text-dark"> OD </th>
               <th className="p-2 bg-green text-dark"> Cree Page </th>
@@ -470,7 +457,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 Rule 1 : Active Dealer <br />
                 Rule 2 : Category based % impact  <br />
               </td>
-              <td style={{ width: "10%" }}><input type="text" value={modalData?.Aug_Month_Value_v1} className="inp40 text-center" readOnly={true} />
+              <td style={{ width: "10%" }}><input type="text" value={modalData ? modalData[monthKey] :''} className="inp40 text-center" readOnly={true} />
               </td>
             </tr>
 
@@ -478,7 +465,8 @@ const Wgt_Delear_Ui = ({ data }) => {
 
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
-              <td colspan="30"> B ( Focus Sector List for Month of Aug )  * Add values / volume  </td>
+              <td colspan="29"> B ( Focus Sector List for Month of {monthName} )  * Add values / volume  <span style={{float: "right"}}>Hight lighted rows are focus product for current month</span></td>
+               
             </tr>
             <tr className="w3-yellow">
               <th style={{ width: "2%" }}>#</th>
@@ -489,7 +477,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               <th style={{ width: "5%" }}>YTD</th>
               <th style={{ width: "5%" }}> 6 Mo. Avg </th>
               {/* <th style={{ width: "5%" }}>LY (Aug) Vol.</th> */}
-              <th style={{ width: "5%" }}>LY (Aug) Val.</th>
+              <th style={{ width: "5%" }}>LY ({monthName}) Val.</th>
               <th style={{ width: "5%" }}>Volume (Ltrs.) </th>
               <th style={{ width: "5%" }}>Value (Lacs)</th>
             </tr>
@@ -528,7 +516,7 @@ const Wgt_Delear_Ui = ({ data }) => {
           </table>
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
-              <td colspan="30"> Net  Sales Plan ( Aug ) Total Sale  A + B   </td>
+              <td colspan="30"> Net  Sales Plan ( {monthName} ) Total Sale  A + B   </td>
             </tr>
             <tr className="">
               <td style={{ width: "80%" }}> ( This total will be updated to Dealers Sales Plan ( v1 ) and the list will will be added in transaction table as dealers breakup )  </td>
