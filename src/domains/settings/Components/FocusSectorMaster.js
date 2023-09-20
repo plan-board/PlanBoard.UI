@@ -138,7 +138,7 @@ const FocusSectorMaster = () => {
           FYId: fyId,
           Month: monthId,
           ZoneId: parseInt(selectedZoneDrop),
-          ProductMarketSectorId: parseInt(mSectorId)
+          ProductMarketSectorId: parseInt(mSectorId),
         },
       ],
     };
@@ -149,7 +149,7 @@ const FocusSectorMaster = () => {
       if (response?.status === 200) {
         alert(response?.data?.Data?.[0]?.MESSAGE);
         fetchFocusSector();
-        setMSector(0)
+        setMSector(0);
       }
       setLoading(false);
     } catch (error) {
@@ -185,17 +185,19 @@ const FocusSectorMaster = () => {
       sortable: true,
     },
   ];
-  const [filterText, setFilterText] = useState('');
+  const [filterText, setFilterText] = useState("");
   const filteredItems = sectorMaster.filter(
-    item => item.MarketSectorName && item.MarketSectorName.toLowerCase().includes(filterText.toLowerCase()),
+    (item) =>
+      item.MarketSectorName &&
+      item.MarketSectorName.toLowerCase().includes(filterText.toLowerCase())
   );
 
   const CustomSubHeaderComponent = ({ children, align }) => {
     const containerStyle = {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: align === 'left' ? 'flex-start' : 'center',
-      marginBottom: '10px',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: align === "left" ? "flex-start" : "center",
+      marginBottom: "10px",
     };
 
     return (
@@ -206,11 +208,15 @@ const FocusSectorMaster = () => {
   };
 
   const additionalComponent = (
-    <span className="w3-left w3-margin-right "> Monthly Focus Sectors(s)   ({filteredItems?.length}) </span>
+    <span className="w3-left w3-margin-right ">
+      {" "}
+      Monthly Focus Sectors(s) ({filteredItems?.length}){" "}
+    </span>
   );
 
   const subHeaderComponent = (
-    <input className="w3-input w3-border filterInput w-100"
+    <input
+      className="w3-input w3-border filterInput w-100"
       type="text"
       placeholder="Filter By Sector  Name"
       aria-label="Search Input"
@@ -222,13 +228,13 @@ const FocusSectorMaster = () => {
   const handleExportClick = () => {
     const arrObj = sectorMaster.map((element, index) => ({
       "S.No": index + 1,
-      "FY": element.FYName,
-      "Month": element.Month,
-      "Zone": element.ZoneName,
-      "Market Sector Name": element.MarketSectorName
+      FY: element.FYName,
+      Month: element.Month,
+      Zone: element.ZoneName,
+      "Market Sector Name": element.MarketSectorName,
     }));
-    console.log("-arrObj", arrObj)
-    ExportExcel('Monthly-Focus-Product', arrObj)
+    // console.log("-arrObj", arrObj);
+    ExportExcel("Monthly-Focus-Product", arrObj);
   };
 
   const handleSelectionChangeDrop = (newValue) => {
@@ -243,23 +249,39 @@ const FocusSectorMaster = () => {
         <table className="table-bordered table-striped">
           <thead>
             <tr>
-              <th><label htmlFor="selectionBox">FY</label></th>
-              <th><label htmlFor="selectionBox">Month</label></th>
-              <th><label htmlFor="selectionBox">Zone</label></th>
-              <th><label htmlFor="selectionBox">Market Sector</label></th>
+              <th>
+                <label htmlFor="selectionBox">FY</label>
+              </th>
+              <th>
+                <label htmlFor="selectionBox">Month</label>
+              </th>
+              <th>
+                <label htmlFor="selectionBox">Zone</label>
+              </th>
+              <th>
+                <label htmlFor="selectionBox">Market Sector</label>
+              </th>
               <th colSpan={2}></th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>
-                <select className="form-control" value={fyId} onChange={handleYearChange}>
+                <select
+                  className="form-control"
+                  value={fyId}
+                  onChange={handleYearChange}
+                >
                   <option value={0}>Select</option>
                   {fyDropdown()}
                 </select>
               </td>
               <td>
-                <select className="form-control" value={monthId} onChange={handleMonthChange}>
+                <select
+                  className="form-control"
+                  value={monthId}
+                  onChange={handleMonthChange}
+                >
                   <option value="0">Select</option>
                   <option value="1">January</option>
                   <option value="2">February</option>
@@ -283,15 +305,26 @@ const FocusSectorMaster = () => {
                 />
               </td>
               <td>
-                <select className="form-control" value={mSectorId} onChange={handleSectorChange}>
+                <select
+                  className="form-control"
+                  value={mSectorId}
+                  onChange={handleSectorChange}
+                >
                   <option value={0}>Select Market Sector</option>
                   {marketSecDropdown()}
                 </select>
               </td>
               <td style={{ width: "30px" }}>
-                <button type="button" className="btn btn-primary"
-                  disabled={mSectorId && monthId && fyId && selectedZoneDrop ? false : true}
-                  onClick={() => handleSetFocusProduct()}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={
+                    mSectorId && monthId && fyId && selectedZoneDrop
+                      ? false
+                      : true
+                  }
+                  onClick={() => handleSetFocusProduct()}
+                >
                   <i className="fa fa-plus"></i> Save
                 </button>
               </td>
@@ -300,12 +333,17 @@ const FocusSectorMaster = () => {
         </table>
       </form>
       <div className="row w-100 my-4">
-        <div className="one-third">
-          {subHeaderComponent}
-        </div>
+        <div className="one-third">{subHeaderComponent}</div>
       </div>
       <div className="tbl-container">
-        {sectorMaster?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
+        {sectorMaster?.length ? (
+          <div>
+            <button className="w3-btn w3-gray" onClick={handleExportClick}>
+              {" "}
+              Export
+            </button>
+          </div>
+        ) : null}
 
         <DataTable
           columns={columns}
@@ -313,7 +351,8 @@ const FocusSectorMaster = () => {
           pagination
           className="datatable"
           fixedHeader={true}
-          fixedHeaderScrollHeight="400px" subHeader
+          fixedHeaderScrollHeight="400px"
+          subHeader
           subHeaderComponent={
             <CustomSubHeaderComponent align="left">
               {additionalComponent}
