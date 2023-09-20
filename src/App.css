@@ -2217,3 +2217,6 @@ table.table-striped tbody tr:nth-child(odd) {
 .green_button_css:active {
   transform: scale(0.95);
 }
+
+.IsFocused{background-color: #e1dd80;}
+.table-striped td.active{ background-color: #4a9eda;}

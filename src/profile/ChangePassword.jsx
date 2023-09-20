@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { SHOW_TOAST } from "../store/constant/types";
 import axiosInstance from "../auth/api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const ChangePassword = () => {
     const dispatch = useDispatch();
-
-    const initialFormData = {
-        currentPassword: '',
+    const { AuthData } = useSelector((state) => state.auth);
+    console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
+    const initialFormData = { 
         newPassword: '',
         confirmPassword: '',
     };
@@ -36,33 +36,23 @@ const ChangePassword = () => {
                 return;
             }
 
-            const getUser = await axiosInstance.post(
-                "GetEmployeeData",
-                { Token: localStorage.getItem("access_token") }
+            const payload = {
+                Token: localStorage.getItem("access_token"),
+                employee_code: AuthData?.Data[0].EmployeeCode,
+                employee_email: AuthData?.Data[0].EmployeeEmail,
+                password: formData.confirmPassword,
+            };
+            const response = await axiosInstance.post(
+                "SetEmployeePassword",
+                payload
             );
-            console.log("=====getUser====", getUser);
-            if (getUser?.status !== 200) {
-                setError('Something went wrong!')
+            console.log("=====Update pass====", response);
+            if (response?.status === 200 && response?.data?.Status === true) {
+                setMsg("Password changed successfully.");
+                setError('');
+                resetForm();
             } else {
-                const payload = {
-                    Token: localStorage.getItem("access_token"),
-                    employee_code: getUser?.data.employee_code,
-                    employee_email: getUser?.data.employee_email,
-                    password: formData.confirmPassword,
-                };
-                const response = await axiosInstance.post(
-                    "SetEmployeePassword",
-                    payload
-                );
-                console.log("=====Update pass====", response);
-                if (response?.status === 200 && response?.data?.Status === true) {
-                    setMsg("Password changed successfully.");
-                    setError('');
-                    resetForm();
-                } else {
-                    setError(response?.data?.Message)
-                }
-
+                setError(response?.data?.Message)
             }
         } catch (error) {
             // Handle errors
@@ -87,13 +77,11 @@ const ChangePassword = () => {
                         <form onSubmit={handleSubmit}>
                             <div className="form-group h6">
                                 <input
+                                    readOnly={true}
                                     className="w3-input w3-border"
-                                    type="password"
-                                    name="currentPassword"
-                                    required={true}
+                                    type="text"  
                                     placeholder="Current Password"
-                                    value={formData.currentPassword}
-                                    onChange={handleInputChange}
+                                    value={AuthData?.Data[0].EmployeeEmail} 
                                 />
                             </div>
                             <div className="form-group h6">

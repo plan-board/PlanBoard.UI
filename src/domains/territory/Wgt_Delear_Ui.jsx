@@ -311,8 +311,8 @@ const Wgt_Delear_Ui = ({ data }) => {
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
               <br />
-              <span onClick={() => getMonthTarget(item)}>
-                <i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></span>
+              <div><p onClick={() => getMonthTarget(item)}><i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></p></div>
+              
             </td>
             <td>
               <input
@@ -488,7 +488,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </tr>
               ) : (
                 selectedRow?.map((item, index) => (
-                  <tr className="" key={index}>
+                  <tr key={index}  className={`${item.IsFocused === 1 ? "IsFocused" : ""}`}>
                     <td>{index + 1}</td>
                     <td>{item?.MarketSectorName}</td>
                     {/* <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td> */}
