@@ -48,21 +48,20 @@ const Sidebar = ({ isAuth, rolId }) => {
         </NavLink>
       )}
       {hasPermission(rolId, "national") && ( 
-        <>
         <NavLink className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")} to="settings">
             <i className="fa fa-gear"></i>
             <p className="w3-small h6">Settings</p>
         </NavLink>
-        <div className="sub-menu">
+      )}
+      <div className="sub-menu">
           <NavLink
             className={({ isActive }) => "nav-link" + (!isActive ? " unselected" : " active")}
             to="/change-password"
           >
+            <i className="fa fa-lock"></i>
             <p className="w3-small h6">Change Password</p>
           </NavLink> 
         </div>
-        </>
-      )}
     </div>
   );
 };

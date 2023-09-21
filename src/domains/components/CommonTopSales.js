@@ -10,10 +10,14 @@ const CommonTopSales = ({
   selectedDepot,
   selectedTerritory
 }) => {
+  console.log("actionType==", actionType);
+  console.log("selectedZone==", selectedZone);
+  console.log("selectedDepot==", selectedDepot);
+  console.log("selectedTerritory==", selectedTerritory);
   const dispatch = useDispatch();
   const [summaryData, setSummaryData] = useState([]);
 
-  useEffect(() => {
+  const fetchTerritoryData = async () => {
     const payload = {
       SummaryParam: [
         {
@@ -33,28 +37,38 @@ const CommonTopSales = ({
         },
       ],
     };
-
-    const fetchTerritoryData = async () => {
-      try {
-        const response = await axiosInstance.post(
-          "api/Summary/FYData",
-          payload
-        );
-        console.log("=====FYData====", response);
-        if (response?.status === 200) {
-          setSummaryData(response.data.Data != null ? response.data.Data : []);
-        }
-      } catch (error) {
-        // Handle errors
-        dispatch({ type: SHOW_TOAST, payload: error.message });
+    try {
+      const response = await axiosInstance.post(
+        "api/Summary/FYData",
+        payload
+      );
+      console.log("=====FYData====", response);
+      if (response?.status === 200) {
+        setSummaryData(response.data.Data != null ? response.data.Data : []);
       }
-    };
-    fetchTerritoryData();
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+
+  useEffect(() => {
+    console.log("=====useEffect====actionType", actionType);
+
+    if (actionType === "hod") {
+      fetchTerritoryData();
+    } else if (actionType === "Zone" && selectedZone !== undefined && selectedZone != 0) {
+      fetchTerritoryData();
+    } else if (actionType === "Depot" && selectedDepot !== undefined && selectedDepot != 0) {
+      fetchTerritoryData();
+    } else if (actionType === "Territory" && selectedTerritory !== undefined && selectedTerritory != 0) {
+      fetchTerritoryData();
+    }
   }, [selectedZone, selectedDepot, selectedTerritory]);
 
   return (
     <>
-      <div className="card-box lightyellow">
+      {summaryData.length ? (<div className="card-box lightyellow">
         {actionType == 'hod' ? (
           <div className="one-fifth text-center">
             <span className="w3-text-gray h6">
@@ -103,7 +117,7 @@ const CommonTopSales = ({
             ]
             [v.1 :
             <u className=" w3-text-red">
-              {fNWCommas(summaryData[0]?.summ_cy_plan_value_v1)}  
+              {fNWCommas(summaryData[0]?.summ_cy_plan_value_v1)}
             </u>
             ]
           </b>
@@ -117,7 +131,7 @@ const CommonTopSales = ({
           >
             <i className="fa fa-lock"></i>
             {summaryData[0]?.isLock == 1 ? "Un-Lock" : "Lock"}
-          </span> 
+          </span>
         </div>
 
         <div className="one-fifth text-center">
@@ -125,12 +139,13 @@ const CommonTopSales = ({
           <hr className="hr1" />
           <span className=" "> {fNWCommas(summaryData[0]?.summ_cy_sale_value)} </span>
           <i className="w3-text-gray">
-          
-            ( {((summaryData[0]?.summ_cy_sale_value / summaryData[0]?.summ_cy_plan_value_v1) * 100)?.toFixed(2) } %)
+
+            ( {((summaryData[0]?.summ_cy_sale_value / summaryData[0]?.summ_cy_plan_value_v1) * 100)?.toFixed(2)} %)
           </i>
         </div>
 
-      </div>
+      </div>) : null}
+
     </>
   );
 };

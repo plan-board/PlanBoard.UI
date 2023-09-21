@@ -7,22 +7,11 @@ import Profile from "../images/profile-img.png";
 import Exit from "../images/exit.png";
 import { useSelector } from "react-redux";
 
-const Navbar = ({ isAuth }) => {
-  // console.log("🚀 ~ file: Navbar.jsx:11 ~ Navbar ~ isAuth:", isAuth)
-  const { AuthData } = useSelector((state) => state?.auth);
-  // console.log("🚀 ~ file: Navbar.jsx:12 ~ Navbar ~ AuthData:", AuthData)
-
-  // const employeeName = localStorage.getItem("TokenValid");
-  // console.log("🚀 ~ file: Navbar.jsx:11 ~ Navbar ~ employeeName:", employeeName)
-  // const employeeTpye = localStorage.getItem("EmployeeTpye");
-  // const authIs = localStorage.getItem("isAuth");
-  // const email = localStorage.getItem("email");
-
-  const logout = () => {
-    // window.open("http://localhost:5000/api/logout", "_self");
+const Navbar = ({ isAuth }) => { 
+  const { AuthData } = useSelector((state) => state?.auth); 
+  const logout = () => { 
     signOut(auth).then(() => {
-      localStorage.clear();
-      //window.location.pathname = "/";
+      localStorage.clear(); 
       const isLogout = true;
       window.location.pathname = "/";
     });
@@ -36,13 +25,12 @@ const Navbar = ({ isAuth }) => {
             className=" w3-right w3-button w3-bar-item w3-hover-none"
             onClick={logout}
           >
-            {" "}
-            <img src={Exit} className="exit_icon" />
+            <img src={Exit} className="exit_icon" alt="Exit" />
           </button> 
           <button className=" w3-right w3-button w3-bar-item">
-            <img src={Profile} className="w3-circle avatar" />{" "}
+            <img src={Profile} className="w3-circle avatar" alt="Profile" />
             {AuthData?.Data[0].EmployeeName} ({AuthData?.Data[0].EmployeeTpye})
-            - (
+            {/* - (
             {AuthData?.Data[0].EmployeeTpye === "HOD" ? (
               <>{AuthData?.HOD.map((ele) => ele.HODName).join(",")}</>
             ) : AuthData?.Data[0].EmployeeTpye === "ZM" ? (
@@ -51,26 +39,27 @@ const Navbar = ({ isAuth }) => {
               <>{AuthData?.Depot.map((ele) => ele.DepotName).join(",")}</>
             ) : AuthData?.Data[0].EmployeeTpye === "AM" ? (
               <>
-                {/* {AuthData?.Territory.map(ele => ele.TerritoryName).join(",")} */}
+                // {AuthData?.Territory.map(ele => ele.TerritoryName).join(",")}
               </>
             ) : (
               <></>
             )}
-            ){/* <img src={photoURL} className="  w3-circle avatar" />  */}
+            ) */}
+            {/* <img src={photoURL} className="  w3-circle avatar" />  */}
           </button>
         </div>
       ) : (
         <>
           {/* <Link className=" w3-right  w3-button link w3-bar-item " to="login">
-            {" "}
-            Login{" "}
+            
+            Login
           </Link>
           <Link
             className=" w3-right  w3-button link w3-bar-item "
             to="register"
           >
-            {" "}
-            Register{" "}
+            
+            Register
           </Link> */}
         </>
       )}
