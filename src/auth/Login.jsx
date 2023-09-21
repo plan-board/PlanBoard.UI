@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import {  Link, useNavigate } from "react-router-dom";
-
-import iconGoogle from "../images/google.png";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"; 
+ 
 import logoShalimaar from "../images/logo.png";
 import logoPlanboard from "../images/logo1-white.png";
-import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../firebase"; 
-import { signInWithEmailAndPassword } from "firebase/auth";
-import axiosInstance from "./api"; 
+
+import axiosInstance from "./api";
 import { setAuthData } from "../store/actions/Auth";
 import { SHOW_TOAST } from "../store/constant/types";
 
@@ -15,7 +13,23 @@ const Login = ({ setIsAuth }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  
+
+  const [error, setError] = useState(false); 
+
+  const initialFormData = {
+    Email: '',
+    Token: '',
+  };
+  const [formData, setFormData] = useState(initialFormData);
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   useEffect(() => {
     if (AuthData?.Status == true) {
       if (AuthData?.Data[0]?.EmployeeTpye == "ZM") {
@@ -28,108 +42,106 @@ const Login = ({ setIsAuth }) => {
         navigate("/territory");
       }
     }
-  }, [AuthData]);
-  //// 2 : Login with Email Password
-  const [error, setError] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  }, [AuthData, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const payload = {
+      SessionData: [
+        formData
+      ],
+    };
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        // Signed in
-        const user = userCredential.user;
+    try {
+      const res = await axiosInstance.post(
+        "api/UserMaster/SessionCheck",
+        payload
+      );
+      console.log("=====Update pass====", res);
+      if (res?.status === 200) {
+        const responseData = res?.data;
 
-        const email = user?.email;
-        // const accessToken = user?.accessToken;
+        if (responseData?.Status === true) {
+          setError('');
+          resetForm();
 
-        // const email='amitgupta@shalimarpaints.com';
-        // const email = 'a.srivastava@shalimarpaints.com';
-        // const email = 'a.chavan@shalimarpaints.com';
-        // const email = 'anil.soni@shalimarpaints.com';
+          dispatch(setAuthData(responseData));
 
-        const accessToken='4644616546565414651asdasd';
+          localStorage.setItem("access_token", responseData.Data[0]?.TokenValid);
+          localStorage.setItem("Isloggedin", responseData.Status);
 
-        const data = {
-          SessionData: [
-            {
-              Email: email,
-              Token: accessToken,
-            },
-          ],
-        };
-        await axiosInstance
-          .post("api/UserMaster/SessionCheck", data)
-          .then((res) => {
-            if (res?.status === 200) {
-              console.log("===SessionCheck===",res.data);
-              dispatch(setAuthData(res?.data));
-              localStorage.setItem("access_token", res.data.Data[0].TokenValid);
-              localStorage.setItem("Isloggedin", res?.data?.Status);
-              if (res?.data?.Data[0]?.EmployeeTpye == "HOD") {
-                navigate("/national");
-              }
-              if (res?.data?.Data[0]?.EmployeeTpye == "ZM") {
-                navigate("/zone");
-              }
-              if (res?.data?.Data[0]?.EmployeeTpye == "DM") {
-                navigate("/depot");
-              }
-              if (
-                res?.data?.Data[0]?.EmployeeTpye == "TM" ||
-                res?.data?.Data[0]?.EmployeeTpye == "AM"
-              ) {
-                navigate("/territory");
-              }
-            }
-          })
-          .catch((error) => {
-            dispatch({ type: SHOW_TOAST, payload: error.message });
-          });
-      })
-      .catch((error) => {
-        setError(" Wrong email or password   ");
-      });
+          switch (responseData.Data[0]?.EmployeeTpye) {
+            case "HOD":
+              navigate("/national");
+              break;
+            case "ZM":
+              navigate("/zone");
+              break;
+            case "DM":
+              navigate("/depot");
+              break;
+            case "TM":
+            case "AM":
+              navigate("/territory");
+              break;
+            default:
+              // Handle unknown EmployeeType
+              break;
+          }
+        } else {
+          setError(responseData?.Message || "An error occurred");
+        }
+      } else {
+        setError("Request failed");
+      }
+
+
+    } catch (error) {
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+
   }; // 2 : handleLogin ends
+
+  const resetForm = () => {
+    setFormData(initialFormData);
+  };
 
   return (
     <>
-        <style>
-            {'.w3-sidebar{display:none}'}
-        </style>
-        <div className="login">
-            <div className="logo-container">
-                <img src={logoShalimaar} />
-                <img src={logoPlanboard} />
-            </div>
-            <div className="wrapper">
-                <div className="login-box">
-                    <h2 className="login-title">Sign In Here</h2>
-                    <div className="w3-content w3-center w3-padding-large mb-3">
-                        Sign in with Planboard registered account.
-                    </div>
-                    <form onSubmit={handleLogin}>
-                        <div className="form-group h6">
-                            <input className="w3-input w3-border" type="email" required={true} placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                        <div className="form-group h6">
-                            <input className="w3-input w3-border" type="password" required={true}  placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
-                        </div>
-                        <div className="form-group w3-small h6 ">
-                            <Link to="/forgot-password">I forgot my password !</Link>
-                        </div>
-                        <div className="form-group m-0">
-                            <button className="" type="submit"> Login </button>
-                        </div>
-                        <div className="form-group w3-text-red">
-                            <p>{error}</p>
-                        </div> 
-                    </form>
-                </div>
-            </div>
+      <style>
+        {'.w3-sidebar{display:none}'}
+      </style>
+      <div className="login">
+        <div className="logo-container">
+          <img src={logoShalimaar} alt="Shailmar" />
+          <img src={logoPlanboard} alt="Shailmar Planboard" />
         </div>
+        <div className="wrapper">
+          <div className="login-box">
+            <h2 className="login-title">Sign In Here</h2>
+            <div className="w3-content w3-center w3-padding-large mb-3">
+              Sign in with Planboard registered account.
+            </div>
+            <form onSubmit={handleLogin}>
+              <div className="form-group h6">
+                <input className="w3-input w3-border" type="email" required={true} placeholder="Email" name="Email" onChange={handleInputChange} />
+              </div>
+              <div className="form-group h6">
+                <input className="w3-input w3-border" type="password" required={true} placeholder="Password" name="Token" onChange={handleInputChange} />
+              </div>
+              <div className="form-group w3-small h6 ">
+                <Link to="/forgot-password">I forgot my password !</Link>
+              </div>
+              <div className="form-group m-0">
+                <button className="" type="submit"> Login </button>
+              </div>
+              <div className="form-group w3-text-red">
+                <p>{error}</p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
