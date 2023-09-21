@@ -19,7 +19,7 @@ import PainterMeet from "./PainterMeet";
 const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
   const { zoneId, depotId, territoryId } = useParams();
-  console.log("🚀 ~ file: Territory.jsx:25 ~ Territory ~ depotId:", depotId);
+  console.log("🚀 ~ file: Territory.jsx:25 ~ Territory ~ territoryId:", territoryId);
 
   const [selectedZone, setSelectedZone] = useState(
     zoneId ?? (AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0)
@@ -116,6 +116,7 @@ const Territory = () => {
               selectedZone={selectedZone}
               selectedDepot={selectedDepot}
               onSelectedDepoChange={onSelectedDepoChange}
+              onSelectedTerritoryChange={onSelectedTerritoryChange}
             />
           </div>
         ) : (

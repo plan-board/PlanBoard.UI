@@ -16,10 +16,10 @@ const Wgt_Delear_Ui = ({ data }) => {
   console.log("-cMName", cMName)
   const dispatch = useDispatch();
   const [getinputs, setGetinputs] = useState({});
-  const [dealerlist, setDealerlist] = useState([]); 
+  const [dealerlist, setDealerlist] = useState([]);
 
   const currentMonthCount =
-  date.getMonth() < 3
+    date.getMonth() < 3
       ? date.getMonth() + 13
       : date.getMonth() + 1;
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
@@ -120,7 +120,7 @@ const Wgt_Delear_Ui = ({ data }) => {
     setSelectedRow(null);
     setModalData(null);
     setSumValue(0);
-  }; 
+  };
 
   // Handle input changes for a specific row
   const handleInputChange = (tableid, name, value) => {
@@ -145,7 +145,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       const payArr = selectedRow.map((item) => ({
         "FYId": parseInt(item.FYId),
         "Month": parseInt(item.Month),
-        "FocusedProductId": item.MarketSectorId,
+        "MarketSectorId": item.MarketSectorId,
         "DealerId": modalData.dealerid,
         "Value": item.Value,
         "Volume": item.Volume
@@ -305,6 +305,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               <br />
               <input
                 type="number"
+                readOnly={true}
                 className="inp40 text-center"
                 defaultValue={item[`${monName}_Month_Value_v1`]}
                 name={`${item.id}_sales`}
@@ -312,11 +313,12 @@ const Wgt_Delear_Ui = ({ data }) => {
               />
               <br />
               <div><p onClick={() => getMonthTarget(item)}><i className="fa fa-pencil c-pointer text-primary" title="Click to update" ></i></p></div>
-              
+
             </td>
             <td>
               <input
                 type="number"
+                readOnly={true}
                 className="inp40 text-center"
                 name={`${item.id}_coll`}
                 onChange={(e) => onchangeInputs(e, item.id)}
@@ -332,7 +334,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             <td>
               {item[`${monName}_Month_Value_v1`]}
               <hr className="hr0" />
-              {item[`${monName}_Month_Value_v1`]}
+              {item[`${monName}_Month_Sale`]}
             </td>
           </Fragment>
         );
@@ -411,7 +413,7 @@ const Wgt_Delear_Ui = ({ data }) => {
           <tbody>
             <tr>
               {/* here colSpan should according to month count */}
-              <th className="p-2 bg-blue" colSpan={currentMonth+4}> </th>
+              <th className="p-2 bg-blue" colSpan={currentMonth + 4}> </th>
               <th className="p-2 bg-green text-dark"> OS </th>
               <th className="p-2 bg-green text-dark"> OD </th>
               <th className="p-2 bg-green text-dark"> Cree Page </th>
@@ -428,17 +430,19 @@ const Wgt_Delear_Ui = ({ data }) => {
         </table>
       </div>
       {/* Pagination */}
-      <div className="pagination">
-        {Array.from({ length: pageCount }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index)}
-            className={`page-button ${currentPage === index ? "active" : ""}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      < div className="pagination" >
+        {
+          Array.from({ length: pageCount }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index)}
+              className={`page-button ${currentPage === index ? "active" : ""}`}
+            >
+              {index + 1}
+            </button>
+          ))
+        }
+      </div >
 
       <CustomPopup
         onClose={popupCloseHandler}
@@ -457,7 +461,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 Rule 1 : Active Dealer <br />
                 Rule 2 : Category based % impact  <br />
               </td>
-              <td style={{ width: "10%" }}><input type="text" value={modalData ? modalData[monthKey] :''} className="inp40 text-center" readOnly={true} />
+              <td style={{ width: "10%" }}><input type="text" value={modalData ? modalData[monthKey] : ''} className="inp40 text-center" readOnly={true} />
               </td>
             </tr>
 
@@ -465,8 +469,8 @@ const Wgt_Delear_Ui = ({ data }) => {
 
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
-              <td colspan="29"> B ( Focus Sector List for Month of {monthName} )  * Add values / volume  <span style={{float: "right"}}>Hight lighted rows are focus product for current month</span></td>
-               
+              <td colspan="29"> B ( Focus Sector List for Month of {monthName} )  * Add values / volume  <span style={{ float: "right" }}>Hight lighted rows are focus product for current month</span></td>
+
             </tr>
             <tr className="w3-yellow">
               <th style={{ width: "2%" }}>#</th>
@@ -488,7 +492,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </tr>
               ) : (
                 selectedRow?.map((item, index) => (
-                  <tr key={index}  className={`${item.IsFocused === 1 ? "IsFocused" : ""}`}>
+                  <tr key={index} className={`${item.IsFocused === 1 ? "IsFocused" : ""}`}>
                     <td>{index + 1}</td>
                     <td>{item?.MarketSectorName}</td>
                     {/* <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td> */}

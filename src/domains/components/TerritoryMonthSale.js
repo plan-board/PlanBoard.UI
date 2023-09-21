@@ -94,7 +94,7 @@ return (
                             </tr>
                         ) : (
                             territoryMonthPlan.map((item, index) => (
-                                <tr key={index} >
+                                <tr key={index+"tms"} >
                                     <td className="h3">{item?.territory_name}</td>
                                     {generateTableRows(item)} 
                                 </tr> 
