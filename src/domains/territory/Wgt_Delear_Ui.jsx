@@ -31,6 +31,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [modalData, setModalData] = useState(null);
   const [monthName, setMonthName] = useState("");
 
+  const [isLocked, setIsLocked] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
   const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
@@ -73,17 +74,20 @@ const Wgt_Delear_Ui = ({ data }) => {
       const response = await axiosInstance.post("GetFocusProductDealerWise", payload);
 
       if (response?.status === 200) {
-        // const filterByDealer = response?.data?.Data.filter((item) => item.DealerId == dataObj.dealerid)
-        setSelectedRow(response?.data?.Data); // add filterByDealer when data
-        console.log("=====GetFocusProductDealerWise==== 65", response?.data?.Data);
+        const result = response?.data?.Data;
+        setSelectedRow(result); // add filterByDealer when data
+        console.log("=====GetFocusProductDealerWise==== 65", result);
 
-        // const upValue = selectedRow.reduce((acc, item) => acc + (parseFloat(item.Value) || 0), 0).toFixed(2);
-        // console.log("-upValue",upValue)
-        // const upValueAsNumber = parseFloat(upValue); 
-        // console.log("-upValueAsNumber",upValueAsNumber)
-        // console.log("-Aug_Month_Value_v1",modalData?.Aug_Month_Value_v1)
+        const sumValue = result.reduce((acc, item) => {
+          // Convert the Value property to a float, or use 0 if it's not a valid number
+          const value = parseFloat(item.Value) || 0;
 
-        // setSumValue(parseFloat(upValueAsNumber + modalData?.Aug_Month_Value_v1).toFixed(2))
+          // Add the current item's value to the accumulator
+          return acc + value;
+        }, 0);
+        const formattedSumValue = (sumValue + (dataObj[monthKey] || 0)).toFixed(2);
+
+        setSumValue(formattedSumValue);
       }
     } catch (error) {
       // Handle errors
@@ -128,13 +132,20 @@ const Wgt_Delear_Ui = ({ data }) => {
     const updatedFormData = selectedRow.map((row) =>
       row.tableid === tableid ? { ...row, [name]: value } : row
     );
+
     // Update the state with the new form data
     setSelectedRow(updatedFormData);
 
-    const upValue = updatedFormData.reduce((acc, item) => acc + (parseFloat(item.Value) || 0), 0).toFixed(2);
-    const upValueAsNumber = parseFloat(upValue);
+    const sumValue = updatedFormData.reduce((acc, item) => {
+      const value = parseFloat(item.Value) || 0;
 
-    setSumValue(parseFloat(upValueAsNumber + modalData?.Aug_Month_Value_v1).toFixed(2))
+      // Add the current item's value to the accumulator
+      return acc + value;
+    }, 0);
+
+    const augMonthValue = parseFloat(modalData[monthKey]) || 0;
+    const result = (sumValue + augMonthValue).toFixed(2);
+    setSumValue(result);
   };
 
   // Handle form submission
@@ -288,6 +299,57 @@ const Wgt_Delear_Ui = ({ data }) => {
     ExportExcel('ssDealer-Wise-Monthly-Plan-Achievement', arrObj)
   };
 
+  const lockData = async () => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      islock_id: 0,
+      FYId: 5,
+      month: date.getMonth() + 1,
+      territory_id: data,
+      islock: true
+    };
+    try {
+      const response = await axiosInstance.post("api/Master/SetIsLockData", payload);
+
+      if (response?.status === 200) {
+        console.log("=====api/Master/SetIsLockData=== 65", response);
+        setIsLocked(true);
+      }
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  }
+
+  // Lock / Unlock
+  const getLockData = async () => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      islock_id: 0,
+      FYId: 5,
+      month: date.getMonth() + 1,
+      territory_id: data
+    };
+    try {
+      const response = await axiosInstance.post("api/Master/GetIsLockData", payload);
+
+      if (response?.status === 200) {
+        console.log("=====api/Master/GetIsLockData=== 65", response);
+        if (response?.data?.Data.length) {
+          setIsLocked(true);
+        } else {
+          setIsLocked(false);
+        }
+      }
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  }
+
+  useEffect(() => {
+    getLockData()
+  }, [data])
   console.log("-currentMonth", currentMonth)
 
   const generateTableRows = (item) => {
@@ -347,14 +409,6 @@ const Wgt_Delear_Ui = ({ data }) => {
   const renderTableRow = (item, index) => {
     return (
       <tr key={index}>
-        <td>{index + 1}</td>
-        <td className="">{item.dealer_name}</td>
-        <td className="">{item.dealer_code}</td>
-        <td className="">{formatDateTimes(item.customer_creationdate)}</td>
-        <td className="">{item.dealer_category}</td>
-        <td className="">{item.LY_Value}</td>
-        <td className="">{item.CY_Value} <hr className="hr0" /> {item.YTD_Value}</td>
-        <td className="">0</td>
         {generateTableRows(item)}
       </tr>
     );
@@ -393,10 +447,13 @@ const Wgt_Delear_Ui = ({ data }) => {
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
           />
+          <div>
+            {isLocked ? (<button className="w3-btn btn-red" ><i className="fa fa-lock  w3-text-red"></i></button>) : (<button className="w3-btn btn-red" onClick={lockData}><i className="fa fa-unlock  w3-text-yellow"></i></button>)}
+          </div>
         </div>
       </div>
-      <div className="tbl-container">
-        <table className="table-bordered table-striped">
+      <div className="table-container ">
+        <table border="table-bordered table-striped" style={{ width: "75%" }}>
           <thead>
             <tr>
               <th className="" > S.No </th>
@@ -407,28 +464,49 @@ const Wgt_Delear_Ui = ({ data }) => {
               <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th onClick={() => handleSort('YTD')}>CY / YTD  {sortField === 'YTD' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
               <th className="" > 6 month </th>
-              {generateTableHeaders()}
             </tr>
           </thead>
           <tbody>
-            <tr>
-              {/* here colSpan should according to month count */}
-              <th className="p-2 bg-blue" colSpan={currentMonth + 4}> </th>
-              <th className="p-2 bg-green text-dark"> OS </th>
-              <th className="p-2 bg-green text-dark"> OD </th>
-              <th className="p-2 bg-green text-dark"> Cree Page </th>
-              <th className="p-2 bg-green text-dark"> Sales </th>
-              <th className="p-2 bg-green text-dark"> Collection </th>
-              <th className="p-2 bg-green text-dark"> LYYTD vs CYYTD </th>
-            </tr>
-            {/* Render tale rows */}
-            {filteredItems?.map((item, index) => {
-              return renderTableRow(item, index);
-            })}
-
+            <tr style={{height: "80px"}}><td colSpan={8}></td></tr>
+            {filteredItems?.map((item, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td className="">{item.dealer_name}</td>
+                <td className="">{item.dealer_code}</td>
+                <td className="">{formatDateTimes(item.customer_creationdate)}</td>
+                <td className="">{item.dealer_category}</td>
+                <td className="">{item.LY_Value}</td>
+                <td className="">{item.CY_Value} <hr className="hr0" /> {item.YTD_Value}</td>
+                <td className="">0</td>
+              </tr>
+            ))}
           </tbody>
         </table>
-      </div>
+        <div class="table-scroll">
+          <table border="1" className="scrollable-container table-bordered table-striped" >
+            <thead>
+              <tr>
+                {generateTableHeaders()}
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{height: "80px"}}>
+                {/* here colSpan should according to month count */}
+                <th className="p-2 bg-blue" colSpan={5}> </th>
+                <th className="p-2 bg-green text-dark"> OS </th>
+                <th className="p-2 bg-green text-dark"> OD </th>
+                <th className="p-2 bg-green text-dark"> Cree Page </th>
+                <th className="p-2 bg-green text-dark"> Sales </th>
+                <th className="p-2 bg-green text-dark"> Collection </th>
+                <th className="p-2 bg-green text-dark"> LYYTD vs CYYTD </th>
+              </tr>
+              {filteredItems?.map((item, index) => {
+                return renderTableRow(item, index);
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div> 
       {/* Pagination */}
       < div className="pagination" >
         {
@@ -524,7 +602,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             </tr>
             <tr className="">
               <td style={{ width: "80%" }}> ( This total will be updated to Dealers Sales Plan ( v1 ) and the list will will be added in transaction table as dealers breakup )  </td>
-              <td style={{ width: "10%" }} align="right" > <button className="w3-button w3-indigo " >  Submit </button></td>
+              <td style={{ width: "10%" }} align="right" > {isLocked ? null : (<button className="w3-button w3-indigo " >  Submit </button>)}</td>
             </tr>
           </table>
         </form>
