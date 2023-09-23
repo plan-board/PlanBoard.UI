@@ -467,7 +467,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             </tr>
           </thead>
           <tbody>
-            <tr style={{height: "80px"}}><td colSpan={8}></td></tr>
+            <tr style={{ height: "80px" }}><td colSpan={8}></td></tr>
             {filteredItems?.map((item, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
@@ -490,7 +490,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               </tr>
             </thead>
             <tbody>
-              <tr style={{height: "80px"}}>
+              <tr style={{ height: "80px" }}>
                 {/* here colSpan should according to month count */}
                 <th className="p-2 bg-blue" colSpan={5}> </th>
                 <th className="p-2 bg-green text-dark"> OS </th>
@@ -506,7 +506,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             </tbody>
           </table>
         </div>
-      </div> 
+      </div>
       {/* Pagination */}
       < div className="pagination" >
         {

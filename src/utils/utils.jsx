@@ -33,7 +33,7 @@ export function GetPercent(firstVal, secondVal) {
 }
 
 
-export function getMoths() {
+export function getMonths() {
     return months;
 }
 
