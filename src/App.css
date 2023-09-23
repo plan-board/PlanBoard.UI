@@ -2220,3 +2220,24 @@ table.table-striped tbody tr:nth-child(odd) {
 
 .IsFocused{background-color: #e1dd80;}
 .table-striped td.active{ background-color: #4a9eda;}
+
+.table-container {
+  display: flex;
+  overflow-x: auto;
+}
+
+.table-scroll {
+  flex: 1;
+  max-width: 500px;  
+  overflow-x: scroll;
+  margin-right: 10px;  
+}
+ 
+.table-bordered {
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background-color: #f2f2f2;
+} 
