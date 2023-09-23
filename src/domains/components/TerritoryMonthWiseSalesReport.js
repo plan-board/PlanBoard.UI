@@ -4,7 +4,7 @@ import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
-import { GetPercent, fNWCommas, getMoths } from "../../utils/utils";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -240,14 +240,6 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <td>{fNWCommas(item?.LY_Value)}</td>
       <td>{fNWCommas(item?.LLY_Value)}</td>
       <td>{fNWCommas(item?.CY_Value)} <hr className="hr0" />{fNWCommas(item?.YTD_Value)}</td>
-      {getMoths().map((month) => (
-        <td key={month}>
-          {fNWCommas(item[`${month}_Month_Value_v1`])}
-          <hr className="hr0" />
-          {fNWCommas(item[`${month}_Month_Sale`])}
-          {GetPercent(item[`${month}_Month_Sale`], item[`${month}_Month_Value_v1`])}
-        </td>
-      ))}
     </tr>
   ));
 
@@ -269,6 +261,25 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         {fNWCommas(totalYTDValue)}
         {GetPercent(totalYTDValue, totalCYValue)}
       </td>
+    </tr>
+  );
+
+  const tableRows2 = filteredItems.map((item, index) => (
+    <tr key={index}>
+      {getMonths().map((month) => (
+        <td key={month}>
+          {fNWCommas(item[`${month}_Month_Value_v1`])}
+          <hr className="hr0" />
+          {fNWCommas(item[`${month}_Month_Sale`])}
+          {GetPercent(item[`${month}_Month_Sale`], item[`${month}_Month_Value_v1`])}
+        </td>
+      ))}
+    </tr>
+  ));
+
+  // Add a new row for total CY_Value and YTD_Value
+  const totalRow2 = (
+    <tr key="total" className="totalRow">
       <td>
         {fNWCommas(totalAprValue)}
         <hr className="hr0" />
@@ -345,6 +356,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   );
 
   const tableWithTotalRow = [...tableRows, totalRow];
+  const tableWithTotalRow2 = [...tableRows2, totalRow2];
 
   const handleExportClick = () => {
     const arrObj = sortedData.map((element, index) => ({
@@ -399,8 +411,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
           />
         </div>
         <div className="full">
-          <div className="tbl-container">
-            <table className="table-bordered table-striped">
+          <div className="table-container ">
+            <table border="table-bordered table-striped" style={{ width: "75%" }}>
               <thead>
                 <tr>
                   <th> S.No </th>
@@ -409,24 +421,12 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                   <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
                   <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
                   <th> CY Plan / YTD </th>
-                  <th> Apr </th>
-                  <th> May </th>
-                  <th> Jun </th>
-                  <th> Jul </th>
-                  <th> Aug </th>
-                  <th> Sep </th>
-                  <th> Oct </th>
-                  <th> Nov </th>
-                  <th> Dec </th>
-                  <th> Jan </th>
-                  <th> Feb </th>
-                  <th> Mar </th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan="18">
+                    <td colSpan="6">
                       <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
                     </td>
                   </tr>
@@ -434,7 +434,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                   <>
                     {filteredItems?.length === 0 ? (
                       <tr>
-                        <td colSpan="18">No data found</td>
+                        <td colSpan="6">No data found</td>
                       </tr>
                     ) : (
                       tableWithTotalRow
@@ -443,7 +443,38 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                 )}
               </tbody>
             </table>
+            <div class="table-scroll">
+              <table border="1" className="scrollable-container table-bordered table-striped" >
+                <thead>
+                  <tr>
+                    {getMonths().map((month) => (
+                      <td>{month}</td>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="12">
+                        <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
+                      {filteredItems?.length === 0 ? (
+                        <tr>
+                          <td colSpan="12">No data found</td>
+                        </tr>
+                      ) : (
+                        tableWithTotalRow2
+                      )}
+                    </>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
+
           {/* Pagination */}
           <div className="pagination">
             {Array.from({ length: pageCount }, (_, index) => (

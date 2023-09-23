@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-import { GetPercent, fNWCommas, getMoths } from "../../utils/utils";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
 
 const date = new Date();
 const cMName = date.toLocaleString('default', { month: 'short' });
@@ -47,8 +47,8 @@ const TerritoryMonthSale = ({ selectedTerritory }) => {
 
     const generateTableRows = (item) => {
         const headers = [];
-        for (let i = 0; i < getMoths().length; i++) {
-            const monName = getMoths()[i];
+        for (let i = 0; i < getMonths().length; i++) {
+            const monName = getMonths()[i];
             headers.push(
                 <Fragment >
                     <td className={`  ${monName === mStartName ? "active" : ""}`}> 
