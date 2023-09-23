@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux"; 
- 
+import { useDispatch, useSelector } from "react-redux";
+
 import logoShalimaar from "../images/logo.png";
 import logoPlanboard from "../images/logo1-white.png";
 
@@ -14,11 +14,12 @@ const Login = ({ setIsAuth }) => {
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
 
-  const [error, setError] = useState(false); 
+  const [error, setError] = useState(false);
 
   const initialFormData = {
-    Email: '',
-    Token: '',
+    Email: "",
+    Password: "",
+    Token: "",
   };
   const [formData, setFormData] = useState(initialFormData);
   // Handle form input changes
@@ -47,9 +48,7 @@ const Login = ({ setIsAuth }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     const payload = {
-      SessionData: [
-        formData
-      ],
+      SessionData: [formData],
     };
 
     try {
@@ -62,12 +61,15 @@ const Login = ({ setIsAuth }) => {
         const responseData = res?.data;
 
         if (responseData?.Status === true) {
-          setError('');
+          setError("");
           resetForm();
 
           dispatch(setAuthData(responseData));
 
-          localStorage.setItem("access_token", responseData.Data[0]?.TokenValid);
+          localStorage.setItem(
+            "access_token",
+            responseData.Data[0]?.TokenValid
+          );
           localStorage.setItem("Isloggedin", responseData.Status);
 
           switch (responseData.Data[0]?.EmployeeTpye) {
@@ -94,12 +96,9 @@ const Login = ({ setIsAuth }) => {
       } else {
         setError("Request failed");
       }
-
-
     } catch (error) {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
-
   }; // 2 : handleLogin ends
 
   const resetForm = () => {
@@ -108,9 +107,7 @@ const Login = ({ setIsAuth }) => {
 
   return (
     <>
-      <style>
-        {'.w3-sidebar{display:none}'}
-      </style>
+      <style>{".w3-sidebar{display:none}"}</style>
       <div className="login">
         <div className="logo-container">
           <img src={logoShalimaar} alt="Shailmar" />
@@ -124,16 +121,33 @@ const Login = ({ setIsAuth }) => {
             </div>
             <form onSubmit={handleLogin}>
               <div className="form-group h6">
-                <input className="w3-input w3-border" type="email" required={true} placeholder="Email" name="Email" onChange={handleInputChange} />
+                <input
+                  className="w3-input w3-border"
+                  type="email"
+                  required={true}
+                  placeholder="Email"
+                  name="Email"
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="form-group h6">
-                <input className="w3-input w3-border" type="password" required={true} placeholder="Password" name="Token" onChange={handleInputChange} />
+                <input
+                  className="w3-input w3-border"
+                  type="password"
+                  required={true}
+                  placeholder="Password"
+                  name="Password"
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="form-group w3-small h6 ">
                 <Link to="/forgot-password">I forgot my password !</Link>
               </div>
               <div className="form-group m-0">
-                <button className="" type="submit"> Login </button>
+                <button className="" type="submit">
+                  {" "}
+                  Login{" "}
+                </button>
               </div>
               <div className="form-group w3-text-red">
                 <p>{error}</p>
