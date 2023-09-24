@@ -393,22 +393,32 @@ const Wgt_Delear_Ui = ({ data }) => {
       if (monName == mStartName) {
         headers.push(
           <Fragment key={`header_${monName}`}>
-            <td>{item?.OS}</td>
-            <td>{item?.OD}</td>
-            <td>{item?.creepage_value}</td>
-            <td>
-              {item[`${monName}_Month_Value`]}
-              <br />
-              <input
-                type="number"
-                readOnly={true}
-                className="inp40 text-center"
-                defaultValue={item[`${monName}_Month_Value_v1`]}
-                name={`${item.id}_sales`}
-                onChange={(e) => onchangeInputs(e, item.id)}
-              />
-              <br />
-              <div>
+            <td style={{ minWidth: "52px" }}>{item?.OS}</td>
+            <td style={{ minWidth: "50px" }}>{item?.OD}</td>
+            <td style={{ minWidth: "100px" }}>{item?.creepage_value}</td>
+            <td style={{ minWidth: "100px", display: "flex" }}>
+              <span style={{ paddingTop: "13px", minWidth: "50px" }}>
+                {item[`${monName}_Month_Value`]}
+              </span>
+              {/* <br /> */}
+              <div
+                style={{
+                  minWidth: "50px",
+                  minHeight: "15px",
+                  paddingTop: "10px",
+                }}
+              >
+                <input
+                  type="number"
+                  readOnly={true}
+                  className="inp40 text-center"
+                  defaultValue={item[`${monName}_Month_Value_v1`]}
+                  name={`${item.id}_sales`}
+                  onChange={(e) => onchangeInputs(e, item.id)}
+                />
+              </div>
+              {/* <br /> */}
+              <div style={{ padding: "13px" }}>
                 <p onClick={() => getMonthTarget(item)}>
                   <i
                     className="fa fa-pencil c-pointer text-primary"
@@ -417,7 +427,13 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </p>
               </div>
             </td>
-            <td>
+            <td
+              style={{
+                minWidth: "100px",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+              }}
+            >
               <input
                 type="number"
                 readOnly={true}
@@ -426,7 +442,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
             </td>
-            <td>{item?.LYYTDvsCYYTD}</td>
+            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}</td>
           </Fragment>
         );
         break;
@@ -464,6 +480,52 @@ const Wgt_Delear_Ui = ({ data }) => {
               //
             >
               {monName}
+              <tr>
+                {/* here colSpan should according to month count */}
+
+                <th
+                  className="p-2 bg-green text-dark"
+                  style={{ minWidth: "50px" }}
+                >
+                  {" "}
+                  OS{" "}
+                </th>
+                <th
+                  className="p-2 bg-green text-dark"
+                  style={{ minWidth: "50px" }}
+                >
+                  {" "}
+                  OD{" "}
+                </th>
+                <th
+                  className="p-2 bg-green text-dark"
+                  style={{ minWidth: "100px" }}
+                >
+                  {" "}
+                  Cree Page{" "}
+                </th>
+                <th
+                  className="p-2 bg-green text-dark"
+                  style={{ minWidth: "150px" }}
+                >
+                  {" "}
+                  Sales{" "}
+                </th>
+                <th
+                  className="p-2 bg-green text-dark"
+                  style={{ minWidth: "105px" }}
+                >
+                  {" "}
+                  Collection{" "}
+                </th>
+                <th
+                  className="p-2 bg-green text-dark"
+                  style={{ minWidth: "100px" }}
+                >
+                  {" "}
+                  LYYTD vs CYYTD{" "}
+                </th>
+              </tr>
             </td>
           </Fragment>
         );
@@ -519,10 +581,10 @@ const Wgt_Delear_Ui = ({ data }) => {
       </div>
       <div className="table-container ">
         <table
-          border="table-bordered table-striped "
-          style={{ width: "75%", marginBottom: "12px" }}
+          border="table-bordered table-striped1 "
+          style={{ width: "65%", marginBottom: "12px", padding: "0px" }}
         >
-          <thead>
+          <thead style={{ height: "62px" }}>
             <tr>
               <th style={{ width: "7%" }} className="">
                 {" "}
@@ -553,20 +615,20 @@ const Wgt_Delear_Ui = ({ data }) => {
                 {sortField === "Category" &&
                   (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th onClick={() => handleSort("LY")}>
+              <th onClick={() => handleSort("LY")} style={{ width: "12%" }}>
                 LY {sortField === "LY" && (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th onClick={() => handleSort("YTD")}>
+              <th onClick={() => handleSort("YTD")} style={{ width: "12%" }}>
                 CY / YTD{" "}
                 {sortField === "YTD" && (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th className=""> 6 month </th>
+              <th className="" style={{ width: "8%" }}>
+                {" "}
+                6 month{" "}
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr style={{ height: "80px" }}>
-              <td colSpan={8}></td>
-            </tr>
             {filteredItems?.map((item, index) => (
               <tr key={index}>
                 <td className="text-center">{index + 1}</td>
@@ -588,25 +650,14 @@ const Wgt_Delear_Ui = ({ data }) => {
 
         <div class="table-scroll">
           <table
+            id={"table2try"}
             border="1"
-            className="scrollable-container table-bordered table-striped "
+            className="scrollable-container table-bordered  table-striped1"
           >
             <thead>
               <tr>{generateTableHeaders()}</tr>
             </thead>
             <tbody>
-              <tr style={{ height: "80px" }}>
-                {/* here colSpan should according to month count */}
-                <th className="p-2 bg-blue" colSpan={5}>
-                  {" "}
-                </th>
-                <th className="p-2 bg-green text-dark"> OS </th>
-                <th className="p-2 bg-green text-dark"> OD </th>
-                <th className="p-2 bg-green text-dark"> Cree Page </th>
-                <th className="p-2 bg-green text-dark"> Sales </th>
-                <th className="p-2 bg-green text-dark"> Collection </th>
-                <th className="p-2 bg-green text-dark"> LYYTD vs CYYTD </th>
-              </tr>
               {filteredItems?.map((item, index) => {
                 return renderTableRow(item, index);
               })}

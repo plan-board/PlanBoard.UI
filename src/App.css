@@ -2233,7 +2233,7 @@ table.table-striped tbody tr:nth-child(odd) {
 
 .table-scroll {
   flex: 1;
-  max-width: 500px;
+  max-width: 600px;
   overflow-x: scroll;
   margin-right: 10px;
   /* height: 60%; */
@@ -2277,4 +2277,29 @@ input[type="email"] {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   background-color: #fff;
+}
+
+table.table-striped1 tbody tr td,
+table.table-striped1 thead tr th {
+  /* padding: 8px 12px; */
+  white-space: nowrap;
+  text-align: center;
+}
+table.table-striped1 tbody tr td input[type="text"] {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  height: 35px;
+}
+table.table-striped1 tbody tr:nth-child(even) {
+  background: #f9f5fb;
+}
+table.table-striped1 tbody tr:nth-child(odd) {
+  background: #fff;
+}
+.table-striped1 td.active {
+  background-color: #4a9eda;
+}
+.table-striped1 tbody tr:nth-child(odd) {
+  background-color: #f2f2f2;
 }
