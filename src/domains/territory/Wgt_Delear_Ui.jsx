@@ -518,7 +518,10 @@ const Wgt_Delear_Ui = ({ data }) => {
         </div>
       </div>
       <div className="table-container ">
-        <table border="table-bordered table-striped " style={{ width: "75%" }}>
+        <table
+          border="table-bordered table-striped "
+          style={{ width: "75%", marginBottom: "12px" }}
+        >
           <thead>
             <tr>
               <th style={{ width: "7%" }} className="">
