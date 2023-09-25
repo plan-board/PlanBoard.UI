@@ -12,6 +12,7 @@ import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSales
 import TerritorySelectionBox from "../components/TerritorySelectionBox";
 import DealerMonthSale from "../components/DealerMonthSale";
 import AllFigureText from "../components/AllFigureText";
+import LogSummary from "../components/LogSummary";
 
 const National = () => {
   const { AuthData } = useSelector((state) => state.auth);
@@ -141,7 +142,20 @@ const National = () => {
           >
             <span className="h6"> Dealer Activity Plan </span>
           </div>
+
+          <div
+            className={
+              toggleState === 4 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(4)}
+          >
+            <span className="h6">
+              <i className="fa fa-list"> Log Summary</i>
+            </span>
+          </div>
+
         </div>
+
         <div class="w-100">
           {/* <div className="table-container"> */}
           {toggleState === 1 && (
@@ -172,6 +186,18 @@ const National = () => {
                 <DealerMonthSale selectedTerritory={selectedTerritory} />
               ) : (
                 <div>Please select a territory</div>
+              )}
+            </>
+          )}
+          {toggleState === 4 && (
+            <>
+              <div>
+                <h3>Log Summary</h3>
+              </div>
+              {selectedTerritory ? (
+                <LogSummary />
+              ) : (
+                <div></div>
               )}
             </>
           )}

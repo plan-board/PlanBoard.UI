@@ -79,45 +79,45 @@ const CommonTopSales = ({
           </div>) : (
           <div className="one-fifth text-center">
             <span className="w3-text-gray h6">
-              {summaryData.length && summaryData[0]?.summ_entity_type}
+              {summaryData.length ? summaryData[0]?.summ_entity_type : "-"}
             </span>
             <hr className="hr1" />
-            <span className=" "> {summaryData.length && summaryData[0]?.summ_entity_name}</span>
+            <span className=" "> {summaryData.length ? summaryData[0]?.summ_entity_name: "-"}</span>
           </div>)}
 
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
 
-            LLY {summaryData.length && summaryData[0]?.summ_lly_fy}
+            LLY {summaryData.length ? summaryData[0]?.summ_lly_fy : ""}
           </span>
           <hr className="hr1" />
-          <span className=" ">{summaryData.length && fNWCommas(summaryData[0]?.summ_lly_sale_value)}</span>
+          <span className=" ">{summaryData.length ? fNWCommas(summaryData[0]?.summ_lly_sale_value) : "-"}</span>
         </div>
 
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
 
-            LY {summaryData.length && summaryData[0]?.summ_ly_fy}
+            LY {summaryData.length ? summaryData[0]?.summ_ly_fy : ""}
           </span>
           <hr className="hr1" />
-          <span className=" "> {summaryData.length && fNWCommas(summaryData[0]?.summ_ly_sale_value)} </span>
+          <span className=" "> {summaryData.length ? fNWCommas(summaryData[0]?.summ_ly_sale_value) : "-"} </span>
         </div>
 
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">
 
-            TARGET {summaryData.length && summaryData[0]?.summ_cy_fy}
+            TARGET {summaryData.length ? summaryData[0]?.summ_cy_fy : ""}
           </span>
           <hr className="hr1" />
           <b>
             [v.0 :
             <u className=" w3-text-red">
-              {summaryData.length && fNWCommas(summaryData[0]?.summ_cy_plan_value)}
+              {summaryData.length ? fNWCommas(summaryData[0]?.summ_cy_plan_value) : ""}
             </u>
             ]
             [v.1 :
             <u className=" w3-text-red">
-              {summaryData.length && fNWCommas(summaryData[0]?.summ_cy_plan_value_v1)}
+              {summaryData.length ? fNWCommas(summaryData[0]?.summ_cy_plan_value_v1) : ""}
             </u>
             ]
           </b>
