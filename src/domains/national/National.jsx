@@ -194,11 +194,7 @@ const National = () => {
               <div>
                 <h3>Log Summary</h3>
               </div>
-              {selectedTerritory ? (
-                <LogSummary />
-              ) : (
-                <div></div>
-              )}
+              <LogSummary actionType="HOD" />
             </>
           )}
         </div>

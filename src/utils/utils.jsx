@@ -51,4 +51,9 @@ export function formatDateTimes(datetimestamp) {
     const formattedDate = `${formattedDay}-${monthName}-${year}`;
   
     return formattedDate;
-  }
+}
+
+export function getCurrentMonth(){
+    const date = new Date(); 
+    return date.getMonth() < 3 ? date.getMonth() + 13 : date.getMonth() + 1;
+}
