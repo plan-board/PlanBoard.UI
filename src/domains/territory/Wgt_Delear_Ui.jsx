@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import CustomPopup from "../CustomPopup";
 import ExportExcel from "../ExportExcel";
 import { formatDateTimes } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
 
 const itemsPerPage = 10;
 const monthArr = [
@@ -579,6 +580,7 @@ const Wgt_Delear_Ui = ({ data }) => {
           />
         </div>
       </div>
+
       <div className="table-container ">
         <table
           border="table-bordered table-striped1 "
@@ -630,7 +632,7 @@ const Wgt_Delear_Ui = ({ data }) => {
           </thead>
           <tbody>
             {filteredItems?.map((item, index) => (
-              <tr key={index}  style={{ height: "80px" }}>
+              <tr key={index}>
                 <td className="text-center">{index + 1}</td>
                 <td className="text-center">{item.dealer_name}</td>
                 <td className="text-center">{item.dealer_code}</td>
@@ -650,24 +652,13 @@ const Wgt_Delear_Ui = ({ data }) => {
 
         <div class="table-scroll">
           <table
-            id={"table2try"}
             border="1"
             className="scrollable-container table-bordered  table-striped1"
           >
             <thead>
               <tr>{generateTableHeaders()}</tr>
             </thead>
-            <tbody> 
-              <tr style={{ height: "80px" }}>
-                {/* here colSpan should according to month count */}
-                <th className="p-2 bg-blue" colSpan={5}> </th>
-                <th className="p-2 bg-green text-dark"> OS </th>
-                <th className="p-2 bg-green text-dark"> OD </th>
-                <th className="p-2 bg-green text-dark"> Cree Page </th>
-                <th className="p-2 bg-green text-dark"> Sales </th>
-                <th className="p-2 bg-green text-dark"> Collection </th>
-                <th className="p-2 bg-green text-dark"> LYYTD vs CYYTD </th>
-              </tr> 
+            <tbody>
               {filteredItems?.map((item, index) => {
                 return renderTableRow(item, index);
               })}
