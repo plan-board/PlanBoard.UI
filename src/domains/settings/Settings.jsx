@@ -5,6 +5,7 @@ import AllFigureText from "../components/AllFigureText";
 import ZoneMaster from "./Components/ZoneMaster";
 import DepotMaster from "./Components/DepotMaster";
 import TerritoryMaster from "./Components/TerritoryMaster";
+import EmployeeMaster from "./Components/EmployeeMaster";
 
 const Settings = () => {
   const [toggleState, setToggleState] = useState(1);
@@ -65,6 +66,17 @@ const Settings = () => {
               <i className="fa fa-gear"> Territory Master</i>{" "}
             </span>
           </div>
+          <div
+            className={
+              toggleState === 5 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(5)}
+          >
+            <span className="h6">
+              {" "}
+              <i className="fa fa-gear"> Employee Master</i>{" "}
+            </span>
+          </div>
         </div>
         <div class="row w-100">
           <div className="full">
@@ -92,6 +104,14 @@ const Settings = () => {
             >
               {toggleState === 4 && (
                 <TerritoryMaster toggleState={toggleState} />
+              )}
+            </div>
+            <div
+              className={toggleState === 5 ? "  " : " w3-hide  "}
+              onClick={() => toggleTab(5)}
+            >
+              {toggleState === 5 && (
+                <EmployeeMaster toggleState={toggleState} />
               )}
             </div>
           </div>

@@ -14,7 +14,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;0,6..12,1000;1,6..12,200;1,6..12,300;1,6..12,400;1,6..12,500;1,6..12,600;1,6..12,700;1,6..12,800;1,6..12,900;1,6..12,1000&display=swap");
 ::-webkit-scrollbar {
   width: 9px;
-  height: 9px;
+  height: 12px;
 }
 ::-webkit-scrollbar-thumb {
   background-color: var(--top-nav);
@@ -2218,21 +2218,27 @@ table.table-striped tbody tr:nth-child(odd) {
   transform: scale(0.95);
 }
 
-.IsFocused{background-color: #e1dd80;}
-.table-striped td.active{ background-color: #4a9eda;}
+.IsFocused {
+  background-color: #e1dd80;
+}
+.table-striped td.active {
+  background-color: #4a9eda;
+}
 
 .table-container {
   display: flex;
   overflow-x: auto;
+  /* flex-wrap: nowrap; */
 }
 
 .table-scroll {
   flex: 1;
-  max-width: 500px;  
+  max-width: 600px;
   overflow-x: scroll;
-  margin-right: 10px;  
+  margin-right: 10px;
+  /* height: 60%; */
 }
- 
+
 .table-bordered {
   border-collapse: collapse;
   border: 1px solid #ddd;
@@ -2240,4 +2246,60 @@ table.table-striped tbody tr:nth-child(odd) {
 
 .table-striped tbody tr:nth-child(odd) {
   background-color: #f2f2f2;
-} 
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.from_dropDownCss {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.formlabel {
+  display: block;
+  margin-bottom: 0px !important; /* Add some spacing between labels and input/select elements */
+  /* font-weight: bold; */
+  color: #333; /* Change the label text color */
+  font-size: 14px;
+}
+.employeeForm-component {
+  /* width: 100vh; */
+  margin: 0 auto;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+}
+
+table.table-striped1 tbody tr td,
+table.table-striped1 thead tr th {
+  /* padding: 8px 12px; */
+  white-space: nowrap;
+  text-align: center;
+}
+table.table-striped1 tbody tr td input[type="text"] {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  height: 35px;
+}
+table.table-striped1 tbody tr:nth-child(even) {
+  background: #f9f5fb;
+}
+table.table-striped1 tbody tr:nth-child(odd) {
+  background: #fff;
+}
+.table-striped1 td.active {
+  background-color: #4a9eda;
+}
+.table-striped1 tbody tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}

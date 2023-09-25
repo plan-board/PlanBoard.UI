@@ -360,7 +360,7 @@ const DepotMaster = ({ toggleState }) => {
                 <td style={{ width: "23%" }}>
                   <select
                     className="form-control"
-                    name="zone_name"
+                    name="zone_id"
                     value={formDetails.zone_id}
                     onChange={handleChange}
                   >
