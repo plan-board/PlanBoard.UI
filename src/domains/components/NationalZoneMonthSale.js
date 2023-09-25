@@ -5,7 +5,7 @@ import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
-import { GetPercent, fNWCommas, getMoths } from "../../utils/utils";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
 
 const NationalZoneMonthSale = ({ selectedZone }) => {
   const dispatch = useDispatch();
@@ -193,7 +193,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         {fNWCommas(item?.YTD_Value)}
         {GetPercent(item?.YTD_Value, item?.CY_Value)}
       </td>
-      {getMoths().map((month) => (
+      {getMonths().map((month) => (
         <td key={month}>
           {fNWCommas(item[`${month}_Month_Value_v1`])}
           <hr className="hr0" />

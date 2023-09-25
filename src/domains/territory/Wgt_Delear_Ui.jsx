@@ -630,7 +630,7 @@ const Wgt_Delear_Ui = ({ data }) => {
           </thead>
           <tbody>
             {filteredItems?.map((item, index) => (
-              <tr key={index}>
+              <tr key={index}  style={{ height: "80px" }}>
                 <td className="text-center">{index + 1}</td>
                 <td className="text-center">{item.dealer_name}</td>
                 <td className="text-center">{item.dealer_code}</td>
@@ -657,7 +657,17 @@ const Wgt_Delear_Ui = ({ data }) => {
             <thead>
               <tr>{generateTableHeaders()}</tr>
             </thead>
-            <tbody>
+            <tbody> 
+              <tr style={{ height: "80px" }}>
+                {/* here colSpan should according to month count */}
+                <th className="p-2 bg-blue" colSpan={5}> </th>
+                <th className="p-2 bg-green text-dark"> OS </th>
+                <th className="p-2 bg-green text-dark"> OD </th>
+                <th className="p-2 bg-green text-dark"> Cree Page </th>
+                <th className="p-2 bg-green text-dark"> Sales </th>
+                <th className="p-2 bg-green text-dark"> Collection </th>
+                <th className="p-2 bg-green text-dark"> LYYTD vs CYYTD </th>
+              </tr> 
               {filteredItems?.map((item, index) => {
                 return renderTableRow(item, index);
               })}
