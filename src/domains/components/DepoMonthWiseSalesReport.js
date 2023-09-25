@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -241,7 +242,7 @@ const DepoMonthWiseSalesReport = ({
   );
 
   const tableRows = filteredItems.map((item, index) => (
-    <tr key={index}>
+    <tr key={index} className="text-center">
       <td>{++index}</td>
       <td>{item?.zone_name}</td>
       <td>{item?.depot_name}</td>
@@ -256,8 +257,10 @@ const DepoMonthWiseSalesReport = ({
 
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
-    <tr key="total" className="totalRow">
-      <td colSpan={3}>Total</td>
+    <tr key="total" className="totalRow text-center">
+      <td colSpan={3} style={{ textAlign: "right", paddingRight: "10px" }}>
+        Total
+      </td>
       <td>{fNWCommas(totalLLYValue)}</td>
       <td>{fNWCommas(totalLYValue)}</td>
       <td>
@@ -426,102 +429,147 @@ const DepoMonthWiseSalesReport = ({
             onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <div className="full">
-          <div className="table-container ">
-            <table border="table-bordered table-striped" style={{ width: "75%" }}>
-              <thead>
-                <tr>
-                  <th>S.No</th>
-                  <th onClick={() => handleSort("Zone")}>
-                    Zone{" "}
-                    {sortField === "Zone" &&
-                      (sortDirection === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => handleSort("Depot")}>
-                    Depot{" "}
-                    {sortField === "Depot" &&
-                      (sortDirection === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => handleSort("LLY")}>
-                    LLY{" "}
-                    {sortField === "LLY" &&
-                      (sortDirection === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => handleSort("LY")}>
-                    LY{" "}
-                    {sortField === "LY" &&
-                      (sortDirection === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th>CY Plan / YTD</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan="6">
-                      <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-                    </td>
-                  </tr>
-                ) : (
-                  <>
-                    {filteredItems?.length === 0 ? (
+        <Row>
+          <div className="full">
+            <div className="table-container-zone ">
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} className="pr-0">
+                <table
+                  border="table-bordered table-striped1"
+                  // style={{ width: "60%" }}
+                  style={{ minHeight: "650px" }}
+                >
+                  <thead>
+                    <tr
+                      style={{
+                        position: "sticky",
+                        top: 0,
+                        backgroundColor: "#007ad1",
+                      }}
+                    >
+                      <th style={{ width: "3%" }}>S.No</th>
+                      <th
+                        onClick={() => handleSort("Zone")}
+                        style={{ width: "5%" }}
+                      >
+                        Zone{" "}
+                        {sortField === "Zone" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th
+                        onClick={() => handleSort("Depot")}
+                        style={{ width: "5%" }}
+                      >
+                        Depot{" "}
+                        {sortField === "Depot" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th
+                        style={{ width: "5%" }}
+                        onClick={() => handleSort("LLY")}
+                      >
+                        LLY{" "}
+                        {sortField === "LLY" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th
+                        style={{ width: "5%" }}
+                        onClick={() => handleSort("LY")}
+                      >
+                        LY{" "}
+                        {sortField === "LY" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th style={{ width: "5%" }}>CY Plan / YTD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isLoading ? (
                       <tr>
-                        <td colSpan="6">No data found</td>
+                        <td colSpan="6">
+                          <LoadingPlaceholder
+                            numberOfRows={4}
+                          ></LoadingPlaceholder>
+                        </td>
                       </tr>
                     ) : (
-                      tableWithTotalRow
+                      <>
+                        {filteredItems?.length === 0 ? (
+                          <tr>
+                            <td colSpan="6">No data found</td>
+                          </tr>
+                        ) : (
+                          tableWithTotalRow
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </tbody>
-            </table>
-            <div class="table-scroll">
-              <table border="1" className="scrollable-container table-bordered table-striped" >
-                <thead>
-                  <tr>
-                    {getMonths().map((month) => (
-                      <td>{month}</td>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    <tr>
-                      <td colSpan="12">
-                        <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-                      </td>
-                    </tr>
-                  ) : (
-                    <>
-                      {filteredItems?.length === 0 ? (
+                  </tbody>
+                </table>
+              </Col>
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} className="pr-0 pl-0">
+                <div class="table-scroll">
+                  <table
+                    border="1"
+                    className="scrollable-container table-bordered table-striped1"
+                    style={{ minHeight: "650px" }}
+                  >
+                    <thead>
+                      <tr
+                        className="text-center"
+                        style={{
+                          position: "sticky",
+                          top: 0,
+                          zIndex: 123,
+                          backgroundColor: "#007ad1",
+                        }}
+                      >
+                        {getMonths().map((month) => (
+                          <td>{month}</td>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody style={{ maxHeight: "550px" }}>
+                      {isLoading ? (
                         <tr>
-                          <td colSpan="12">No data found</td>
+                          <td colSpan="12">
+                            <LoadingPlaceholder
+                              numberOfRows={4}
+                            ></LoadingPlaceholder>
+                          </td>
                         </tr>
                       ) : (
-                        tableWithTotalRow2
+                        <>
+                          {filteredItems?.length === 0 ? (
+                            <tr>
+                              <td colSpan="12">No data found</td>
+                            </tr>
+                          ) : (
+                            tableWithTotalRow2
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
-                </tbody>
-              </table>
+                    </tbody>
+                  </table>
+                </div>
+              </Col>
             </div>
           </div>
-        </div>
-        <div className="full">
-          {/* Pagination */}
-          <div className="pagination">
-            {Array.from({ length: pageCount }, (_, index) => (
-              <button
-                key={index}
-                onClick={() => handlePageChange(index)}
-                className={`page-button ${currentPage === index ? "active" : ""
+          <div className="full">
+            {/* Pagination */}
+            <div className="pagination">
+              {Array.from({ length: pageCount }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(index)}
+                  className={`page-button ${
+                    currentPage === index ? "active" : ""
                   }`}
-              >
-                {index + 1}
-              </button>
-            ))}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </Row>
       </div>
     </div>
   );
