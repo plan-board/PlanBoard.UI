@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
 
 const itemsPerPage = 10; // Number of items to display per page
 
@@ -14,8 +15,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const [isLoading, setLoading] = useState(true);
 
   const [filterText, setFilterText] = useState("");
-  const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
-  const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
+  const [sortField, setSortField] = useState(""); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(""); // To store the current sorting direction ('asc' or 'desc')
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -52,44 +53,43 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const handleSort = (field) => {
     if (sortField === field) {
       // If the same column is clicked again, toggle the sort direction
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       // If a different column is clicked, set the new sort field and direction
       setSortField(field);
-      setSortDirection('asc'); // Default to ascending order
+      setSortDirection("asc"); // Default to ascending order
     }
   };
 
   // Sort the data based on the current sorting field and direction
-  let sortedData = [...territoryMonthPlan,];
-  if (sortField === 'Depot') {
+  let sortedData = [...territoryMonthPlan];
+  if (sortField === "Depot") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return a.depot_name?.localeCompare(b.depot_name);
       } else {
         return b.depot_name?.localeCompare(a.depot_name);
       }
     });
-  } else if (sortField === 'Territory') {
+  } else if (sortField === "Territory") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return a.territory_name?.localeCompare(b.territory_name);
       } else {
         return b.territory_name?.localeCompare(a.territory_name);
       }
     });
-  } else if (sortField === 'LLY') {
+  } else if (sortField === "LLY") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return (a.LLY_Value || 0) - (b.LLY_Value || 0);
       } else {
         return (b.LLY_Value || 0) - (a.LLY_Value || 0);
       }
     });
-  }
-  else if (sortField === 'LY') {
+  } else if (sortField === "LY") {
     sortedData.sort((a, b) => {
-      if (sortDirection === 'asc') {
+      if (sortDirection === "asc") {
         return (a.LY_Value || 0) - (b.LY_Value || 0);
       } else {
         return (b.LY_Value || 0) - (a.LY_Value || 0);
@@ -99,12 +99,19 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
 
   const filterData = (data) => {
     const filterTextLowerCase = filterText.toLowerCase();
-    return data.filter((item) => (
-      (item?.zone_name && item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
-      (item?.depot_name && item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
-      (!isNaN(item.LLY_Value) && item?.LLY_Value.toString().toLowerCase().includes(filterTextLowerCase)) ||
-      (!isNaN(item.LY_Value) && item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
-    ));
+    return data.filter(
+      (item) =>
+        (item?.zone_name &&
+          item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
+        (item?.depot_name &&
+          item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
+        (!isNaN(item.LLY_Value) &&
+          item?.LLY_Value.toString()
+            .toLowerCase()
+            .includes(filterTextLowerCase)) ||
+        (!isNaN(item.LY_Value) &&
+          item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
+    );
   };
 
   // Paginate the sorted data
@@ -233,7 +240,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   );
 
   const tableRows = filteredItems.map((item, index) => (
-    <tr key={index}>
+    <tr key={index} className="text-center">
       <td>{++index}</td>
       <td>{item?.depot_name}</td>
       <td>{item?.territory_name}</td>
@@ -245,16 +252,10 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
 
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
-    <tr key="total" className="totalRow">
-      <td colSpan={3}>
-        Total
-      </td>
-      <td>
-        {fNWCommas(totalLLYValue)}
-      </td>
-      <td>
-        {fNWCommas(totalLYValue)}
-      </td>
+    <tr key="total" className="totalRow text-center">
+      <td colSpan={3}>Total</td>
+      <td>{fNWCommas(totalLLYValue)}</td>
+      <td>{fNWCommas(totalLYValue)}</td>
       <td>
         {fNWCommas(totalCYValue)}
         <hr className="hr0" />
@@ -271,7 +272,10 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
           {fNWCommas(item[`${month}_Month_Value_v1`])}
           <hr className="hr0" />
           {fNWCommas(item[`${month}_Month_Sale`])}
-          {GetPercent(item[`${month}_Month_Sale`], item[`${month}_Month_Value_v1`])}
+          {GetPercent(
+            item[`${month}_Month_Sale`],
+            item[`${month}_Month_Value_v1`]
+          )}
         </td>
       ))}
     </tr>
@@ -361,48 +365,56 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const handleExportClick = () => {
     const arrObj = sortedData.map((element, index) => ({
       "S.No": index + 1,
-      "Depot": element.depot_name,
-      "Zone": element.zone_name,
-      "LLY": element.LLY_Value,
-      "LY": element.LY_Value,
+      Depot: element.depot_name,
+      Zone: element.zone_name,
+      LLY: element.LLY_Value,
+      LY: element.LY_Value,
       "CY Plan": element.CY_Value,
-      "YTD": element.YTD_Value,
-      "Apr": element.Apr_Month_Value_v1,
+      YTD: element.YTD_Value,
+      Apr: element.Apr_Month_Value_v1,
       "Apr Sale": element.Apr_Month_Sale,
-      "May": element.May_Month_Value_v1,
+      May: element.May_Month_Value_v1,
       "May Sale": element.May_Month_Sale,
-      "Jun": element.Jun_Month_Value_v1,
+      Jun: element.Jun_Month_Value_v1,
       "Jun Sale": element.Jun_Month_Sale,
-      "Jul": element.Jul_Month_Value_v1,
+      Jul: element.Jul_Month_Value_v1,
       "Jul Sale": element.Jul_Month_Sale,
-      "Aug": element.Aug_Month_Value_v1,
+      Aug: element.Aug_Month_Value_v1,
       "Aug Sale": element.Aug_Month_Sale,
-      "Sep": element.Sep_Month_Value_v1,
+      Sep: element.Sep_Month_Value_v1,
       "Sep Sale": element.Sep_Month_Sale,
-      "Oct": element.Oct_Month_Value_v1,
+      Oct: element.Oct_Month_Value_v1,
       "Oct Sale": element.Oct_Month_Sale,
-      "Nov": element.Nov_Month_Value_v1,
+      Nov: element.Nov_Month_Value_v1,
       "Nov Sale": element.Nov_Month_Sale,
-      "Dec": element.Dec_Month_Value_v1,
+      Dec: element.Dec_Month_Value_v1,
       "Dec Sale": element.Dec_Month_Sale,
-      "Jan": element.Jan_Month_Value_v1,
+      Jan: element.Jan_Month_Value_v1,
       "Jan Sale": element.Feb_Month_Sale,
-      "Feb": element.Feb_Month_Value_v1,
+      Feb: element.Feb_Month_Value_v1,
       "Feb Sale": element.Feb_Month_Sale,
-      "Mar": element.Mar_Month_Value_v1,
-      "Mar Sale": element.Mar_Month_Sale
+      Mar: element.Mar_Month_Value_v1,
+      "Mar Sale": element.Mar_Month_Sale,
     }));
-    console.log("-arrObj", arrObj)
-    ExportExcel('Territory-Wise-Monthly-Plan-Achievement', arrObj)
+    console.log("-arrObj", arrObj);
+    ExportExcel("Territory-Wise-Monthly-Plan-Achievement", arrObj);
   };
 
   return (
     <div id="mom-north" className="w-100">
-      {filteredItems?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
+      {filteredItems?.length ? (
+        <div>
+          <button className="w3-btn w3-gray" onClick={handleExportClick}>
+            {" "}
+            Export
+          </button>
+        </div>
+      ) : null}
 
       <div id="mom-bar-north" className="row">
         <div className="one-half mt-3">
-          <input className="w3-margin-bottom w3-input w3-border "
+          <input
+            className="w3-margin-bottom w3-input w3-border "
             type="text"
             placeholder="Filter By Territory, Depot, LLY and LY"
             aria-label="Search Input"
@@ -412,15 +424,40 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         </div>
         <div className="full">
           <div className="table-container ">
-            <table border="table-bordered table-striped" style={{ width: "75%" }}>
+            <table
+              border="table-bordered table-striped"
+              style={{ width: "55%", marginBottom: "12px" }}
+            >
               <thead>
                 <tr>
-                  <th> S.No </th>
-                  <th onClick={() => handleSort('Depot')}>Depot  {sortField === 'Depot' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th onClick={() => handleSort('Territory')}>Zone  {sortField === 'Territory' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th onClick={() => handleSort('LLY')}>LLY  {sortField === 'LLY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th onClick={() => handleSort('LY')}>LY  {sortField === 'LY' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                  <th> CY Plan / YTD </th>
+                  <th style={{ width: "3%" }}> S.No </th>
+                  <th
+                    style={{ width: "7%" }}
+                    onClick={() => handleSort("Depot")}
+                  >
+                    Depot{" "}
+                    {sortField === "Depot" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th
+                    style={{ width: "5%" }}
+                    onClick={() => handleSort("Territory")}
+                  >
+                    Zone{" "}
+                    {sortField === "Territory" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th style={{ width: "5%" }} onClick={() => handleSort("LLY")}>
+                    LLY{" "}
+                    {sortField === "LLY" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th style={{ width: "5%" }} onClick={() => handleSort("LY")}>
+                    LY{" "}
+                    {sortField === "LY" &&
+                      (sortDirection === "asc" ? "▲" : "▼")}
+                  </th>
+                  <th style={{ width: "5%" }}> CY Plan / YTD </th>
                 </tr>
               </thead>
               <tbody>
@@ -444,9 +481,12 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
               </tbody>
             </table>
             <div class="table-scroll">
-              <table border="1" className="scrollable-container table-bordered table-striped" >
+              <table
+                border="1"
+                className="scrollable-container table-bordered table-striped"
+              >
                 <thead>
-                  <tr>
+                  <tr className="text-center">
                     {getMonths().map((month) => (
                       <td>{month}</td>
                     ))}
@@ -456,7 +496,9 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                   {isLoading ? (
                     <tr>
                       <td colSpan="12">
-                        <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
+                        <LoadingPlaceholder
+                          numberOfRows={4}
+                        ></LoadingPlaceholder>
                       </td>
                     </tr>
                   ) : (
@@ -481,7 +523,9 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
               <button
                 key={index}
                 onClick={() => handlePageChange(index)}
-                className={`page-button ${currentPage === index ? "active" : ""}`}
+                className={`page-button ${
+                  currentPage === index ? "active" : ""
+                }`}
               >
                 {index + 1}
               </button>
