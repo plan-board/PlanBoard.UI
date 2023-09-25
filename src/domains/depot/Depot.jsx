@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import ZoneSelectionBox from "../components/ZoneSelectionBox";
 import DepoSelectionBox from "../components/DepoSelectionBox";
 import AllFigureText from "../components/AllFigureText";
+import LogSummary from "../components/LogSummary";
 
 const Depot = () => {
   const [toggleState, setToggleState] = useState(1);
@@ -51,7 +52,7 @@ const Depot = () => {
       </div>
       <div className="card-box lightgreen">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||
-        AuthData?.Data[0].EmployeeTpye === "ZM" ? (
+          AuthData?.Data[0].EmployeeTpye === "ZM" ? (
           <div className="row w-100">
             <div className="one-fourth">
               <ZoneSelectionBox
@@ -88,22 +89,39 @@ const Depot = () => {
           <div
             className={
               toggleState === 1
-              ? "w3-button tab tab-active"
-              : "w3-button tab"
+                ? "w3-button tab tab-active"
+                : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
             <span className="h6"> Territory Monthly Plan</span>
           </div>
+         
+          <div
+            className={
+              toggleState === 2
+                ? "w3-button tab tab-active"
+                : "w3-button tab"
+            }
+            onClick={() => toggleTab(2)}
+          >
+            <span className="h6"> <i className="fa fa-list"></i> Log Summary</span>
+          </div>
         </div>
         <div class="w3-row w-100">
           <div className={toggleState === 1 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(1)}
           >
             <div>
-            <h3>Territory Wise Monthly Plan / Achievement</h3>
-          </div>
+              <h3>Territory Wise Monthly Plan / Achievement</h3>
+            </div>
             <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+          </div>
+          <div className={toggleState === 2 ? "  " : " w3-hide  "}
+          >
+            <div>
+              <h3>Log Summary</h3>
+            </div>
+            <LogSummary actionType="Depot" />
           </div>
         </div>
       </div>

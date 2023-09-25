@@ -244,12 +244,9 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <td>{++index}</td>
       <td>{item?.depot_name}</td>
       <td>{item?.territory_name}</td>
-      <td>{fNWCommas(item?.LY_Value)}</td>
       <td>{fNWCommas(item?.LLY_Value)}</td>
-      <td>
-        {fNWCommas(item?.CY_Value)} <hr className="hr0" />
-        {fNWCommas(item?.YTD_Value)}
-      </td>
+      <td>{fNWCommas(item?.LY_Value)}</td>
+      <td>{fNWCommas(item?.CY_Value)} <hr className="hr0" />{fNWCommas(item?.YTD_Value)}</td>
     </tr>
   ));
 

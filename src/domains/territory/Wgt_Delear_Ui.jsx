@@ -4,7 +4,7 @@ import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import CustomPopup from "../CustomPopup";
 import ExportExcel from "../ExportExcel";
-import { formatDateTimes } from "../../utils/utils";
+import { GetPercent, formatDateTimes } from "../../utils/utils";
 import { Row, Col } from "reactstrap";
 
 const itemsPerPage = 10;
@@ -391,12 +391,13 @@ const Wgt_Delear_Ui = ({ data }) => {
     const headers = [];
     for (let i = 0; i < monthArr.length; i++) {
       const monName = monthArr[i];
+      const llyYTTD = GetPercent(item?.LYYTDvsCYYTD ,item?.YTD_Value+item[`${monName}_Month_Value_v1`])
       if (monName == mStartName) {
         headers.push(
           <Fragment key={`header_${monName}`}>
             <td style={{ minWidth: "52px" }}>{item?.OS}</td>
             <td style={{ minWidth: "50px" }}>{item?.OD}</td>
-            <td style={{ minWidth: "100px" }}>{item?.creepage_value}</td>
+            <td style={{ minWidth: "100px" }}>{item?.creepage_value+item?.OD}</td>
             <td style={{ minWidth: "100px", display: "flex" }}>
               <span style={{ paddingTop: "13px", minWidth: "50px" }}>
                 {item[`${monName}_Month_Value`]}
@@ -443,7 +444,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
             </td>
-            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}</td>
+            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{item?.YTD_Value+item[`${monName}_Month_Value_v1`]} ({llyYTTD})</td>
           </Fragment>
         );
         break;
@@ -501,9 +502,9 @@ const Wgt_Delear_Ui = ({ data }) => {
                 <th
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "100px" }}
+                  title="Creepage + OD"
                 >
-                  {" "}
-                  Cree Page{" "}
+                  Total Due
                 </th>
                 <th
                   className="p-2 bg-green text-dark"
@@ -584,7 +585,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       <div className="table-container ">
         <table
           border="table-bordered table-striped1 "
-          style={{ width: "65%", marginBottom: "12px", padding: "0px" }}
+          style={{ width: "75%", marginBottom: "12px", padding: "0px" }}
         >
           <thead style={{ height: "62px" }}>
             <tr>
@@ -617,21 +618,30 @@ const Wgt_Delear_Ui = ({ data }) => {
                 {sortField === "Category" &&
                   (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th onClick={() => handleSort("LY")} style={{ width: "12%" }}>
+              <th>Potentials</th>
+              <th  style={{ width: "10%" }}>LY Actual Share</th>
+              <th  style={{ width: "10%" }}>Ytd Actal +Plan Share</th>
+              <th onClick={() => handleSort("LY")} style={{ width: "10%" }}>
                 LY {sortField === "LY" && (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th onClick={() => handleSort("YTD")} style={{ width: "12%" }}>
+              <th onClick={() => handleSort("YTD")} style={{ width: "10%" }}>
                 CY / YTD{" "}
                 {sortField === "YTD" && (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th className="" style={{ width: "8%" }}>
+              <th style={{ width: "10%" }} className="" >
                 {" "}
-                6 month{" "}
+                6 month avg. sale{" "}
+              </th>
+              <th  className="" style={{ width: "8%" }}>
+                LY Same Month
               </th>
             </tr>
           </thead>
           <tbody>
-            {filteredItems?.map((item, index) => (
+            {filteredItems?.map((item, index) => {
+              const lYActualShare = (item.potential!=0)? (item.LY_Value * 100) / item.potential: item.LY_Value; 
+              const YTDActualPlanShare = (item.potential!=0)?((item.YTD_Value + item[`${mStartName}_Month_Value_v1`]) * 100) / item.potential: 0; 
+              return (
               <tr key={index}>
                 <td className="text-center">{index + 1}</td>
                 <td className="text-center">{item.dealer_name}</td>
@@ -640,13 +650,19 @@ const Wgt_Delear_Ui = ({ data }) => {
                   {formatDateTimes(item.customer_creationdate)}
                 </td>
                 <td className="text-center">{item.dealer_category}</td>
+
+                <td className="text-center">{item.potential}</td>
+                <td className="text-center">{lYActualShare}</td>
+                <td className="text-center">{YTDActualPlanShare}</td>
                 <td className="text-center">{item.LY_Value}</td>
                 <td className="text-center">
                   {item.CY_Value} <hr className="hr0" /> {item.YTD_Value}
                 </td>
+
                 <td className="text-center">0</td>
+                <td className="text-center">{item[`${mStartName}_Month_LY_Value`]}</td>
               </tr>
-            ))}
+              ) } )}
           </tbody>
         </table>
 
