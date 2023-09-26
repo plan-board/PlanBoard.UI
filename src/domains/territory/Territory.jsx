@@ -53,14 +53,7 @@ const Territory = () => {
     setSelectedTerritory(newValue);
     console.log("45-setselectedTerritory", newValue);
   };
-
-  const payload = {
-    Token: localStorage.getItem("access_token"),
-    entity_id: 0,
-  };
-   
-  
-
+ 
   return (
     <div className="main">
       <div className="w3-row">

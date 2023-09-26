@@ -16,26 +16,18 @@ import LogSummary from "../components/LogSummary";
 
 const National = () => {
   const { AuthData } = useSelector((state) => state.auth);
-  // console.log("====auth====", AuthData);
+  console.log("====auth====", AuthData);
   // Set Select Zone
   const [selectedZone, setSelectedZone] = useState(0);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(
-    AuthData?.Zone[0].ZoneID ? AuthData?.Zone[0].ZoneID : 0
-  );
-  const [filteredZones, setFilteredZones] = useState([]);
-  const [filteredZonesData, setFilteredZonesData] = useState([]);
-
-  const [data, setData] = useState(null);
-
+    AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0
+  ); 
+ 
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
     setToggleState(index);
   };
-
-  const handleSelectionChange = (newValue) => {
-    setSelectedZone(newValue);
-  };
-
+ 
   const handleSelectionChangeDrop = (newValue) => {
     setSelectedZoneDrop(newValue);
   };
@@ -194,7 +186,7 @@ const National = () => {
               <div>
                 <h3>Log Summary</h3>
               </div>
-              <LogSummary actionType="HOD" />
+              <LogSummary actionType="HOD" selectedId={0}/>
             </>
           )}
         </div>

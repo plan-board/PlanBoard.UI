@@ -121,7 +121,7 @@ const Depot = () => {
             <div>
               <h3>Log Summary</h3>
             </div>
-            <LogSummary actionType="Depot" />
+            <LogSummary actionType="Depot" selectedId={selectedDepot} />
           </div>
         </div>
       </div>

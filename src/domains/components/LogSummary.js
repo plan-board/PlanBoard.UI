@@ -7,7 +7,7 @@ import { getCurrentMonth } from "../../utils/utils";
 
 const itemsPerPage = 10;
 
-const LogSummary = ({ actionType = "HOD" }) => {
+const LogSummary = ({ actionType = "HOD", selectedId }) => {
     console.log("LogSummary=LogSummary");
     const dispatch = useDispatch();
 
@@ -19,15 +19,15 @@ const LogSummary = ({ actionType = "HOD" }) => {
 
     const [currentPage, setCurrentPage] = useState(0);
 
-
+    const entityId = actionType == "HOD" ? 0 : selectedId;
     const fetchLogHistory = async () => {
         try {
             const payload = {
                 Token: localStorage.getItem("access_token"),
                 Type: actionType,
                 FYId: 5,
-                Month: getCurrentMonth,
-                EntityId: 0,
+                Month: getCurrentMonth(),
+                EntityId: entityId,
             };
             const response = await axiosInstance.post(
                 "api/Master/GetIsLockByEntityData",
@@ -44,8 +44,10 @@ const LogSummary = ({ actionType = "HOD" }) => {
     };
 
     useEffect(() => {
-        fetchLogHistory();
-    }, []);
+        if(actionType == "HOD" || selectedId !=0 ){
+            fetchLogHistory();
+        }
+    }, [selectedId]);
 
     const handleSort = (field) => {
         if (sortField === field) {
@@ -98,7 +100,7 @@ const LogSummary = ({ actionType = "HOD" }) => {
     };
 
     const handleExportClick = () => {
-        const arrObj = logHistory.map((element, index) => ({
+        const arrObj = logHistory?.map((element, index) => ({
             "S.No": index + 1,
             "Zone": element.zone_name,
             "Depo": element.depot_name,
