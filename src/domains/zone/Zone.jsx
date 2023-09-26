@@ -60,7 +60,7 @@ const Zone = () => {
             <DepoMonthWiseSalesReport selectedZone={selectedZone} selectedDepot={selectedDepot} />
           </div>
           <div className={toggleState === 2 ? "  " : " w3-hide  "} onClick={() => toggleTab(1)} >
-            <LogSummary actionType="Zone" />
+            <LogSummary actionType="Zone"  selectedId={selectedZone} />
           </div>
         </div>
       </div>

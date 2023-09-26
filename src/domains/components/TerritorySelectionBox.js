@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 
@@ -11,7 +11,8 @@ const TerritorySelectionBox = ({
   setSelectedTerritory,
 }) => {
   const dispatch = useDispatch();
-
+  const { AuthData } = useSelector((state) => state?.auth);
+  console.log("AuthData", AuthData);
   const [isLoading, setLoading] = useState(true);
   const [territoryArray, setTerritoryArray] = useState([]);
   const [selctedTerritory, setSelctedTerritory] = useState(
@@ -40,9 +41,15 @@ const TerritorySelectionBox = ({
         );
         console.log("=====TerritoryMonthPlan====", response);
         if (response?.status === 200) {
-          setTerritoryArray(
-            response.data.Data != null ? response.data.Data : []
-          );
+          let filteredTerr = [];
+          if(AuthData?.Data[0].EmployeeTpye === "AM"){
+            filteredTerr = (response?.data?.Data || []).filter((obj1) =>
+              (AuthData?.Territory || []).some((obj2) => obj1.territoryid === obj2.TerritoryID)
+            );
+          }else{
+            filteredTerr = response?.data?.Data || [];
+          }
+          setTerritoryArray(filteredTerr); 
         }
         setLoading(false);
       } catch (error) {

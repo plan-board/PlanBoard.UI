@@ -99,9 +99,7 @@ const Wgt_Delear_Ui = ({ data }) => {
           // Add the current item's value to the accumulator
           return acc + value;
         }, 0);
-        const formattedSumValue = (sumValue + (dataObj[monthKey] || 0)).toFixed(
-          2
-        );
+        const formattedSumValue = sumValue.toFixed(2);
 
         setSumValue(formattedSumValue);
       }
@@ -159,8 +157,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       return acc + value;
     }, 0);
 
-    const augMonthValue = parseFloat(modalData[monthKey]) || 0;
-    const result = (sumValue + augMonthValue).toFixed(2);
+    const result = sumValue.toFixed(2);
     setSumValue(result);
   };
 
@@ -190,6 +187,7 @@ const Wgt_Delear_Ui = ({ data }) => {
 
       if (response?.status === 200) {
         console.log("=====aSetFocusedProductDealerWise==== 65", response);
+        fetchDealerMaster();
         popupCloseHandler(false);
       }
     } catch (error) {
@@ -391,13 +389,14 @@ const Wgt_Delear_Ui = ({ data }) => {
     const headers = [];
     for (let i = 0; i < monthArr.length; i++) {
       const monName = monthArr[i];
-      const llyYTTD = GetPercent(item?.LYYTDvsCYYTD ,item?.YTD_Value+item[`${monName}_Month_Value_v1`])
+      const YTDPlusV1 = item?.YTD_Value + item[`${monName}_Month_Value_v1`];
+      const llyYTTD = (YTDPlusV1 != 0) ? ( (YTDPlusV1 - item?.LYYTDvsCYYTD) * 100) / item?.LYYTDvsCYYTD : 0;
       if (monName == mStartName) {
         headers.push(
           <Fragment key={`header_${monName}`}>
             <td style={{ minWidth: "52px" }}>{item?.OS}</td>
             <td style={{ minWidth: "50px" }}>{item?.OD}</td>
-            <td style={{ minWidth: "100px" }}>{item?.creepage_value+item?.OD}</td>
+            <td style={{ minWidth: "100px" }}>{item?.creepage_value + item?.OD}</td>
             <td style={{ minWidth: "100px", display: "flex" }}>
               <span style={{ paddingTop: "13px", minWidth: "50px" }}>
                 {item[`${monName}_Month_Value`]}
@@ -444,14 +443,14 @@ const Wgt_Delear_Ui = ({ data }) => {
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
             </td>
-            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{item?.YTD_Value+item[`${monName}_Month_Value_v1`]} ({llyYTTD})</td>
+            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1} ({llyYTTD.toFixed(2)})</td>
           </Fragment>
         );
         break;
       } else {
         headers.push(
           <Fragment key={`header_${monName}`}>
-            <td style={{ minWidth: "70px" }}>
+            <td style={{ minWidth: "80px" }}>
               {item[`${monName}_Month_Value_v1`]}
               <hr className="hr0" />
               {item[`${monName}_Month_Sale`]}
@@ -479,7 +478,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             <td
               colSpan={6}
               key={`header_${monName}`}
-              //
+              style={{ width: "5%", textAlign: "center", fontWeight: "bolder" }}
             >
               {monName}
               <tr>
@@ -489,15 +488,15 @@ const Wgt_Delear_Ui = ({ data }) => {
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "50px" }}
                 >
-                  {" "}
-                  OS{" "}
+
+                  OS
                 </th>
                 <th
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "50px" }}
                 >
-                  {" "}
-                  OD{" "}
+
+                  OD
                 </th>
                 <th
                   className="p-2 bg-green text-dark"
@@ -510,22 +509,22 @@ const Wgt_Delear_Ui = ({ data }) => {
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "150px" }}
                 >
-                  {" "}
-                  Sales{" "}
+
+                  Sales
                 </th>
                 <th
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "105px" }}
                 >
-                  {" "}
-                  Collection{" "}
+
+                  Collection
                 </th>
                 <th
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "100px" }}
                 >
-                  {" "}
-                  LYYTD vs CYYTD{" "}
+
+                  LYYTD vs CYYTD
                 </th>
               </tr>
             </td>
@@ -535,7 +534,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       } else {
         headers.push(
           <Fragment key={`header_${monName}`}>
-            <td rowSpan={3}>{monName}</td>
+            <td rowSpan={3} style={{ width: "5%", textAlign: "center", fontWeight: "bolder" }}>{monName}</td>
           </Fragment>
           // </div>
         );
@@ -552,7 +551,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             {dealerlist?.length ? (
               <div>
                 <button className="w3-btn w3-gray" onClick={handleExportClick}>
-                  {" "}
+
                   Export
                 </button>
               </div>
@@ -589,80 +588,82 @@ const Wgt_Delear_Ui = ({ data }) => {
         >
           <thead style={{ height: "62px" }}>
             <tr>
-              <th style={{ width: "7%" }} className="">
-                {" "}
-                S.No{" "}
+              <th style={{ width: "4%" }} className="">
+
+                S.No
               </th>
               <th
                 style={{ width: "17%" }}
                 onClick={() => handleSort("DelearName")}
               >
-                Delear Name{" "}
+                Delear Name
                 {sortField === "DelearName" &&
                   (sortDirection === "asc" ? "▲" : "▼")}
               </th>
               <th
-                style={{ width: "12%" }}
+                style={{ width: "8%" }}
                 onClick={() => handleSort("DelearCode")}
               >
-                Delear Code{" "}
+                Delear Code
                 {sortField === "DelearCode" &&
                   (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th style={{ width: "12%" }}> Creation Date</th>
+              <th style={{ width: "8%" }}> Creation Date</th>
               <th
-                style={{ width: "8%" }}
+                style={{ width: "4%" }}
                 onClick={() => handleSort("Category")}
+                title="Category"
               >
-                Category{" "}
+                Cat
                 {sortField === "Category" &&
                   (sortDirection === "asc" ? "▲" : "▼")}
               </th>
               <th>Potentials</th>
-              <th  style={{ width: "10%" }}>LY Actual Share</th>
-              <th  style={{ width: "10%" }}>Ytd Actal +Plan Share</th>
+              <th style={{ width: "8%" }}>LY Actual <br /> Share</th>
+              <th style={{ width: "10%" }}>Ytd Actal +Plan Share</th>
               <th onClick={() => handleSort("LY")} style={{ width: "10%" }}>
                 LY {sortField === "LY" && (sortDirection === "asc" ? "▲" : "▼")}
               </th>
               <th onClick={() => handleSort("YTD")} style={{ width: "10%" }}>
-                CY / YTD{" "}
+                CY / YTD
                 {sortField === "YTD" && (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th style={{ width: "10%" }} className="" >
-                {" "}
-                6 month avg. sale{" "}
+              <th style={{ width: "8%" }} className="" >
+
+                6 month <br /> avg. sale
               </th>
-              <th  className="" style={{ width: "8%" }}>
-                LY Same Month
+              <th className="" style={{ width: "8%" }}>
+                LY Same<br />Month
               </th>
             </tr>
           </thead>
           <tbody>
             {filteredItems?.map((item, index) => {
-              const lYActualShare = (item.potential!=0)? (item.LY_Value * 100) / item.potential: item.LY_Value; 
-              const YTDActualPlanShare = (item.potential!=0)?((item.YTD_Value + item[`${mStartName}_Month_Value_v1`]) * 100) / item.potential: 0; 
+              const lYActualShare = (item.potential != 0) ? (item.LY_Value * 100) / item.potential : 0;
+              const YTDActualPlanShare = (item.potential != 0) ? ((item.YTD_Value + item[`${mStartName}_Month_Value_v1`]) * 100) / item.potential : 0;
               return (
-              <tr key={index}>
-                <td className="text-center">{index + 1}</td>
-                <td className="text-center">{item.dealer_name}</td>
-                <td className="text-center">{item.dealer_code}</td>
-                <td className="text-center">
-                  {formatDateTimes(item.customer_creationdate)}
-                </td>
-                <td className="text-center">{item.dealer_category}</td>
+                <tr key={index}>
+                  <td className="text-center">{index + 1}</td>
+                  <td className="text-center">{item.dealer_name}</td>
+                  <td className="text-center">{item.dealer_code}</td>
+                  <td className="text-center">
+                    {formatDateTimes(item.customer_creationdate)}
+                  </td>
+                  <td className="text-center">{item.dealer_category}</td>
 
-                <td className="text-center">{item.potential}</td>
-                <td className="text-center">{lYActualShare}</td>
-                <td className="text-center">{YTDActualPlanShare}</td>
-                <td className="text-center">{item.LY_Value}</td>
-                <td className="text-center">
-                  {item.CY_Value} <hr className="hr0" /> {item.YTD_Value}
-                </td>
+                  <td className="text-center">{item.potential}</td>
+                  <td className="text-center">{lYActualShare.toFixed(2)}%</td>
+                  <td className="text-center">{YTDActualPlanShare.toFixed(2)}%</td>
+                  <td className="text-center">{item.LY_Value}</td>
+                  <td className="text-center">
+                    {item.CY_Value} <hr className="hr0" /> {item.YTD_Value}
+                  </td>
 
-                <td className="text-center">0</td>
-                <td className="text-center">{item[`${mStartName}_Month_LY_Value`]}</td>
-              </tr>
-              ) } )}
+                  <td className="text-center">0</td>
+                  <td className="text-center">{item[`${mStartName}_Month_LY_Value`]}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
 
@@ -714,8 +715,8 @@ const Wgt_Delear_Ui = ({ data }) => {
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
               <td colspan="30">
-                {" "}
-                A : Sales Plan Produced by Dealer Level Rules{" "}
+
+                A : Sales Plan Produced by Dealer Level Rules
               </td>
             </tr>
             <tr className="">
@@ -737,9 +738,9 @@ const Wgt_Delear_Ui = ({ data }) => {
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
               <td colspan="29">
-                {" "}
+
                 B ( Focus Sector List for Month of {monthName} ) * Add values /
-                volume{" "}
+                volume
                 <span style={{ float: "right" }}>
                   Hight lighted rows are focus product for current month
                 </span>
@@ -829,19 +830,19 @@ const Wgt_Delear_Ui = ({ data }) => {
           <table className="w3-table table-bordered w3-small ">
             <tr className="w3-gray">
               <td colspan="30">
-                {" "}
-                Net Sales Plan ( {monthName} ) Total Sale A + B{" "}
+
+                Net Sales Plan ( {monthName} ) Total Sale A + B
               </td>
             </tr>
             <tr className="">
               <td style={{ width: "80%" }}>
-                {" "}
+
                 ( This total will be updated to Dealers Sales Plan ( v1 ) and
                 the list will will be added in transaction table as dealers
-                breakup ){" "}
+                breakup )
               </td>
               <td style={{ width: "10%" }} align="right">
-                {" "}
+
                 {isLocked ? null : (
                   <button className="w3-button w3-indigo "> Submit </button>
                 )}
