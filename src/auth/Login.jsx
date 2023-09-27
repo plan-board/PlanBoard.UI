@@ -118,7 +118,10 @@ const Login = ({ setIsAuth }) => {
           <div className="wrapper">
             <div className="login-box">
               <h2 className="login-title">Sign In Here</h2>
-              <div className="w3-content w3-center w3-padding-large mb-3">
+              <div
+                className="w3-content w3-center w3-padding-large mb-3"
+                style={{ fontFamily: "Nunito sans" }}
+              >
                 Sign in with Planboard registered account.
               </div>
               <form onSubmit={handleLogin}>
