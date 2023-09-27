@@ -14,31 +14,30 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
     onValueChange(parseInt(event.target.value));
   };
 
-  useEffect(() => {
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      entity_id: 0
-    };
+  const fetchZoneMasters = async () => {
+    try {
+      const payload = {
+        Token: localStorage.getItem("access_token"),
+        entity_id: 0
+      };
+      
+      const response = await axiosInstance.post("api/Master/ZoneData", payload);
+      console.log("=====api/Master/ZoneData====", response);
 
-    const fetchZoneMasters = async () => {
-      try {
+      if (response?.status === 200) {
+        const filteredZoneArr = response.data.Data?.filter(item1 =>
+          AuthData?.Zone.some(item2 => item2.ZoneID === item1.zone_id)
+        );
 
-        const response = await axiosInstance.post("api/Master/ZoneData", payload);
-        console.log("=====api/Master/ZoneData====", response);
-
-        if (response?.status === 200) {
-          const filteredZoneArr = response.data.Data?.filter(item1 =>
-            AuthData?.Zone.some(item2 => item2.ZoneID === item1.zone_id)
-          );
-
-          setFilteredZones(filteredZoneArr?.length ? filteredZoneArr : [])
-        }
-      } catch (error) {
-        // Handle errors
-        dispatch({ type: SHOW_TOAST, payload: error.message });
+        setFilteredZones(filteredZoneArr?.length ? filteredZoneArr : [])
       }
-    };
-
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+  
+  useEffect(() => {
     fetchZoneMasters();
   }, []);
 
@@ -48,7 +47,8 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
       value={selectedZone}
       onChange={handleChange}
     >
-      <option value={0} >{asDropDown ? "Select Zone" : "All Zone"}</option>
+      <option value={0}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Zone":"Select Zone"}</option> 
+      {/* <option value={0} >{asDropDown ? "Select Zone" : "All Zone"}</option> */}
       {filteredZones.map((item) => (
         <option value={item?.zone_id} key={item?.zone_id}>
           {item.zone_name}

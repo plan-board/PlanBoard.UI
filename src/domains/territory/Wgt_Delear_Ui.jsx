@@ -293,7 +293,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       LY: element.LY_Value,
       "CY Plan": element.CY_Value,
       YTD: element.YTD_Value,
-      "6 month": 0,
+      "6 month": element.LastSixMonth_Avg_Sales,
       OS: element.OS,
       OD: element.OD,
       "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
@@ -390,7 +390,7 @@ const Wgt_Delear_Ui = ({ data }) => {
     for (let i = 0; i < monthArr.length; i++) {
       const monName = monthArr[i];
       const YTDPlusV1 = item?.YTD_Value + item[`${monName}_Month_Value_v1`];
-      const llyYTTD = (YTDPlusV1 != 0) ? ( (YTDPlusV1 - item?.LYYTDvsCYYTD) * 100) / item?.LYYTDvsCYYTD : 0;
+      const llyYTTD = (YTDPlusV1 != 0) ? ((YTDPlusV1 - item?.LYYTDvsCYYTD) * 100) / item?.LYYTDvsCYYTD : 0;
       if (monName == mStartName) {
         headers.push(
           <Fragment key={`header_${monName}`}>
@@ -443,7 +443,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
             </td>
-            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1} ({llyYTTD.toFixed(2)})</td>
+            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)})</td>
           </Fragment>
         );
         break;
@@ -464,7 +464,25 @@ const Wgt_Delear_Ui = ({ data }) => {
 
   // Function to render a single row
   const renderTableRow = (item, index) => {
-    return <tr key={index}>{generateTableRows(item)}</tr>;
+    const lYActualShare = (item.potential != 0) ? (item.LY_Value * 100) / item.potential : 0;
+    const YTDActualPlanShare = (item.potential != 0) ? ((item.YTD_Value + item[`${mStartName}_Month_Value_v1`]) * 100) / item.potential : 0;
+
+    return <tr key={index}>
+      <td className="text-center">
+        {formatDateTimes(item.customer_creationdate)}
+      </td>
+      <td className="text-center">{item.dealer_category}</td>
+      <td className="text-center">{item.potential}</td>
+      <td className="text-center">{lYActualShare.toFixed(2)}%</td>
+      <td className="text-center">{YTDActualPlanShare.toFixed(2)}%</td>
+      <td className="text-center">{item.LY_Value}</td>
+      <td className="text-center">
+        {item.CY_Value} <hr className="hr0" /> {item.YTD_Value}
+      </td>
+      <td className="text-center">{item.LastSixMonth_Avg_Sales}</td>
+      <td className="text-center">{item[`${mStartName}_Month_LY_Value`]}</td>
+
+      {generateTableRows(item)}</tr>;
   };
 
   const generateTableHeaders = () => {
@@ -481,9 +499,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               style={{ width: "5%", textAlign: "center", fontWeight: "bolder" }}
             >
               {monName}
-              <tr>
-                {/* here colSpan should according to month count */}
-
+              <tr> 
                 <th
                   className="p-2 bg-green text-dark"
                   style={{ minWidth: "50px" }}
@@ -584,16 +600,15 @@ const Wgt_Delear_Ui = ({ data }) => {
       <div className="table-container ">
         <table
           border="table-bordered table-striped1 "
-          style={{ width: "75%", marginBottom: "12px", padding: "0px" }}
+          style={{ width: "30%", marginBottom: "12px", padding: "0px" }}
         >
           <thead style={{ height: "62px" }}>
             <tr>
               <th style={{ width: "4%" }} className="">
-
                 S.No
               </th>
               <th
-                style={{ width: "17%" }}
+                style={{ width: "18%" }}
                 onClick={() => handleSort("DelearName")}
               >
                 Delear Name
@@ -608,61 +623,18 @@ const Wgt_Delear_Ui = ({ data }) => {
                 {sortField === "DelearCode" &&
                   (sortDirection === "asc" ? "▲" : "▼")}
               </th>
-              <th style={{ width: "8%" }}> Creation Date</th>
-              <th
-                style={{ width: "4%" }}
-                onClick={() => handleSort("Category")}
-                title="Category"
-              >
-                Cat
-                {sortField === "Category" &&
-                  (sortDirection === "asc" ? "▲" : "▼")}
-              </th>
-              <th>Potentials</th>
-              <th style={{ width: "8%" }}>LY Actual <br /> Share</th>
-              <th style={{ width: "10%" }}>Ytd Actal +Plan Share</th>
-              <th onClick={() => handleSort("LY")} style={{ width: "10%" }}>
-                LY {sortField === "LY" && (sortDirection === "asc" ? "▲" : "▼")}
-              </th>
-              <th onClick={() => handleSort("YTD")} style={{ width: "10%" }}>
-                CY / YTD
-                {sortField === "YTD" && (sortDirection === "asc" ? "▲" : "▼")}
-              </th>
-              <th style={{ width: "8%" }} className="" >
-
-                6 month <br /> avg. sale
-              </th>
-              <th className="" style={{ width: "8%" }}>
-                LY Same<br />Month
-              </th>
             </tr>
           </thead>
           <tbody>
             {filteredItems?.map((item, index) => {
-              const lYActualShare = (item.potential != 0) ? (item.LY_Value * 100) / item.potential : 0;
-              const YTDActualPlanShare = (item.potential != 0) ? ((item.YTD_Value + item[`${mStartName}_Month_Value_v1`]) * 100) / item.potential : 0;
+              const itemIndex = currentPage * itemsPerPage + index + 1;
               return (
-                <tr key={index}>
-                  <td className="text-center">{index + 1}</td>
+                <tr key={itemIndex}>
+                  <td className="text-center">{itemIndex}</td>
                   <td className="text-center">{item.dealer_name}</td>
                   <td className="text-center">{item.dealer_code}</td>
-                  <td className="text-center">
-                    {formatDateTimes(item.customer_creationdate)}
-                  </td>
-                  <td className="text-center">{item.dealer_category}</td>
-
-                  <td className="text-center">{item.potential}</td>
-                  <td className="text-center">{lYActualShare.toFixed(2)}%</td>
-                  <td className="text-center">{YTDActualPlanShare.toFixed(2)}%</td>
-                  <td className="text-center">{item.LY_Value}</td>
-                  <td className="text-center">
-                    {item.CY_Value} <hr className="hr0" /> {item.YTD_Value}
-                  </td>
-
-                  <td className="text-center">0</td>
-                  <td className="text-center">{item[`${mStartName}_Month_LY_Value`]}</td>
                 </tr>
-              )
+              );
             })}
           </tbody>
         </table>
@@ -673,9 +645,39 @@ const Wgt_Delear_Ui = ({ data }) => {
             className="scrollable-container table-bordered  table-striped1"
           >
             <thead>
-              <tr>{generateTableHeaders()}</tr>
+              <tr>
+                <th style={{ width: "8%" }}> Creation Date</th>
+                <th
+                  style={{ width: "4%" }}
+                  onClick={() => handleSort("Category")}
+                  title="Category"
+                >
+                  Cat
+                  {sortField === "Category" &&
+                    (sortDirection === "asc" ? "▲" : "▼")}
+                </th>
+                <th>Potentials</th>
+                <th style={{ width: "8%" }}>LY Actual <br /> Share</th>
+                <th style={{ width: "10%" }}>Ytd Actal <br />+Plan Share</th>
+                <th onClick={() => handleSort("LY")} style={{ width: "10%" }}>
+                  LY {sortField === "LY" && (sortDirection === "asc" ? "▲" : "▼")}
+                </th>
+                <th onClick={() => handleSort("YTD")} style={{ width: "10%" }}>
+                  CY / YTD
+                  {sortField === "YTD" && (sortDirection === "asc" ? "▲" : "▼")}
+                </th>
+                <th style={{ width: "8%" }} className="" >
+
+                  6 month <br /> avg. sale
+                </th>
+                <th className="" style={{ width: "8%" }}>
+                  LY Same<br />Month
+                </th>
+                {generateTableHeaders()}
+              </tr>
             </thead>
             <tbody>
+
               {filteredItems?.map((item, index) => {
                 return renderTableRow(item, index);
               })}
