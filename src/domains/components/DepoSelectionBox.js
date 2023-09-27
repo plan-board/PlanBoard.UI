@@ -55,8 +55,11 @@ const DepoSelectionBox = ({
   };
 
   useEffect(() => {
-    fetchDepotSalesPlan();
+    if (AuthData?.Data[0].EmployeeType === "HOD" || (selectedZone !== 0 && selectedDepot !== 0)) {
+      fetchDepotSalesPlan();
+    }
   }, [selectedZone, selectedDepot]);
+  
 
   return (
     <>
@@ -74,7 +77,7 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-          <option value={0}>All Depot</option>
+        <option value={0}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Depot":"Select Depot"}</option> 
           {depotArray?.map((item, index) => (
             <option key={index} value={item?.depotid}>
               {item.depot_name}
