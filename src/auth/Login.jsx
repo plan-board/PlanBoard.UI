@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
+import MayankSoftLogo from "../images/MayankSoftLogo.jpg";
+import ShalimarPaintsLogo from "../images/ShalimarPaintsLogo.jpg";
 import logoShalimaar from "../images/logo.png";
 import logoPlanboard from "../images/logo1-white.png";
 
@@ -108,51 +109,61 @@ const Login = ({ setIsAuth }) => {
   return (
     <>
       <style>{".w3-sidebar{display:none}"}</style>
-      <div className="login">
-        <div className="logo-container">
-          <img src={logoShalimaar} alt="Shailmar" />
-          <img src={logoPlanboard} alt="Shailmar Planboard" />
-        </div>
-        <div className="wrapper">
-          <div className="login-box">
-            <h2 className="login-title">Sign In Here</h2>
-            <div className="w3-content w3-center w3-padding-large mb-3">
-              Sign in with Planboard registered account.
+      <div className="login-Container">
+        <div className="loginBg">
+          <div className="logo-container">
+            <img src={MayankSoftLogo} alt="MayankSoft" />
+            <img src={ShalimarPaintsLogo} alt="Shailmar Planboard" />
+          </div>
+          <div className="wrapper">
+            <div className="login-box">
+              <h2 className="login-title">Sign In Here</h2>
+              <div className="w3-content w3-center w3-padding-large mb-3">
+                Sign in with Planboard registered account.
+              </div>
+              <form onSubmit={handleLogin}>
+                <div className="form-group h6">
+                  <input
+                    className="w3-input w3-border"
+                    type="email"
+                    required={true}
+                    placeholder="Email"
+                    name="Email"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group h6">
+                  <input
+                    className="w3-input w3-border"
+                    type="password"
+                    required={true}
+                    placeholder="Password"
+                    name="Password"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group w3-small h6 ">
+                  <Link to="/forgot-password">I forgot my password !</Link>
+                </div>
+                <div className="form-group m-0">
+                  <button className="" type="submit">
+                    {" "}
+                    Login{" "}
+                  </button>
+                </div>
+                <div className="form-group w3-text-red">
+                  <p>{error}</p>
+                </div>
+              </form>
             </div>
-            <form onSubmit={handleLogin}>
-              <div className="form-group h6">
-                <input
-                  className="w3-input w3-border"
-                  type="email"
-                  required={true}
-                  placeholder="Email"
-                  name="Email"
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group h6">
-                <input
-                  className="w3-input w3-border"
-                  type="password"
-                  required={true}
-                  placeholder="Password"
-                  name="Password"
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group w3-small h6 ">
-                <Link to="/forgot-password">I forgot my password !</Link>
-              </div>
-              <div className="form-group m-0">
-                <button className="" type="submit">
-                  {" "}
-                  Login{" "}
-                </button>
-              </div>
-              <div className="form-group w3-text-red">
-                <p>{error}</p>
-              </div>
-            </form>
+          </div>
+          <div className="loginFooter">
+            <div className="footertextDev">
+              Design & Developed By Mayank Software Solution
+            </div>
+            <div className="copyRight">
+              2023©All Rights Reserved Shalimar Paints Limited
+            </div>
           </div>
         </div>
       </div>

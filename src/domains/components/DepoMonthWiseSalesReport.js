@@ -434,18 +434,12 @@ const DepoMonthWiseSalesReport = ({
             <div className="table-container-zone ">
               <Col xl={6} lg={6} md={6} sm={6} xs={6} className="pr-0">
                 <table
-                  border="table-bordered table-striped1"
+                  border="1"
+                  className="table-bordered table-striped1"
                   // style={{ width: "60%" }}
-                  style={{ minHeight: "650px" }}
                 >
                   <thead>
-                    <tr
-                      style={{
-                        position: "sticky",
-                        top: 0,
-                        backgroundColor: "#007ad1",
-                      }}
-                    >
+                    <tr>
                       <th style={{ width: "3%" }}>S.No</th>
                       <th
                         onClick={() => handleSort("Zone")}
@@ -510,24 +504,16 @@ const DepoMonthWiseSalesReport = ({
                   <table
                     border="1"
                     className="scrollable-container table-bordered table-striped1"
-                    style={{ minHeight: "650px" }}
+                    id={"secondZoneTable"}
                   >
                     <thead>
-                      <tr
-                        className="text-center"
-                        style={{
-                          position: "sticky",
-                          top: 0,
-                          zIndex: 123,
-                          backgroundColor: "#007ad1",
-                        }}
-                      >
+                      <tr className="text-center">
                         {getMonths().map((month) => (
                           <td>{month}</td>
                         ))}
                       </tr>
                     </thead>
-                    <tbody style={{ maxHeight: "550px" }}>
+                    <tbody>
                       {isLoading ? (
                         <tr>
                           <td colSpan="12">
