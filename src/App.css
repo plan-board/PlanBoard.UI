@@ -1754,28 +1754,13 @@ th {
   background: var(--top-nav);
   color: #fff;
 }
-.logo-container {
-  position: absolute;
-  top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 20px;
-}
-.logo-container img {
-  height: 80px;
-}
-.logo-container img:last-child {
-  height: 60px;
-}
 
 .login {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: center/cover no-repeat url(./images/login-bg.jpg);
+  background: center/cover no-repeat url(./images/some.jpg);
   flex-direction: column;
 }
 
@@ -1791,6 +1776,7 @@ th {
   color: var(--text-color);
   box-shadow: 0 0 15px rgb(0 0 0 / 10%);
   padding: 30px;
+  margin: auto;
 }
 .main-title {
   position: relative;
@@ -1813,10 +1799,11 @@ th {
   outline: none;
 }
 .wrapper .login-box a {
-  color: var(--red);
+  color: red;
   font-size: 16px;
   font-weight: 400;
   margin-bottom: 10px;
+  margin-left: 230px;
 }
 .w3-red {
   transition: 0.3s;
@@ -1864,6 +1851,7 @@ th {
   text-align: center;
   margin: 0;
   font-weight: 600;
+  color: #000;
 }
 
 .wrapper .login-box button {
@@ -1873,7 +1861,7 @@ th {
   justify-content: center;
   width: 100%;
   color: #fff;
-  background-color: var(--purple);
+  background-color: #33cde2;
   padding: 9px 16px;
   border: none;
   cursor: pointer;
@@ -1882,7 +1870,7 @@ th {
 }
 
 .wrapper .login-box button:hover {
-  background-color: var(--purple-hover);
+  background-color: #0d9fb2;
   transition: 0.3s;
 }
 
@@ -2234,7 +2222,6 @@ table.table-striped tbody tr:nth-child(odd) {
 .table-container-zone {
   display: flex;
   overflow-x: auto;
-  max-height: 500px;
 }
 
 .table-scroll {
@@ -2242,8 +2229,6 @@ table.table-striped tbody tr:nth-child(odd) {
   max-width: 800px;
   overflow-x: scroll;
   margin-right: 10px;
-  /* max-height: 620px; */
-  /* height: 60%; */
 }
 
 .table-bordered {
@@ -2288,7 +2273,7 @@ input[type="email"] {
 
 table.table-striped1 tbody tr td,
 table.table-striped1 thead tr th {
-  /* padding: 8px 12px; */
+  padding: 8px 12px;
 
   white-space: nowrap;
   text-align: center;
@@ -2317,4 +2302,67 @@ table.table-striped1 tbody tr:nth-child(odd) {
   top: 0;
   z-index: 10;
   background-color: white;
+}
+
+#secondZoneTable td {
+  height: 40px;
+}
+
+.footer-content {
+  border-top: 1px solid black;
+  margin-top: 5%;
+}
+
+.login-Container {
+  font-family: TTNorms-Bold;
+  background-image: linear-gradient(to bottom right, #33cde2, #6e9ddb);
+  font-family: TTNorms-Bold;
+  height: 100%;
+  width: 100%;
+}
+.loginBg {
+  /* background-image: url(/ReportingPanel/static/media/loginBg.83a491a8.83a491a….png); */
+  background-image: url(../src/images/some.jpg);
+  background-size: cover;
+  min-height: 100vh;
+  padding: 0 25px;
+  position: relative;
+  width: 100%;
+}
+.logo-container {
+  top: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0px;
+  margin-bottom: 4%;
+}
+.logo-container img {
+  width: 10%;
+  aspect-ratio: 3/2;
+  object-fit: contain;
+  mix-blend-mode: darken;
+}
+.loginFooter {
+  border-top: 1px solid #131415;
+  bottom: 0;
+  color: #fff;
+  display: flex;
+  font-family: TTNorms-Light;
+  font-size: 0.95rem;
+  height: 60px;
+  padding: 20px 0;
+  position: absolute;
+  width: calc(100% - 50px);
+}
+
+.footertextDev {
+  margin: 0 40px 0 30px;
+  color: #000;
+}
+.copyRight {
+  margin-left: auto;
+  margin-right: 30px;
+  color: #000;
 }

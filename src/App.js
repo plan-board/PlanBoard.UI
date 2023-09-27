@@ -1,12 +1,7 @@
 import "./App.css";
 
 import { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate, 
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "./auth/api";
 
@@ -31,12 +26,13 @@ import {
   Dealer,
   Schedule,
 } from "./domains";
+import CustomerPotential from "./domains/customerPotential";
 import { About } from "./pages";
 import { setAuthData } from "./store/actions/Auth";
 import { SHOW_TOAST } from "./store/constant/types";
 import Settings from "./domains/settings/Settings";
 
-function App() { 
+function App() {
   const { AuthData } = useSelector((state) => state.auth);
   // console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
 
@@ -45,22 +41,25 @@ function App() {
   const loggedIn = localStorage.getItem("Isloggedin");
   const checkUserAuth = async () => {
     try {
-      const response = await axiosInstance.post('api/UserMaster/UserAuth', {
-        TokenData: [{ Token: localStorage.getItem('access_token') }],
+      const response = await axiosInstance.post("api/UserMaster/UserAuth", {
+        TokenData: [{ Token: localStorage.getItem("access_token") }],
       });
 
       if (response?.status === 200 && response?.data?.Status) {
         dispatch(setAuthData(response.data));
-        localStorage.setItem('access_token', response?.data?.Data[0].TokenValid);
+        localStorage.setItem(
+          "access_token",
+          response?.data?.Data[0].TokenValid
+        );
       } else {
         // Handle the case when authentication fails
         // You can show an error message or redirect the user
-        localStorage.removeItem('access_token')
+        localStorage.removeItem("access_token");
       }
     } catch (error) {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
-  }
+  };
   useEffect(() => {
     if (AuthData == null) {
       checkUserAuth();
@@ -89,10 +88,7 @@ function App() {
             />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route
-              path="/forgot-password"
-              element={<Forgotpassword />}
-            />
+            <Route path="/forgot-password" element={<Forgotpassword />} />
             <Route
               path="/account"
               element={<PrivateRoute element={<Account />} />}
@@ -155,10 +151,13 @@ function App() {
               }
             />
             <Route
+              path="/customer-potential"
+              element={<PrivateRoute element={<CustomerPotential />} />}
+            />
+            <Route
               path="/change-password"
               element={<PrivateRoute element={<ChangePassword />} />}
             />
-
           </Routes>
         </div>
       </BrowserRouter>
