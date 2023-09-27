@@ -61,9 +61,9 @@ const TerritorySelectionBox = ({
   };
 
   useEffect(() => {
-    if (AuthData?.Data[0].EmployeeType === "HOD" || (selectedZone !== 0 && selectedDepot !== 0)) {
+    // if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != 0 && selectedDepot != 0)) {
      fetchTerritory();
-    }
+    // }
   }, [selectedZone, selectedDepot]);
 
   return (

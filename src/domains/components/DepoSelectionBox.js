@@ -8,12 +8,11 @@ const DepoSelectionBox = ({
   selectedDepot,
   onSelectedDepoChange,
 }) => {
-  console.log(
-    "🚀 ~ file: DepoSelectionBox.js:11 ~ selectedDepot:",
-    selectedDepot
-  );
+  console.log(    "🚀 ~ selectedZone:",    selectedZone  );
+  console.log(    "🚀 ~ selectedDepot:",    selectedDepot  );
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
+  console.log(    "🚀 ~ AuthData:",    AuthData  );
   const [isLoading, setLoading] = useState(true);
   const [depotArray, setDepotSalesPlanData] = useState([]);
   const [deptonameselect, setDeptonameselect] = useState(null);
@@ -55,9 +54,9 @@ const DepoSelectionBox = ({
   };
 
   useEffect(() => {
-    if (AuthData?.Data[0].EmployeeType === "HOD" || (selectedZone !== 0 && selectedDepot !== 0)) {
+    // if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != 0 )) {
       fetchDepotSalesPlan();
-    }
+    // }
   }, [selectedZone, selectedDepot]);
   
 

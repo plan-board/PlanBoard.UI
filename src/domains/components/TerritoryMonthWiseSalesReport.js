@@ -239,9 +239,11 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
     0
   );
 
-  const tableRows = filteredItems.map((item, index) => (
-    <tr key={index} className="text-center">
-      <td>{++index}</td>
+  const tableRows = filteredItems.map((item, index) => { 
+    const itemIndex = currentPage * itemsPerPage + index + 1;
+    return (
+    <tr key={itemIndex+'tm'} className="text-center">
+      <td>{itemIndex}</td>
       <td>{item?.depot_name}</td>
       <td>{item?.territory_name}</td>
       <td>{fNWCommas(item?.LLY_Value)}</td>
@@ -251,7 +253,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         {fNWCommas(item?.YTD_Value)}
       </td>
     </tr>
-  ));
+  )});
 
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (

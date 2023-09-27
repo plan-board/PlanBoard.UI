@@ -2226,7 +2226,7 @@ table.table-striped tbody tr:nth-child(odd) {
 
 .table-scroll {
   flex: 1;
-  max-width: 800px;
+  /*max-width: 800px;*/
   overflow-x: scroll;
   margin-right: 10px;
 }

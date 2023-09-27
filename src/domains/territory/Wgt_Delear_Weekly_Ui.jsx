@@ -184,34 +184,37 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
               </tr>
             </thead>
             <tbody>
-              {filteredItems?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => (
-                <tr className="h6 w3-small" key={item?.dealerid}>
-                  <td className="">
-                    {++index}
-                  </td>
-                  <td className="" colSpan={1} style={{ width: "15%" }}>
-                    {item?.dealer_name}
-                  </td>
-                  <td className="" colSpan={1} style={{ width: "15%" }}>
-                    {item?.dealer_code}
-                  </td>
-                  <td className="" colSpan={1}>
-                    {item?.month_value}
-                  </td>
-                  <td className="">
-                    {item?.week1}
-                  </td>
-                  <td className="">
-                    {item?.week2}
-                  </td>
-                  <td className="">
-                    {item?.week3}
-                  </td>
-                  <td className="">
-                    {item?.week4}
-                  </td>
-                </tr>
-              ))}
+              {filteredItems?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => {
+                const itemIndex = currentPage * itemsPerPage + index + 1;
+                return (
+                  <tr className="h6 w3-small" key={item?.dealerid}>
+                    <td className="">
+                      {itemIndex}
+                    </td>
+                    <td className="" colSpan={1} style={{ width: "15%" }}>
+                      {item?.dealer_name}
+                    </td>
+                    <td className="" colSpan={1} style={{ width: "15%" }}>
+                      {item?.dealer_code}
+                    </td>
+                    <td className="" colSpan={1}>
+                      {item?.month_value}
+                    </td>
+                    <td className="">
+                      {item?.week1}
+                    </td>
+                    <td className="">
+                      {item?.week2}
+                    </td>
+                    <td className="">
+                      {item?.week3}
+                    </td>
+                    <td className="">
+                      {item?.week4}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
           {/* Pagination */}

@@ -241,19 +241,22 @@ const DepoMonthWiseSalesReport = ({
     0
   );
 
-  const tableRows = filteredItems.map((item, index) => (
-    <tr key={index} className="text-center">
-      <td>{++index}</td>
-      <td>{item?.zone_name}</td>
-      <td>{item?.depot_name}</td>
-      <td>{fNWCommas(item?.LLY_Value)}</td>
-      <td>{fNWCommas(item?.LY_Value)}</td>
-      <td>
-        {fNWCommas(item?.CY_Value)} <hr className="hr0" />
-        {fNWCommas(item?.YTD_Value)}
-      </td>
-    </tr>
-  ));
+  const tableRows = filteredItems.map((item, index) => {
+    const itemIndex = currentPage * itemsPerPage + index + 1;
+    return (
+      <tr key={itemIndex+'dm'} className="text-center">
+        <td>{itemIndex}</td>
+        <td>{item?.zone_name}</td>
+        <td>{item?.depot_name}</td>
+        <td>{fNWCommas(item?.LLY_Value)}</td>
+        <td>{fNWCommas(item?.LY_Value)}</td>
+        <td>
+          {fNWCommas(item?.CY_Value)} <hr className="hr0" />
+          {fNWCommas(item?.YTD_Value)}
+        </td>
+      </tr>
+    )
+  });
 
   // Add a new row for total CY_Value and YTD_Value
   const totalRow = (
@@ -436,7 +439,7 @@ const DepoMonthWiseSalesReport = ({
                 <table
                   border="1"
                   className="table-bordered table-striped1"
-                  // style={{ width: "60%" }}
+                // style={{ width: "60%" }}
                 >
                   <thead>
                     <tr>
@@ -546,9 +549,8 @@ const DepoMonthWiseSalesReport = ({
                 <button
                   key={index}
                   onClick={() => handlePageChange(index)}
-                  className={`page-button ${
-                    currentPage === index ? "active" : ""
-                  }`}
+                  className={`page-button ${currentPage === index ? "active" : ""
+                    }`}
                 >
                   {index + 1}
                 </button>
