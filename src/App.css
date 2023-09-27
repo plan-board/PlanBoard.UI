@@ -1797,6 +1797,7 @@ th {
   height: 40px;
   border-radius: var(--border-radius);
   outline: none;
+  font-family: "Nunito Sans";
 }
 .wrapper .login-box a {
   color: red;
@@ -1861,16 +1862,17 @@ th {
   justify-content: center;
   width: 100%;
   color: #fff;
-  background-color: #33cde2;
+  background-color: #169be8;
   padding: 9px 16px;
   border: none;
   cursor: pointer;
   transition: 0.3s;
   border-radius: var(--border-radius);
+  font-family: "Nunito Sans";
 }
 
 .wrapper .login-box button:hover {
-  background-color: #0d9fb2;
+  background-color: #055585;
   transition: 0.3s;
 }
 
@@ -2325,7 +2327,7 @@ table.table-striped1 tbody tr:nth-child(odd) {
   background-image: url(../src/images/some.jpg);
   background-size: cover;
   min-height: 100vh;
-  padding: 0 25px;
+  padding: 0 0px;
   position: relative;
   width: 100%;
 }
@@ -2335,7 +2337,7 @@ table.table-striped1 tbody tr:nth-child(odd) {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 0px;
+  padding: 0 25px;
   margin-bottom: 4%;
 }
 .logo-container img {
@@ -2347,22 +2349,28 @@ table.table-striped1 tbody tr:nth-child(odd) {
 .loginFooter {
   border-top: 1px solid #131415;
   bottom: 0;
-  color: #fff;
+  background-color: #040404;
   display: flex;
   font-family: TTNorms-Light;
   font-size: 0.95rem;
   height: 60px;
   padding: 20px 0;
   position: absolute;
-  width: calc(100% - 50px);
+  width: 100%;
 }
 
 .footertextDev {
   margin: 0 40px 0 30px;
-  color: #000;
+  color: #efe9e9;
+  font-family: "Nunito Sans";
+  font-weight: bolder;
+  white-space: nowrap;
 }
 .copyRight {
   margin-left: auto;
   margin-right: 30px;
-  color: #000;
+  color: #efe9e9;
+  font-family: "Nunito Sans";
+  font-weight: bolder;
+  white-space: nowrap;
 }

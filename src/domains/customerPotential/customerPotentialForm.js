@@ -22,7 +22,7 @@ export const CustomerPotentialForm = ({
           name="PotentialValue"
           type="number"
           onChange={(e) => handleChange(e, row)}
-          value={row.PotentialValue}
+          value={parseInt(row.PotentialValue)}
         />
       </span>
     );

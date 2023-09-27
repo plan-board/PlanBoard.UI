@@ -42,54 +42,6 @@ const CustomerPotential = () => {
       item.CustomerName.toLowerCase().includes(filterName.toLowerCase());
     return codeMatch && nameMatch;
   });
-  const handleSave = () => {
-    console.log(territortId);
-  };
-  const subHeaderComponentMemo = React.useMemo(() => {
-    return (
-      <div style={{ display: "flex", minWidth: "100%" }}>
-        <input
-          type="text"
-          placeholder="Filter by Customer Code"
-          value={filterCode}
-          onChange={handleFilterChange}
-          style={{
-            fontSize: "14px",
-            paddingLeft: "10px",
-            marginLeft: "0px",
-            width: "30%",
-          }}
-        />
-
-        <input
-          type="text"
-          placeholder="Filter by CustomerName"
-          value={filterName}
-          onChange={handleFilterNameChange}
-          style={{
-            fontSize: "14px",
-            paddingLeft: "10px",
-            marginLeft: "30px",
-            width: "30%",
-          }}
-        />
-
-        <button
-          type="button"
-          className="btn btn-primary"
-          style={{
-            fontSize: "14px",
-            paddingLeft: "10px",
-            marginLeft: "32%",
-            // right: 0,
-          }}
-          onClick={handleSave}
-        >
-          <i className="fa fa-plus"></i> Save
-        </button>
-      </div>
-    );
-  }, [filterCode, filterName]);
 
   const fetchCustomerList = async () => {
     const payload = {
@@ -104,6 +56,9 @@ const CustomerPotential = () => {
       );
 
       if (response?.status === 200) {
+        response.data.Data.map((val) => {
+          val.change = false;
+        });
         setEmployeeList(response.data.Data != null ? response.data.Data : []);
       }
       setLoading(false);
@@ -150,11 +105,123 @@ const CustomerPotential = () => {
     if (e.target.name === "territoryId") {
       setTerritoryId(e.target.value);
     }
-    // if (e.target.name === "PotentialValue") {
-    //   // console.log(e.target.name, e.target.value, args);
-    //   if(args ==)
-    // }
+    if (e.target.name === "PotentialValue") {
+      // console.log(e.target.name, e.target.value, args);
+      if (args) {
+        let data = [...employeeList];
+        let matchIndex = data.findIndex(
+          (val) => val.CustomerId === args.CustomerId
+        );
+
+        if (matchIndex != -1) {
+          data[matchIndex].PotentialValue = parseInt(e.target.value);
+          data[matchIndex].change = true;
+        }
+        setEmployeeList([...data]);
+      }
+    }
   };
+
+  const handleSave = async () => {
+    let ApiData = [];
+
+    employeeList.map((val) => {
+      if (val.change == true) {
+        let changedData = {
+          CustomerId: val.CustomerId,
+          PotentialValue: val.PotentialValue,
+        };
+        ApiData.push(changedData);
+      }
+    });
+
+    if (ApiData.length > 0) {
+      const payload = {
+        Token: localStorage.getItem("access_token"),
+        PotentialParam: ApiData,
+      };
+      setLoading(true);
+      try {
+        const response = await axiosInstance.post(
+          "api/Master/SetPotentialData",
+          payload
+        );
+
+        if (response?.status === 200) {
+          if (response.data.Status) {
+            setResponseDetails({
+              show: true,
+              message: response.data.Message,
+              type: "success",
+            });
+            fetchCustomerList();
+            setTerritoryId("");
+          } else {
+            setResponseDetails({
+              show: true,
+              message: response.data.Message,
+              type: "error",
+            });
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        dispatch({ type: SHOW_TOAST, payload: error.message });
+      }
+    } else {
+      setResponseDetails({
+        show: true,
+        message: "No Changes Found To Proceed",
+        type: "error",
+      });
+    }
+  };
+
+  const subHeaderComponentMemo = React.useMemo(() => {
+    return (
+      <div style={{ display: "flex", minWidth: "100%" }}>
+        <input
+          type="text"
+          placeholder="Filter by Customer Code"
+          value={filterCode}
+          onChange={handleFilterChange}
+          style={{
+            fontSize: "14px",
+            paddingLeft: "10px",
+            marginLeft: "0px",
+            width: "30%",
+          }}
+        />
+
+        <input
+          type="text"
+          placeholder="Filter by CustomerName"
+          value={filterName}
+          onChange={handleFilterNameChange}
+          style={{
+            fontSize: "14px",
+            paddingLeft: "10px",
+            marginLeft: "30px",
+            width: "30%",
+          }}
+        />
+
+        <button
+          type="button"
+          className="btn btn-primary"
+          style={{
+            fontSize: "14px",
+            paddingLeft: "10px",
+            marginLeft: "32%",
+            // right: 0,
+          }}
+          onClick={() => handleSave()}
+        >
+          <i className="fa fa-plus"></i> Save
+        </button>
+      </div>
+    );
+  }, [filterCode, filterName, employeeList]);
 
   return (
     <div className="main">
