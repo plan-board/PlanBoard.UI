@@ -371,7 +371,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
     const arrObj = sortedData.map((element, index) => ({
       "S.No": index + 1,
       Depot: element.depot_name,
-      Zone: element.zone_name,
+      Territory: element.territory_name,
       LLY: element.LLY_Value,
       LY: element.LY_Value,
       "CY Plan": element.CY_Value,
@@ -410,7 +410,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       {filteredItems?.length ? (
         <div>
           <button className="w3-btn w3-gray" onClick={handleExportClick}>
-            {" "}
+            
             Export
           </button>
         </div>
@@ -434,13 +434,13 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
               style={{ width: "55%", marginBottom: "12px" }}
             >
               <thead>
-                <tr>
+                <tr  style={{height:"50px"}}>
                   <th style={{ width: "3%" }}> S.No </th>
                   <th
                     style={{ width: "7%" }}
                     onClick={() => handleSort("Depot")}
                   >
-                    Depot{" "}
+                    Depot
                     {sortField === "Depot" &&
                       (sortDirection === "asc" ? "▲" : "▼")}
                   </th>
@@ -448,17 +448,17 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                     style={{ width: "5%" }}
                     onClick={() => handleSort("Territory")}
                   >
-                    Zone{" "}
+                    Territory
                     {sortField === "Territory" &&
                       (sortDirection === "asc" ? "▲" : "▼")}
                   </th>
                   <th style={{ width: "5%" }} onClick={() => handleSort("LLY")}>
-                    LLY{" "}
+                    LLY
                     {sortField === "LLY" &&
                       (sortDirection === "asc" ? "▲" : "▼")}
                   </th>
                   <th style={{ width: "5%" }} onClick={() => handleSort("LY")}>
-                    LY{" "}
+                    LY
                     {sortField === "LY" &&
                       (sortDirection === "asc" ? "▲" : "▼")}
                   </th>
@@ -491,9 +491,9 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                 className="scrollable-container table-bordered table-striped"
               >
                 <thead>
-                  <tr className="text-center">
+                  <tr className="text-center" style={{height:"50px"}}>
                     {getMonths().map((month) => (
-                      <td>{month}</td>
+                      <th>{month}</th>
                     ))}
                   </tr>
                 </thead>

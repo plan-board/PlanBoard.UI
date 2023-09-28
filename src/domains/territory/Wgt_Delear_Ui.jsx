@@ -443,7 +443,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 onChange={(e) => onchangeInputs(e, item.id)}
               />
             </td>
-            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)})</td>
+            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)}) </td>
           </Fragment>
         );
         break;
