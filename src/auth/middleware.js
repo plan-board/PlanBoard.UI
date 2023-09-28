@@ -8,6 +8,7 @@ export const permissions = [
       "territory",
       "dealer",
       "dashscheduleboard",
+      "change-password"
     ],
   },
   {
@@ -18,6 +19,7 @@ export const permissions = [
       "territory",
       "dealer",
       "dashscheduleboard",
+      "change-password"
     ],
   },
   {
@@ -27,6 +29,7 @@ export const permissions = [
       "territory",
       "dealer",
       "dashscheduleboard",
+      "change-password"
     ],
   },
   {
@@ -35,6 +38,7 @@ export const permissions = [
       "territory",
       "dealer",
       "dashscheduleboard",
+      "change-password"
     ],
   },{
     roleId:"AM",
@@ -42,6 +46,8 @@ export const permissions = [
       "territory",
       "dealer",
       "dashscheduleboard",
+      "customer-potential",
+      "change-password"
     ],
   },
 ];

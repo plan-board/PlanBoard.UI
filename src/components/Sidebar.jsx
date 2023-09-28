@@ -86,7 +86,8 @@ const Sidebar = ({ isAuth, rolId }) => {
           <p className="w3-small h6">Settings</p>
         </NavLink>
       )}
-      <div className="sub-menu">
+      {hasPermission(rolId, "customer-potential") && (
+        <div className="sub-menu">
         <NavLink
           className={({ isActive }) =>
             "nav-link" + (!isActive ? " unselected" : " active")
@@ -97,6 +98,8 @@ const Sidebar = ({ isAuth, rolId }) => {
           <p className="w3-small h6">Customer Potential</p>
         </NavLink>
       </div>
+      )}
+      {hasPermission(rolId, "change-password") && (
       <div className="sub-menu">
         <NavLink
           className={({ isActive }) =>
@@ -108,6 +111,7 @@ const Sidebar = ({ isAuth, rolId }) => {
           <p className="w3-small h6">Change Password</p>
         </NavLink>
       </div>
+      )}
     </div>
   );
 };
