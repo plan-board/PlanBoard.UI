@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
-// import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
-// import ZoneDropDown from "./ZoneDropDown";
 
-import ReactTable from "react-table-6";
-import "react-table-6/react-table.css";
-import withFixedColumns from "react-table-hoc-fixed-columns";
-import "react-table-hoc-fixed-columns/lib/styles.css";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
+import ExportExcel from "../ExportExcel";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
 
-const ReactTableFixedColumns = withFixedColumns(ReactTable);
+const itemsPerPage = 10; // Number of items to display per page
 
 const DepoMonthWiseSalesReport = ({
   selectedZone,
@@ -24,8 +19,11 @@ const DepoMonthWiseSalesReport = ({
   const dispatch = useDispatch();
   const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
   const [isLoading, setLoading] = useState(true);
-
   const [filterText, setFilterText] = useState("");
+  const [sortField, setSortField] = useState(""); // To store the current sorting field (empty for no sorting)
+  const [sortDirection, setSortDirection] = useState(""); // To store the current sorting direction ('asc' or 'desc')
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     console.log("-calling DepotMonthPlan api from dpo mon wise re");
@@ -54,340 +52,512 @@ const DepoMonthWiseSalesReport = ({
     fetchDepotSalesPlan();
   }, [selectedZone]);
 
-  // builkd table colunms
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // If the same column is clicked again, toggle the sort direction
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      // If a different column is clicked, set the new sort field and direction
+      setSortField(field);
+      setSortDirection("asc"); // Default to ascending order
+    }
+  };
 
-  const filteredItems = monthWiseSalesData.filter(
-    (item) =>
-      item.depot_name &&
-      item.depot_name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  // Sort the data based on the current sorting field and direction
+  let sortedData = [...monthWiseSalesData];
+  if (sortField === "Zone") {
+    sortedData.sort((a, b) => {
+      if (sortDirection === "asc") {
+        return a.zone_name?.localeCompare(b.zone_name);
+      } else {
+        return b.zone_name?.localeCompare(a.zone_name);
+      }
+    });
+  } else if (sortField === "Depot") {
+    sortedData.sort((a, b) => {
+      if (sortDirection === "asc") {
+        return a.depot_name?.localeCompare(b.depot_name);
+      } else {
+        return b.depot_name?.localeCompare(a.depot_name);
+      }
+    });
+  } else if (sortField === "LLY") {
+    sortedData.sort((a, b) => {
+      if (sortDirection === "asc") {
+        return (a.LLY_Value || 0) - (b.LLY_Value || 0);
+      } else {
+        return (b.LLY_Value || 0) - (a.LLY_Value || 0);
+      }
+    });
+  } else if (sortField === "LY") {
+    sortedData.sort((a, b) => {
+      if (sortDirection === "asc") {
+        return (a.LY_Value || 0) - (b.LY_Value || 0);
+      } else {
+        return (b.LY_Value || 0) - (a.LY_Value || 0);
+      }
+    });
+  }
 
+  const filterData = (data) => {
+    const filterTextLowerCase = filterText.toLowerCase();
+    return data.filter(
+      (item) =>
+        (item?.zone_name &&
+          item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
+        (item?.depot_name &&
+          item?.depot_name?.toLowerCase().includes(filterTextLowerCase)) ||
+        (!isNaN(item.LLY_Value) &&
+          item?.LLY_Value.toString()
+            .toLowerCase()
+            .includes(filterTextLowerCase)) ||
+        (!isNaN(item.LY_Value) &&
+          item?.LY_Value.toString().toLowerCase().includes(filterTextLowerCase))
+    );
+  };
+
+  // Paginate the sorted data
+  const pageCount = Math.ceil(sortedData.length / itemsPerPage);
+  const offset = currentPage * itemsPerPage;
+  const dataToShow = sortedData.slice(offset, offset + itemsPerPage);
+
+  // Filter the paginated and sorted data
+  const filteredItems = filterData(dataToShow);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   const totalLYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.LY_Value || 0),
+    (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
     0
   );
   const totalLLYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.LLY_Value || 0),
+    (acc, item) => acc + (parseInt(item.LLY_Value.toFixed(0)) || 0),
     0
   );
-  const totalCYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.CY_Value || 0),
+  const totalCYValue = sortedData.reduce(
+    (acc, item) => acc + (parseInt(item.CY_Value.toFixed(0)) || 0),
     0
   );
-  const totalYTDValue = filteredItems.reduce(
-    (acc, item) => acc + (item.YTD_Value || 0),
+  const totalYTDValue = sortedData.reduce(
+    (acc, item) => acc + (parseInt(item.YTD_Value.toFixed(0)) || 0),
     0
   );
-  const totalAprValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
+  const totalAprValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Apr_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalAprValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Sale || 0),
+  const totalAprValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Apr_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalMayValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
+  const totalMayValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.May_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalMayValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.May_Month_Sale || 0),
+  const totalMayValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.May_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJunValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
+  const totalJunValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jun_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJunValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Sale || 0),
+  const totalJunValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jun_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJulValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
+  const totalJulValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jul_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJulValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Sale || 0),
+  const totalJulValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jul_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalAugValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
+  const totalAugValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Aug_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalAugValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Sale || 0),
+  const totalAugValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Aug_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalSepValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
+  const totalSepValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Sep_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalSepValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Sale || 0),
+  const totalSepValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Sep_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalOctValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
+  const totalOctValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Oct_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalOctValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Sale || 0),
+  const totalOctValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Oct_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalNovValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
+  const totalNovValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Nov_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalNovValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Sale || 0),
+  const totalNovValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Nov_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalDecValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
+  const totalDecValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Dec_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalDecValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Sale || 0),
+  const totalDecValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Dec_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalJanValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
+  const totalJanValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jan_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalJanValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Sale || 0),
+  const totalJanValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Jan_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalFebValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
+  const totalFebValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Feb_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalFebValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Sale || 0),
+  const totalFebValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Feb_Month_Sale.toFixed(0)) || 0),
     0
   );
-  const totalMarValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
+  const totalMarValue = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Mar_Month_Value_v1.toFixed(0)) || 0),
     0
   );
-  const totalMarValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Sale || 0),
+  const totalMarValue_v1 = sortedData?.reduce(
+    (acc, item) => acc + (parseInt(item?.Mar_Month_Sale.toFixed(0)) || 0),
     0
   );
 
-  const tableRows = filteredItems.map((item, index) => (
+  const tableRows = filteredItems.map((item, index) => {
+    const itemIndex = currentPage * itemsPerPage + index + 1;
+    return (
+      <tr key={itemIndex+'dm'} className="text-center">
+        <td>{itemIndex}</td>
+        <td>{item?.zone_name}</td>
+        <td>{item?.depot_name}</td>
+        <td>{fNWCommas(item?.LLY_Value)}</td>
+        <td>{fNWCommas(item?.LY_Value)}</td>
+        <td>
+          {fNWCommas(item?.CY_Value)} <hr className="hr0" />
+          {fNWCommas(item?.YTD_Value)}
+        </td>
+      </tr>
+    )
+  });
+
+  // Add a new row for total CY_Value and YTD_Value
+  const totalRow = (
+    <tr key="total" className="totalRow text-center">
+      <td colSpan={3} style={{ textAlign: "right", paddingRight: "10px" }}>
+        Total
+      </td>
+      <td>{fNWCommas(totalLLYValue)}</td>
+      <td>{fNWCommas(totalLYValue)}</td>
+      <td>
+        {fNWCommas(totalCYValue)}
+        <hr className="hr0" />
+        {fNWCommas(totalYTDValue)}
+        {GetPercent(totalYTDValue, totalCYValue)}
+      </td>
+    </tr>
+  );
+
+  const tableRows2 = filteredItems.map((item, index) => (
     <tr key={index}>
-      <td>{item?.zone_name}</td>
-      <td>{item?.depot_name}</td>
-      <td>{item?.LY_Value}</td>
-      <td>{item?.LLY_Value}</td>
-      <td>{item?.CY_Value} <hr className="hr0" />{item?.YTD_Value}</td>
-      <td>
-        {item?.Apr_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Apr_Month_Sale}
-      </td>
-      <td>
-        {item?.May_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.May_Month_Sale}
-      </td>
-      <td>
-        {item?.Jun_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jun_Month_Sale}
-      </td>
-      <td>
-        {item?.Jul_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jul_Month_Sale}
-      </td>
-      <td>
-        {item?.Aug_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Aug_Month_Sale}
-      </td>
-      <td>
-        {item?.Sep_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Sep_Month_Sale}
-      </td>
-      <td>
-        {item?.Oct_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Oct_Month_Sale}
-      </td>
-      <td>
-        {item?.Nov_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Nov_Month_Sale}
-      </td>
-      <td>
-        {item?.Dec_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Dec_Month_Sale}
-      </td>
-      <td>
-        {item?.Jan_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jan_Month_Sale}
-      </td>
-      <td>
-        {item?.Feb_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Feb_Month_Sale}
-      </td>
-      <td>
-        {item?.Mar_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Mar_Month_Sale}
-      </td>
+      {getMonths().map((month) => (
+        <td key={month}>
+          {fNWCommas(item[`${month}_Month_Value_v1`])}
+          <hr className="hr0" />
+          {fNWCommas(item[`${month}_Month_Sale`])}
+          {GetPercent(
+            item[`${month}_Month_Sale`],
+            item[`${month}_Month_Value_v1`]
+          )}
+        </td>
+      ))}
     </tr>
   ));
 
   // Add a new row for total CY_Value and YTD_Value
-  const totalRow = (
-    <tr key="total" className="colrdrow">
-      <td colSpan={2}>
-        Total
-      </td>
+  const totalRow2 = (
+    <tr key="total" className="totalRow">
       <td>
-        {totalLLYValue.toFixed(2)}
-      </td>
-      <td>
-        {totalLYValue.toFixed(2)}
-      </td>
-      <td>
-        {totalCYValue.toFixed(2)}
+        {fNWCommas(totalAprValue)}
         <hr className="hr0" />
-        {totalYTDValue.toFixed(2)}
+        {fNWCommas(totalAprValue_v1)}
+        {GetPercent(totalAprValue_v1, totalAprValue)}
       </td>
       <td>
-        {totalAprValue?.toFixed(2)}
+        {fNWCommas(totalMayValue)}
         <hr className="hr0" />
-        {totalAprValue_v1?.toFixed(2)}
+        {fNWCommas(totalMayValue_v1)}
+        {GetPercent(totalMayValue_v1, totalMayValue)}
       </td>
       <td>
-        {totalMayValue?.toFixed(2)}
+        {fNWCommas(totalJunValue)}
         <hr className="hr0" />
-        {totalMayValue_v1?.toFixed(2)}
+        {fNWCommas(totalJunValue_v1)}
+        {GetPercent(totalJunValue_v1, totalJunValue)}
       </td>
       <td>
-        {totalJunValue?.toFixed(2)}
+        {fNWCommas(totalJulValue)}
         <hr className="hr0" />
-        {totalJunValue_v1?.toFixed(2)}
+        {fNWCommas(totalJulValue_v1)}
+        {GetPercent(totalJulValue_v1, totalJulValue)}
       </td>
       <td>
-        {totalJulValue?.toFixed(2)}
+        {fNWCommas(totalAugValue)}
         <hr className="hr0" />
-        {totalJulValue_v1?.toFixed(2)}
+        {fNWCommas(totalAugValue_v1)}
+        {GetPercent(totalAugValue_v1, totalAugValue)}
       </td>
       <td>
-        {totalAugValue?.toFixed(2)}
+        {fNWCommas(totalSepValue)}
         <hr className="hr0" />
-        {totalAugValue_v1?.toFixed(2)}
+        {fNWCommas(totalSepValue_v1)}
+        {GetPercent(totalSepValue_v1, totalSepValue)}
       </td>
       <td>
-        {totalSepValue?.toFixed(2)}
+        {fNWCommas(totalOctValue)}
         <hr className="hr0" />
-        {totalSepValue_v1?.toFixed(2)}
+        {fNWCommas(totalOctValue_v1)}
+        {GetPercent(totalOctValue_v1, totalOctValue)}
       </td>
       <td>
-        {totalOctValue?.toFixed(2)}
+        {fNWCommas(totalNovValue)}
         <hr className="hr0" />
-        {totalOctValue_v1?.toFixed(2)}
+        {fNWCommas(totalNovValue_v1)}
+        {GetPercent(totalNovValue_v1, totalNovValue)}
       </td>
       <td>
-        {totalNovValue?.toFixed(2)}
+        {fNWCommas(totalDecValue)}
         <hr className="hr0" />
-        {totalNovValue_v1?.toFixed(2)}
+        {fNWCommas(totalDecValue_v1)}
+        {GetPercent(totalDecValue_v1, totalDecValue)}
       </td>
       <td>
-        {totalDecValue?.toFixed(2)}
+        {fNWCommas(totalJanValue)}
         <hr className="hr0" />
-        {totalDecValue_v1?.toFixed(2)}
+        {fNWCommas(totalJanValue_v1)}
+        {GetPercent(totalJanValue_v1, totalJanValue)}
       </td>
       <td>
-        {totalJanValue?.toFixed(2)}
+        {fNWCommas(totalFebValue)}
         <hr className="hr0" />
-        {totalJanValue_v1?.toFixed(2)}
+        {fNWCommas(totalFebValue_v1)}
+        {GetPercent(totalFebValue_v1, totalFebValue)}
       </td>
       <td>
-        {totalFebValue?.toFixed(2)}
+        {fNWCommas(totalMarValue)}
         <hr className="hr0" />
-        {totalFebValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalMarValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalMarValue_v1?.toFixed(2)}
+        {fNWCommas(totalMarValue_v1)}
+        {GetPercent(totalMarValue_v1, totalMarValue)}
       </td>
     </tr>
   );
 
   const tableWithTotalRow = [...tableRows, totalRow];
+  const tableWithTotalRow2 = [...tableRows2, totalRow2];
+
+  const handleExportClick = () => {
+    const arrObj = monthWiseSalesData.map((element, index) => ({
+      "S.No": index + 1,
+      Zone: element.zone_name,
+      Depot: element.depot_name,
+      LLY: parseInt(element.LLY_Value).toFixed(0),
+      LY: parseInt(element.LY_Value).toFixed(0),
+      "CY Plan": parseInt(element.CY_Value).toFixed(0),
+      YTD: parseInt(element.YTD_Value).toFixed(0),
+      Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
+      "Apr Sale": parseInt(element.Apr_Month_Sale).toFixed(0),
+      May: parseInt(element.May_Month_Value_v1).toFixed(0),
+      "May Sale": parseInt(element.May_Month_Sale).toFixed(0),
+      Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
+      "Jun Sale": parseInt(element.Jun_Month_Sale).toFixed(0),
+      Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
+      "Jul Sale": parseInt(element.Jul_Month_Sale).toFixed(0),
+      Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
+      "Aug Sale": parseInt(element.Aug_Month_Sale).toFixed(0),
+      Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
+      "Sep Sale": parseInt(element.Sep_Month_Sale).toFixed(0),
+      Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
+      "Oct Sale": parseInt(element.Oct_Month_Sale).toFixed(0),
+      Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
+      "Nov Sale": parseInt(element.Nov_Month_Sale).toFixed(0),
+      Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
+      "Dec Sale": parseInt(element.Dec_Month_Sale).toFixed(0),
+      Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
+      "Jan Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
+      Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
+      "Feb Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
+      Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
+      "Mar Sale": parseInt(element.Mar_Month_Sale).toFixed(0),
+    }));
+    console.log("-arrObj", arrObj);
+    ExportExcel("Depot-Wise-Monthly-Plan-Achievement", arrObj);
+  };
 
   return (
-    <div id="mom-north" className="w3-row w3-margin-top ">
-      <div id="mom-bar-north" >
-        <div className="form-group filterInput">
-          <input className="w3-margin-bottom w3-input w3-border "
+    <div id="mom-north" className="row">
+      {monthWiseSalesData?.length ? (
+        <div style={{ marginLeft: "15px" }}>
+          <button onClick={handleExportClick} className="green_button_css">
+            {" "}
+            <i className="fa fa-pdf">Export</i>
+          </button>
+        </div>
+      ) : null}
+
+      <div id="mom-bar-north" className="w-100">
+        <div className="one-half mt-3">
+          <input
+            className="w3-margin-bottom w3-input w3-border "
             type="text"
-            placeholder="Filter By Depot  Name"
+            placeholder="Filter By Zone, Depot, LLY, LY "
             aria-label="Search Input"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <table className="w3-table w3-stripped table-bordered">
-          <tr className="colrdrow">
-            <td >
-              Zone
-            </td>
-            <td >
-              Depot
-            </td>
-            <td >
-              LLY
-            </td>
-            <td >
-              LY
-            </td>
-            <td >
-              CY Plan / YTD
-            </td>
-            <td className="w3-gray"> Apr </td>
-            <td className="w3-gray"> May </td>
-            <td className="w3-gray"> Jun </td>
-            <td className="w3-gray"> Jul </td>
-            <td className="w3-gray"> Aug </td>
-            <td className="w3-gray"> Sep </td>
-            <td className="w3-gray"> Oct </td>
-            <td className="w3-gray"> Nov </td>
-            <td className="w3-gray"> Dec </td>
-            <td className="w3-gray"> Jan </td>
-            <td className="w3-gray"> Feb </td>
-            <td className="w3-gray"> Mar </td>
-          </tr>
-          {isLoading ? (
-            <tr>
-              <td colSpan="18">
-                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-              </td>
-            </tr>
-          ) : (
-            <>
-              {filteredItems?.length === 0 ? (
-                <tr>
-                  <td colSpan="18">No data found</td>
-                </tr>
-              ) : (
-                tableWithTotalRow
-              )}
-            </>
-          )}
-        </table>
+        <Row>
+          <div className="full">
+            <div className="table-container-zone ">
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} className="pr-0">
+                <table
+                  border="1"
+                  className="table-bordered table-striped1"
+                // style={{ width: "60%" }}
+                >
+                  <thead>
+                    <tr>
+                      <th style={{ width: "3%" }}>S.No</th>
+                      <th
+                        onClick={() => handleSort("Zone")}
+                        style={{ width: "5%" }}
+                      >
+                        Zone{" "}
+                        {sortField === "Zone" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th
+                        onClick={() => handleSort("Depot")}
+                        style={{ width: "5%" }}
+                      >
+                        Depot{" "}
+                        {sortField === "Depot" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th
+                        style={{ width: "5%" }}
+                        onClick={() => handleSort("LLY")}
+                      >
+                        LLY{" "}
+                        {sortField === "LLY" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th
+                        style={{ width: "5%" }}
+                        onClick={() => handleSort("LY")}
+                      >
+                        LY{" "}
+                        {sortField === "LY" &&
+                          (sortDirection === "asc" ? "▲" : "▼")}
+                      </th>
+                      <th style={{ width: "5%" }}>CY Plan / YTD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isLoading ? (
+                      <tr>
+                        <td colSpan="6">
+                          <LoadingPlaceholder
+                            numberOfRows={4}
+                          ></LoadingPlaceholder>
+                        </td>
+                      </tr>
+                    ) : (
+                      <>
+                        {filteredItems?.length === 0 ? (
+                          <tr>
+                            <td colSpan="6">No data found</td>
+                          </tr>
+                        ) : (
+                          tableWithTotalRow
+                        )}
+                      </>
+                    )}
+                  </tbody>
+                </table>
+              </Col>
+              <Col xl={6} lg={6} md={6} sm={6} xs={6} className="pr-0 pl-0">
+                <div class="table-scroll">
+                  <table
+                    border="1"
+                    className="scrollable-container table-bordered table-striped1"
+                    id={"secondZoneTable"}
+                  >
+                    <thead>
+                      <tr className="text-center">
+                        {getMonths().map((month) => (
+                          <td>{month}</td>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {isLoading ? (
+                        <tr>
+                          <td colSpan="12">
+                            <LoadingPlaceholder
+                              numberOfRows={4}
+                            ></LoadingPlaceholder>
+                          </td>
+                        </tr>
+                      ) : (
+                        <>
+                          {filteredItems?.length === 0 ? (
+                            <tr>
+                              <td colSpan="12">No data found</td>
+                            </tr>
+                          ) : (
+                            tableWithTotalRow2
+                          )}
+                        </>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Col>
+            </div>
+          </div>
+          <div className="full">
+            {/* Pagination */}
+            <div className="pagination">
+              {Array.from({ length: pageCount }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(index)}
+                  className={`page-button ${currentPage === index ? "active" : ""
+                    }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+        </Row>
       </div>
     </div>
   );

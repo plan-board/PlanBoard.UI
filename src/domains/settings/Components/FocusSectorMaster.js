@@ -5,6 +5,8 @@ import LoadingPlaceholder from "../../../components/LoadingPlaceholder";
 import axiosInstance from "./../../../auth/api";
 import { SHOW_TOAST } from "../../../store/constant/types";
 import DataTable from "react-data-table-component";
+import ExportExcel from "../../ExportExcel";
+import ZoneDropDown from "../../components/ZoneDropDown";
 
 const FocusSectorMaster = () => {
   const dispatch = useDispatch();
@@ -15,15 +17,15 @@ const FocusSectorMaster = () => {
   const [mSectorId, setMSector] = useState(0);
 
   const [fyList, setFYlist] = useState([]);
-  const [monthList, setMonthList] = useState([]);
   const [mSectorList, setMSectorList] = useState([]);
   const [sectorMaster, setSectorMaster] = useState([]);
+  const [selectedZoneDrop, setSelectedZoneDrop] = useState(0);
 
   const payload = {
     Token: localStorage.getItem("access_token"),
     FPParam: [
       {
-        FYId: 0,
+        // FYId: 0,
         Month: 0,
         MarketSectorId: 0,
       },
@@ -135,7 +137,8 @@ const FocusSectorMaster = () => {
         {
           FYId: fyId,
           Month: monthId,
-          MarketSectorId: mSectorId,
+          ZoneId: parseInt(selectedZoneDrop),
+          ProductMarketSectorId: parseInt(mSectorId),
         },
       ],
     };
@@ -146,6 +149,7 @@ const FocusSectorMaster = () => {
       if (response?.status === 200) {
         alert(response?.data?.Data?.[0]?.MESSAGE);
         fetchFocusSector();
+        setMSector(0);
       }
       setLoading(false);
     } catch (error) {
@@ -171,22 +175,29 @@ const FocusSectorMaster = () => {
       sortable: true,
     },
     {
-      name: "Focus Sector",
+      name: "Zone",
+      selector: (row) => row.ZoneName,
+      sortable: true,
+    },
+    {
+      name: "Market Sector",
       selector: (row) => row.MarketSectorName,
       sortable: true,
     },
   ];
-  const [filterText, setFilterText] = useState('');
+  const [filterText, setFilterText] = useState("");
   const filteredItems = sectorMaster.filter(
-    item => item.MarketSectorName && item.MarketSectorName.toLowerCase().includes(filterText.toLowerCase()),
+    (item) =>
+      item.MarketSectorName &&
+      item.MarketSectorName.toLowerCase().includes(filterText.toLowerCase())
   );
 
   const CustomSubHeaderComponent = ({ children, align }) => {
     const containerStyle = {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: align === 'left' ? 'flex-start' : 'center',
-      marginBottom: '10px',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: align === "left" ? "flex-start" : "center",
+      marginBottom: "10px",
     };
 
     return (
@@ -197,11 +208,15 @@ const FocusSectorMaster = () => {
   };
 
   const additionalComponent = (
-    <span className="w3-left w3-margin-right "> Monthly Focus Sectors(s)   ({filteredItems?.length}) </span>
+    <span className="w3-left w3-margin-right ">
+      {" "}
+      Monthly Focus Sectors(s) ({filteredItems?.length}){" "}
+    </span>
   );
 
   const subHeaderComponent = (
-    <input className="w3-margin-bottom w3-input w3-border filterInput"
+    <input
+      className="w3-input w3-border filterInput w-100"
       type="text"
       placeholder="Filter By Sector  Name"
       aria-label="Search Input"
@@ -210,93 +225,141 @@ const FocusSectorMaster = () => {
     />
   );
 
+  const handleExportClick = () => {
+    const arrObj = sectorMaster.map((element, index) => ({
+      "S.No": index + 1,
+      FY: element.FYName,
+      Month: element.Month,
+      Zone: element.ZoneName,
+      "Market Sector Name": element.MarketSectorName,
+    }));
+    // console.log("-arrObj", arrObj);
+    ExportExcel("Monthly-Focus-Product", arrObj);
+  };
+
+  const handleSelectionChangeDrop = (newValue) => {
+    setSelectedZoneDrop(newValue);
+  };
+
   return (
     <>
-      <p className="w3-small h6 ">Manage Monthly Focus Sectors </p>
+      <h5>Manage Monthly Focus Sectors </h5>
       <hr />
-      <form className=" ">
-        <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
-          <tr className=" w3-light-gray  h6">
-            <td className=" ">
-              <label htmlFor="selectionBox">FY</label>
-              <select
-                className="w3-select"
-                value={fyId}
-                onChange={handleYearChange}
-              >
-                <option value={0}>Select</option>
-                {fyDropdown()}
-              </select>
-            </td>
-            <td className=" ">
-              {" "}
-              <label htmlFor="selectionBox">Month</label>
-              <select
-                className="w3-select"
-                value={monthId}
-                onChange={handleMonthChange}
-              >
-                <option value="0">Select</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
-            </td>
-            <td className=" ">
-              {" "}
-              <label htmlFor="selectionBox">Market Sector</label>
-              <select
-                className="w3-select"
-                value={mSectorId}
-                onChange={handleSectorChange}
-              >
-                {" "}
-                <option value={0}>All</option>
-                {marketSecDropdown()}
-              </select>
-            </td>
-            <td className=" " style={{ width: "30px" }}>
-              {" "}
-              <br />
-              <button
-                type="button"
-                className="w3-button w3-indigo"
-                disabled={mSectorId && monthId && fyId ? false : true}
-                onClick={() => handleSetFocusProduct()}
-                style={{ marginTop: "10px" }}
-              >
-                <i className="fa fa-plus"></i> Save
-              </button>
-            </td>
-          </tr>
+      <form>
+        <table className="table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>
+                <label htmlFor="selectionBox">FY</label>
+              </th>
+              <th>
+                <label htmlFor="selectionBox">Month</label>
+              </th>
+              <th>
+                <label htmlFor="selectionBox">Zone</label>
+              </th>
+              <th>
+                <label htmlFor="selectionBox">Market Sector</label>
+              </th>
+              <th colSpan={2}></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <select
+                  className="form-control"
+                  value={fyId}
+                  onChange={handleYearChange}
+                >
+                  <option value={0}>Select</option>
+                  {fyDropdown()}
+                </select>
+              </td>
+              <td>
+                <select
+                  className="form-control"
+                  value={monthId}
+                  onChange={handleMonthChange}
+                >
+                  <option value="0">Select</option>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </td>
+              <td>
+                <ZoneDropDown
+                  selectedZone={selectedZoneDrop}
+                  onValueChange={handleSelectionChangeDrop}
+                  asDropDown={true}
+                />
+              </td>
+              <td>
+                <select
+                  className="form-control"
+                  value={mSectorId}
+                  onChange={handleSectorChange}
+                >
+                  <option value={0}>Select Market Sector</option>
+                  {marketSecDropdown()}
+                </select>
+              </td>
+              <td style={{ width: "30px" }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={
+                    mSectorId && monthId && fyId && selectedZoneDrop
+                      ? false
+                      : true
+                  }
+                  onClick={() => handleSetFocusProduct()}
+                >
+                  <i className="fa fa-plus"></i> Save
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </form>
-      <div className="w3-row w3-padding-16"> </div>
-      <div>
-      {subHeaderComponent}
+      <div className="row w-100 my-4">
+        <div className="one-third">{subHeaderComponent}</div>
       </div>
-      <DataTable
-        columns={columns}
-        data={filteredItems}
-        pagination
-        className="datatable"
-        fixedHeader={true}
-        fixedHeaderScrollHeight="400px" subHeader
-        subHeaderComponent={
-          <CustomSubHeaderComponent align="left">
-            {additionalComponent}
-          </CustomSubHeaderComponent>
-        }
-      />
+      <div className="tbl-container">
+        {sectorMaster?.length ? (
+          <div>
+            <button className="w3-btn w3-gray" onClick={handleExportClick}>
+              {" "}
+              Export
+            </button>
+          </div>
+        ) : null}
+
+        <DataTable
+          columns={columns}
+          data={filteredItems}
+          pagination
+          className="datatable"
+          fixedHeader={true}
+          fixedHeaderScrollHeight="400px"
+          subHeader
+          subHeaderComponent={
+            <CustomSubHeaderComponent align="left">
+              {additionalComponent}
+            </CustomSubHeaderComponent>
+          }
+        />
+      </div>
 
       {/* <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
         <tr className=" w3-light-gray  h6">

@@ -13,14 +13,13 @@ const Sidebar = ({ isAuth, rolId }) => {
 
   return (
     <div
-      className="w3-sidebar w3-bar-block w3-hide-small"
+      className="w3-sidebar w3-bar-block w3-hide-small sidebar-nav"
       style={{ zIndex: 20 }}
     >
       <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
         <img src={logo} className="" style={{ width: "50px" }} />
         <p className="w3-small h6">Planboard</p>
       </button>
-
       {hasPermission(rolId, "national") && (
         <NavLink
           className={({ isActive }) =>
@@ -28,10 +27,8 @@ const Sidebar = ({ isAuth, rolId }) => {
           }
           to="national"
         >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
-            <p className="w3-small h6">National</p>
-          </button>
+          <i className="fa fa-globe"></i>
+          <p className="w3-small h6">National</p>
         </NavLink>
       )}
       {hasPermission(rolId, "zone") && (
@@ -41,10 +38,8 @@ const Sidebar = ({ isAuth, rolId }) => {
           }
           to="zone"
         >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
-            <p className="w3-small h6">Zone</p>
-          </button>
+          <i className="fa fa-area-chart"></i>
+          <p className="w3-small h6">Zone</p>
         </NavLink>
       )}
       {hasPermission(rolId, "depot") && (
@@ -54,10 +49,8 @@ const Sidebar = ({ isAuth, rolId }) => {
           }
           to="depot"
         >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
-            <p className="w3-small h6">Depot</p>
-          </button>
+          <i className="fa fa-list-alt"></i>
+          <p className="w3-small h6">Depot</p>
         </NavLink>
       )}
       {hasPermission(rolId, "territory") && (
@@ -67,13 +60,10 @@ const Sidebar = ({ isAuth, rolId }) => {
           }
           to="territory"
         >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa  fa-bar-chart "></i>
-            <p className="w3-small h6">Territory</p>
-          </button>
+          <i className="fa  fa-map-marker"></i>
+          <p className="w3-small h6">Territory</p>
         </NavLink>
       )}
-
       {hasPermission(rolId, "dashscheduleboard") && (
         <NavLink
           className={({ isActive }) =>
@@ -81,10 +71,8 @@ const Sidebar = ({ isAuth, rolId }) => {
           }
           to="schedule"
         >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-bar-chart "></i>
-            <p className="w3-small h6">Schedule</p>
-          </button>
+          <i className="fa fa-table"></i>
+          <p className="w3-small h6">Schedule</p>
         </NavLink>
       )}
       {hasPermission(rolId, "national") && (
@@ -94,11 +82,35 @@ const Sidebar = ({ isAuth, rolId }) => {
           }
           to="settings"
         >
-          <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
-            <i className="fa fa-gear"></i>
-            <p className="w3-small h6">Settings</p>
-          </button>
+          <i className="fa fa-gear"></i>
+          <p className="w3-small h6">Settings</p>
         </NavLink>
+      )}
+      {hasPermission(rolId, "customer-potential") && (
+        <div className="sub-menu">
+        <NavLink
+          className={({ isActive }) =>
+            "nav-link" + (!isActive ? " unselected" : " active")
+          }
+          to="/customer-potential"
+        >
+          <i className="fa fa-user"></i>
+          <p className="w3-small h6">Customer Potential</p>
+        </NavLink>
+      </div>
+      )}
+      {hasPermission(rolId, "change-password") && (
+      <div className="sub-menu">
+        <NavLink
+          className={({ isActive }) =>
+            "nav-link" + (!isActive ? " unselected" : " active")
+          }
+          to="/change-password"
+        >
+          <i className="fa fa-lock"></i>
+          <p className="w3-small h6">Change Password</p>
+        </NavLink>
+      </div>
       )}
     </div>
   );

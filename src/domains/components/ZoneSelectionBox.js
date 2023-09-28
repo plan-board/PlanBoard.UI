@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-// { filteredZones, selectedZone, onValueChange }
 const ZoneSelectionBox = ({selectedZone, onValueChange}) => {
   const { AuthData } = useSelector((state) => state.auth);
   const [selectedZones, setSelctedZone] = useState(0);
@@ -21,7 +20,7 @@ const ZoneSelectionBox = ({selectedZone, onValueChange}) => {
       value={selectedZones}
       onChange={handleChange}
     >
-      <option value={0} >All Zone</option>
+      <option value={0}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Zone":"Select Zone"}</option> 
       {AuthData?.Zone.map((item, index) => (
         <option key={index} value={item?.ZoneID} >
           {item.ZoneName}
