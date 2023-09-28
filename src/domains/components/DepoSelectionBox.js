@@ -21,12 +21,14 @@ const DepoSelectionBox = ({
   );
 
   const handleChange = (event) => {
-    const depotid = parseInt(event.target.value);
-    setDeptonameselect(
-      event.target.options[event.target.selectedIndex]?.textContent
-    );
-    onSelectedDepoChange(depotid);
-    setSelctedDepo(depotid);
+    if(event.target.value != ""){
+      const depotid = parseInt(event.target.value);
+      setDeptonameselect(
+        event.target.options[event.target.selectedIndex]?.textContent
+      );
+      onSelectedDepoChange(depotid);
+      setSelctedDepo(depotid);
+    }
   };
   
   const fetchDepotSalesPlan = async () => {
@@ -68,7 +70,12 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-          <option>{depotArray[0]?.depot_name}</option>
+          <option value="">Select Depot</option> 
+          {AuthData?.Depot?.map((item, index) => (
+            <option key={index} value={item?.DepotID}>
+              {item.DepotName}
+            </option>
+          ))}
         </select>
       ) : (
         <select
@@ -76,7 +83,7 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-        <option value={0}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Depot":"Select Depot"}</option> 
+        <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Depot":"Select Depot"}</option> 
           {depotArray?.map((item, index) => (
             <option key={index} value={item?.depotid}>
               {item.depot_name}

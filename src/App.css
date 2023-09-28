@@ -2317,7 +2317,7 @@ table.table-striped1 tbody tr:nth-child(odd) {
 
 .login-Container {
   font-family: TTNorms-Bold;
-  background-image: linear-gradient(to bottom right, #33cde2, #6e9ddb);
+  /* background-image: linear-gradient(to bottom right, #33cde2, #6e9ddb); */
   font-family: TTNorms-Bold;
   height: 100%;
   width: 100%;

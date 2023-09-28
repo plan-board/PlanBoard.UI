@@ -23,12 +23,14 @@ const TerritorySelectionBox = ({
   );
 
   const handleChange = (event) => {
-    const territorId = parseInt(event.target.value);
-    onSelectedTerritoryChange(territorId);
-    setSelctedTerritory(territorId);
+    if(event.target.value != ""){
+      const territorId = parseInt(event.target.value);
+      onSelectedTerritoryChange(territorId);
+      setSelctedTerritory(territorId);
+    }
   };
-  
-  
+
+
   const fetchTerritory = async () => {
     setLoading(true);
     try {
@@ -44,14 +46,14 @@ const TerritorySelectionBox = ({
       console.log("=====TerritoryMonthPlan====", response);
       if (response?.status === 200) {
         let filteredTerr = [];
-        if(AuthData?.Data[0].EmployeeTpye === "AM"){
+        if (AuthData?.Data[0].EmployeeTpye === "AM") {
           filteredTerr = (response?.data?.Data || []).filter((obj1) =>
             (AuthData?.Territory || []).some((obj2) => obj1.territoryid === obj2.TerritoryID)
           );
-        }else{
+        } else {
           filteredTerr = response?.data?.Data || [];
         }
-        setTerritoryArray(filteredTerr); 
+        setTerritoryArray(filteredTerr);
       }
       setLoading(false);
     } catch (error) {
@@ -61,24 +63,41 @@ const TerritorySelectionBox = ({
   };
 
   useEffect(() => {
-    // if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != 0 && selectedDepot != 0)) {
-     fetchTerritory();
-    // }
+    if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != "" && selectedDepot !=  "")) {
+      fetchTerritory();
+    }
   }, [selectedZone, selectedDepot]);
 
   return (
-    <select
-      className="form-control"
-      value={selctedTerritory}
-      onChange={handleChange}
-    >
-      <option value="0">{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Territory":"Select Territory"}</option> 
-      {territoryArray?.map((item, index) => (
-        <option key={index} value={item?.territoryid}>
-          {item.territory_name}
-        </option>
-      ))}
-    </select>
+    <>
+      {AuthData?.Data[0].EmployeeTpye === "AM" ? (
+        <select
+          className="form-control"
+          value={selctedTerritory}
+          onChange={handleChange}
+        >
+          <option value="">Select Territory</option>
+          {AuthData?.Territory?.map((item, index) => (
+            <option key={index} value={item?.TerritoryID}>
+              {item.TerritoryName}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <select
+          className="form-control"
+          value={selctedTerritory}
+          onChange={handleChange}
+        >
+          <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Territory" : "Select Territory"}</option>
+          {territoryArray?.map((item, index) => (
+            <option key={index} value={item?.territoryid}>
+              {item.territory_name}
+            </option>
+          ))}
+        </select>
+      )}
+    </>
   );
 };
 
