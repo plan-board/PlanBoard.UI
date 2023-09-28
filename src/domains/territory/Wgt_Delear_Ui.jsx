@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import CustomPopup from "../CustomPopup";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, formatDateTimes } from "../../utils/utils";
-import { Row, Col } from "reactstrap";
 import Loader from "../../common/Loader";
 
 const itemsPerPage = 10;
