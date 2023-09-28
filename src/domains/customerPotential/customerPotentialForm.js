@@ -68,12 +68,9 @@ export const CustomerPotentialForm = ({
             onChange={handleChange}
             value={territoryId}
           >
-            <option value="0">Select</option>
+            <option value="">Select</option>
             {TerritoryDropdown()}
-          </select>
-          {/* {errors.role_id && (
-                <span style={{ color: "red" }}>{errors.role_id}</span>
-              )} */}
+          </select> 
         </Col>
       </Row>
       <div className="tbl-container" style={{ marginTop: "10px" }}>
@@ -87,16 +84,7 @@ export const CustomerPotentialForm = ({
           pagination
           customStyles={customStyles}
           subHeaderComponent={subHeaderComponentMemo}
-          subHeaderAlign="left"
-          // subHeaderComponent={
-          //   <button
-          //     type="button"
-          //     className="btn btn-primary"
-          //     // onClick={() => handleSave()}
-          //   >
-          //     <i className="fa fa-plus"></i> Save
-          //   </button>
-          // }
+          subHeaderAlign="left" 
         />
       </div>
     </>
