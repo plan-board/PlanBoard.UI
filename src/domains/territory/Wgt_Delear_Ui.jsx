@@ -6,6 +6,7 @@ import CustomPopup from "../CustomPopup";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, formatDateTimes } from "../../utils/utils";
 import { Row, Col } from "reactstrap";
+import Loader from "../../common/Loader";
 
 const itemsPerPage = 10;
 const monthArr = [
@@ -36,6 +37,7 @@ const Wgt_Delear_Ui = ({ data }) => {
     date.getMonth() < 3 ? date.getMonth() + 13 : date.getMonth() + 1;
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
+  const [submitForm, setSubmitForm] = useState(false);
 
   const [selectedRow, setSelectedRow] = useState(null);
   const [sumValue, setSumValue] = useState(0);
@@ -57,7 +59,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       [id]: { ...getinputs[id], [e.target.name]: e.target.value },
     });
   }
-
+ 
   const getMonthTarget = (item) => {
     console.log("--getMonthTarget item", item);
     setVisibility(true);
@@ -110,6 +112,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   };
 
   const fetchDealerMaster = async () => {
+    setLoading(true);
     const payload = {
       Token: localStorage.getItem("access_token"),
       TerritoryId: data,
@@ -122,8 +125,10 @@ const Wgt_Delear_Ui = ({ data }) => {
         setDealerlist(response?.data?.Data);
         console.log("=====api/Master/ZoneData==== 65", response);
       }
+      setLoading(false);
     } catch (error) {
       // Handle errors
+      setLoading(false);
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
@@ -141,7 +146,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   };
 
   // Handle input changes for a specific row
-  const handleInputChange = (tableid, name, value) => {
+  const handleInputChange = (tableid, name, value, e) => {
     // Create a copy of the form data with the updated value
     const updatedFormData = selectedRow.map((row) =>
       row.tableid === tableid ? { ...row, [name]: value } : row
@@ -163,7 +168,8 @@ const Wgt_Delear_Ui = ({ data }) => {
 
   // Handle form submission
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    setSubmitForm(true);
+    event.preventDefault();  
     console.log("Form Data:", selectedRow);
     try {
       const payArr = selectedRow.map((item) => ({
@@ -187,10 +193,14 @@ const Wgt_Delear_Ui = ({ data }) => {
 
       if (response?.status === 200) {
         console.log("=====aSetFocusedProductDealerWise==== 65", response);
+        setDealerlist([]) //clear data
         fetchDealerMaster();
         popupCloseHandler(false);
       }
+      setSubmitForm(false);
+
     } catch (error) {
+      setSubmitForm(false);
       // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
@@ -267,7 +277,11 @@ const Wgt_Delear_Ui = ({ data }) => {
         (!isNaN(item.YTD_Value) &&
           item?.YTD_Value.toString()
             .toLowerCase()
-            .includes(filterTextLowerCase))
+            .includes(filterTextLowerCase))  ||
+        (!isNaN(item.potential) &&
+          item?.potential.toString()
+            .toLowerCase()
+            .includes(filterTextLowerCase)) 
     );
   };
 
@@ -404,7 +418,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               {/* <br /> */}
               <div
                 style={{
-                  minWidth: "50px",
+                  minWidth: "100px",
                   minHeight: "15px",
                   paddingTop: "10px",
                 }}
@@ -428,21 +442,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </p>
               </div>
             </td>
-            <td
-              style={{
-                minWidth: "100px",
-                paddingLeft: "5px",
-                paddingRight: "5px",
-              }}
-            >
-              <input
-                type="number"
-                readOnly={true}
-                className="inp40 text-center"
-                name={`${item.id}_coll`}
-                onChange={(e) => onchangeInputs(e, item.id)}
-              />
-            </td>
+            <td style={{ minWidth: "100px" }}>{item?.creepage_value + item?.OD + item[`${monName}_Month_Value_v1`]}</td>
             <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)}) </td>
           </Fragment>
         );
@@ -625,17 +625,21 @@ const Wgt_Delear_Ui = ({ data }) => {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {filteredItems?.map((item, index) => {
-              const itemIndex = currentPage * itemsPerPage + index + 1;
-              return (
-                <tr key={itemIndex}>
-                  <td className="text-center">{itemIndex}</td>
-                  <td className="text-center">{item.dealer_name}</td>
-                  <td className="text-center">{item.dealer_code}</td>
-                </tr>
-              );
-            })}
+          <tbody> 
+            {isLoading ? (
+              <><Loader /></>
+            ) : (
+              filteredItems?.map((item, index) => {
+                const itemIndex = currentPage * itemsPerPage + index + 1;
+                return (
+                  <tr key={itemIndex}>
+                    <td className="text-center">{itemIndex}</td>
+                    <td className="text-center">{item.dealer_name}</td>
+                    <td className="text-center">{item.dealer_code}</td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
 
@@ -677,10 +681,14 @@ const Wgt_Delear_Ui = ({ data }) => {
               </tr>
             </thead>
             <tbody>
-
-              {filteredItems?.map((item, index) => {
+            {isLoading ? (
+              <><Loader /></>
+            ) : (
+              filteredItems?.map((item, index) => {
                 return renderTableRow(item, index);
-              })}
+              })
+            )}
+
             </tbody>
           </table>
         </div>
@@ -803,7 +811,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                         pattern="[0-9]*[.]?[0-9]*"
                         value={item?.Value}
                         className="inp40 text-center"
-                        name="Value"
+                        name="Value"  
                         onChange={(e) =>
                           handleInputChange(
                             item.tableid,
@@ -844,9 +852,12 @@ const Wgt_Delear_Ui = ({ data }) => {
                 breakup )
               </td>
               <td style={{ width: "10%" }} align="right">
-
                 {isLocked ? null : (
-                  <button className="w3-button w3-indigo "> Submit </button>
+                  submitForm ? (
+                    <i className="w3-button fa fa-spinner"></i>
+                  ) : (
+                    <button className="w3-button w3-indigo">Submit</button>
+                  )
                 )}
               </td>
             </tr>

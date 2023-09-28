@@ -1,18 +1,19 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import AllFigureText from "../components/AllFigureText";
 import { CustomerPotentialForm } from "./customerPotentialForm";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import ResponsePopup from "../../common/ResponsePopup";
 import Loader from "../../common/Loader";
-import { useDispatch } from "react-redux";
-import { Row, Col } from "reactstrap";
+import { useDispatch, useSelector } from "react-redux";
 
 const CustomerPotential = () => {
   const dispatch = useDispatch();
+  const { AuthData } = useSelector((state) => state?.auth);
+
   const [isLoading, setLoading] = useState(false);
   const [territoryList, setTerritoryList] = useState([]);
-  const [territortId, setTerritoryId] = useState(0);
+  const [territortId, setTerritoryId] = useState(null);
   const [employeeList, setEmployeeList] = useState([]);
   const [filterCode, setFilterCode] = useState("");
   const [filterName, setFilterName] = useState("");
@@ -21,27 +22,33 @@ const CustomerPotential = () => {
     show: false,
     message: "",
   });
+
   useEffect(() => {
     fetchTerritoryList();
   }, []);
+
   useEffect(() => {
-    fetchCustomerList();
+    if(territortId){
+      fetchCustomerList();
+    }
   }, [territortId]);
   const handleFilterChange = (e) => {
     setFilterCode(e.target.value);
   };
-  const handleFilterNameChange = (e) => {
-    setFilterName(e.target.value);
-  };
+  // const handleFilterNameChange = (e) => {
+  //   setFilterName(e.target.value);
+  // };
   const filteredData = employeeList.filter((item) => {
     const codeMatch =
       filterCode === "" ||
       item.CustomerCode.toLowerCase().includes(filterCode.toLowerCase());
+  
     const nameMatch =
-      filterName === "" ||
-      item.CustomerName.toLowerCase().includes(filterName.toLowerCase());
-    return codeMatch && nameMatch;
-  });
+      filterCode === "" ||
+      item.CustomerName.toLowerCase().includes(filterCode.toLowerCase());
+  
+    return codeMatch || nameMatch;
+  }); 
 
   const fetchCustomerList = async () => {
     const payload = {
@@ -73,19 +80,17 @@ const CustomerPotential = () => {
   const fetchTerritoryList = async () => {
     const payload = {
       Token: localStorage.getItem("access_token"),
-      entity_id: 0,
+      ZoneId: 0,
+      DepotId: 0,
     };
     try {
-      const response = await axiosInstance.post("api/Master/AreaData", payload);
+      const response = await axiosInstance.post("TerritoryMonthPlan", payload);
 
-      if (response?.status === 200) {
-        let sortData = response.data.Data != null ? response.data.Data : [];
-        if (sortData.length > 0) {
-          sortData.sort((a, b) => {
-            return a.area_name?.localeCompare(b.area_name);
-          });
-          setTerritoryList(sortData);
-        }
+      if (response?.status === 200) { 
+        const filteredTerr = (response?.data?.Data || []).filter((obj1) =>
+          (AuthData?.Territory || []).some((obj2) => obj1.territoryid === obj2.TerritoryID)
+        );
+        setTerritoryList(filteredTerr); 
       }
       setLoading(false);
     } catch (error) {
@@ -95,9 +100,9 @@ const CustomerPotential = () => {
 
   const TerritoryDropdown = () => {
     return territoryList.map((item, index) => (
-      <option key={item?.area_id} value={item?.area_id}>
-        {item?.area_name}
-      </option>
+      <option key={index} value={item?.territoryid}>
+      {item.territory_name}
+    </option>
     ));
   };
 
@@ -182,26 +187,13 @@ const CustomerPotential = () => {
       <div style={{ display: "flex", minWidth: "100%" }}>
         <input
           type="text"
-          placeholder="Filter by Customer Code"
+          placeholder="Filter by Customer Name or Code"
           value={filterCode}
           onChange={handleFilterChange}
           style={{
             fontSize: "14px",
             paddingLeft: "10px",
             marginLeft: "0px",
-            width: "30%",
-          }}
-        />
-
-        <input
-          type="text"
-          placeholder="Filter by CustomerName"
-          value={filterName}
-          onChange={handleFilterNameChange}
-          style={{
-            fontSize: "14px",
-            paddingLeft: "10px",
-            marginLeft: "30px",
             width: "30%",
           }}
         />
