@@ -441,7 +441,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </p>
               </div>
             </td>
-            <td style={{ minWidth: "100px" }}>{item?.creepage_value + item?.OD + item[`${monName}_Month_Value_v1`]}</td>
+            <td style={{ minWidth: "100px" }}>{(item?.creepage_value + item?.OD + item[`${monName}_Month_Value_v1`]).toFixed(2)}</td>
             <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)}) </td>
           </Fragment>
         );

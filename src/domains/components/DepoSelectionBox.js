@@ -22,11 +22,13 @@ const DepoSelectionBox = ({
 
   const handleChange = (event) => {
     const depotid = parseInt(event.target.value);
-    setDeptonameselect(
-      event.target.options[event.target.selectedIndex]?.textContent
-    );
-    onSelectedDepoChange(depotid);
-    setSelctedDepo(depotid);
+    if(depotid != ""){
+      setDeptonameselect(
+        event.target.options[event.target.selectedIndex]?.textContent
+      );
+      onSelectedDepoChange(depotid);
+      setSelctedDepo(depotid);
+    }
   };
   
   const fetchDepotSalesPlan = async () => {
@@ -53,10 +55,15 @@ const DepoSelectionBox = ({
     }
   };
 
-  useEffect(() => {
-    // if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != 0 )) {
+  useEffect(() => { 
+    if (AuthData?.Data[0].EmployeeTpye === "DM") {
+      console.log("--call")
       fetchDepotSalesPlan();
-    // }
+    }else {
+      if (selectedZone != 0 ) {
+        fetchDepotSalesPlan();
+      }
+    }
   }, [selectedZone, selectedDepot]);
   
 
@@ -68,7 +75,12 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-          <option>{depotArray[0]?.depot_name}</option>
+          <option value="">Select Depot</option> 
+          {AuthData?.Depot?.map((item, index) => (
+            <option key={index} value={item?.DepotID}>
+              {item.DepotName}
+            </option>
+          ))}
         </select>
       ) : (
         <select
@@ -76,7 +88,7 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-        <option value={0}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Depot":"Select Depot"}</option> 
+        <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Depot":"Select Depot"}</option> 
           {depotArray?.map((item, index) => (
             <option key={index} value={item?.depotid}>
               {item.depot_name}
