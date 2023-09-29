@@ -11,6 +11,7 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
   const [filteredZones, setFilteredZones] = useState([]);
 
   const handleChange = (event) => {
+    console.log("-ss")
     if (event.target.value != "") {
       onValueChange(parseInt(event.target.value));
     }
@@ -51,7 +52,7 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
           value={selectedZone}
           onChange={handleChange}
         >
-          <option value="">Select Zone</option>
+          {/* <option value="">Select Zone</option> */}
           {AuthData?.Zone?.map((item, index) => (
             <option key={index} value={item?.ZoneID} >
               {item.ZoneName}

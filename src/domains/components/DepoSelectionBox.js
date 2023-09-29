@@ -21,8 +21,8 @@ const DepoSelectionBox = ({
   );
 
   const handleChange = (event) => {
-    if(event.target.value != ""){
-      const depotid = parseInt(event.target.value);
+    const depotid = parseInt(event.target.value);
+    if(depotid != ""){
       setDeptonameselect(
         event.target.options[event.target.selectedIndex]?.textContent
       );
@@ -55,10 +55,15 @@ const DepoSelectionBox = ({
     }
   };
 
-  useEffect(() => {
-    // if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != 0 )) {
+  useEffect(() => { 
+    if (AuthData?.Data[0].EmployeeTpye === "DM") {
+      console.log("--call")
       fetchDepotSalesPlan();
-    // }
+    }else {
+      if (selectedZone != 0 ) {
+        fetchDepotSalesPlan();
+      }
+    }
   }, [selectedZone, selectedDepot]);
   
 

@@ -63,7 +63,12 @@ const TerritorySelectionBox = ({
   };
 
   useEffect(() => {
-    if (AuthData?.Data[0].EmployeeTpye === "HOD" || (selectedZone != "" && selectedDepot !=  "")) {
+    setTerritoryArray([]) 
+    // if (AuthData?.Data[0].EmployeeTpye === "HOD") {}
+    if((selectedZone != "0" && selectedDepot !=  "0")){
+      fetchTerritory();
+    }
+    if(AuthData?.Data[0].EmployeeTpye === "DM" && selectedDepot !=  ""){
       fetchTerritory();
     }
   }, [selectedZone, selectedDepot]);
@@ -89,7 +94,7 @@ const TerritorySelectionBox = ({
           value={selctedTerritory}
           onChange={handleChange}
         >
-          <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Territory" : "Select Territory"}</option>
+          <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>Select Territory</option>
           {territoryArray?.map((item, index) => (
             <option key={index} value={item?.territoryid}>
               {item.territory_name}

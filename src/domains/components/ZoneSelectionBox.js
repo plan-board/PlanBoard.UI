@@ -5,10 +5,11 @@ const ZoneSelectionBox = ({ selectedZone, onValueChange }) => {
   const [selectedZones, setSelctedZone] = useState(0);
  
   const handleChange = (event) => {
+    console.log("-ss")
     if (event.target.value != "") {
       onValueChange(parseInt(event.target.value));
-      setSelctedZone(parseInt(event.target.value));
     }
+    setSelctedZone(parseInt(event.target.value)); 
   };
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const ZoneSelectionBox = ({ selectedZone, onValueChange }) => {
           value={selectedZones}
           onChange={handleChange}
         >
-          <option value="">Select Zone</option>
+          {/* <option value="">Select Zone</option> */}
           {AuthData?.Zone?.map((item, index) => (
             <option key={index} value={item?.ZoneID} >
               {item.ZoneName}
