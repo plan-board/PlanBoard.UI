@@ -28,7 +28,7 @@ const CustomerPotential = () => {
   }, []);
 
   useEffect(() => {
-    if(territortId){
+    if (territortId) {
       fetchCustomerList();
     }
   }, [territortId]);
@@ -42,13 +42,13 @@ const CustomerPotential = () => {
     const codeMatch =
       filterCode === "" ||
       item.CustomerCode.toLowerCase().includes(filterCode.toLowerCase());
-  
+
     const nameMatch =
       filterCode === "" ||
       item.CustomerName.toLowerCase().includes(filterCode.toLowerCase());
-  
+
     return codeMatch || nameMatch;
-  }); 
+  });
 
   const fetchCustomerList = async () => {
     const payload = {
@@ -86,11 +86,13 @@ const CustomerPotential = () => {
     try {
       const response = await axiosInstance.post("TerritoryMonthPlan", payload);
 
-      if (response?.status === 200) { 
+      if (response?.status === 200) {
         const filteredTerr = (response?.data?.Data || []).filter((obj1) =>
-          (AuthData?.Territory || []).some((obj2) => obj1.territoryid === obj2.TerritoryID)
+          (AuthData?.Territory || []).some(
+            (obj2) => obj1.territoryid === obj2.TerritoryID
+          )
         );
-        setTerritoryList(filteredTerr); 
+        setTerritoryList(filteredTerr);
       }
       setLoading(false);
     } catch (error) {
@@ -101,8 +103,8 @@ const CustomerPotential = () => {
   const TerritoryDropdown = () => {
     return territoryList.map((item, index) => (
       <option key={index} value={item?.territoryid}>
-      {item.territory_name}
-    </option>
+        {item.territory_name}
+      </option>
     ));
   };
 
@@ -160,7 +162,7 @@ const CustomerPotential = () => {
               type: "success",
             });
             fetchCustomerList();
-            setTerritoryId("");
+            setTerritoryId(0);
           } else {
             setResponseDetails({
               show: true,

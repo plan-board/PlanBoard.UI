@@ -48,11 +48,13 @@ const Depot = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited <AllFigureText /></span>
+        <span className="main-title">
+          Shalimar Paints Limited <AllFigureText />
+        </span>
       </div>
       <div className="card-box lightgreen">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||
-          AuthData?.Data[0].EmployeeTpye === "ZM" ? (
+        AuthData?.Data[0].EmployeeTpye === "ZM" ? (
           <div className="row w-100">
             <div className="one-fourth">
               <ZoneSelectionBox
@@ -88,36 +90,35 @@ const Depot = () => {
         <div className="w3-bar tab-container">
           <div
             className={
-              toggleState === 1
-                ? "w3-button tab tab-active"
-                : "w3-button tab"
+              toggleState === 1 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
             <span className="h6"> Territory Monthly Plan</span>
           </div>
-         
+
           <div
             className={
-              toggleState === 2
-                ? "w3-button tab tab-active"
-                : "w3-button tab"
+              toggleState === 2 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(2)}
           >
-            <span className="h6"> <i className="fa fa-list"></i> Log Summary</span>
+            <span className="h6">
+              {" "}
+              <i className="fa fa-list"></i> Log Summary
+            </span>
           </div>
         </div>
         <div class="w3-row w-100">
-          <div className={toggleState === 1 ? "  " : " w3-hide  "}
-          >
+          <div className={toggleState === 1 ? "  " : " w3-hide  "}>
             <div>
               <h3>Territory Wise Monthly Plan / Achievement</h3>
             </div>
-            <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+            {toggleState === 1 && (
+              <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+            )}
           </div>
-          <div className={toggleState === 2 ? "  " : " w3-hide  "}
-          >
+          <div className={toggleState === 2 ? "  " : " w3-hide  "}>
             <div>
               <h3>Log Summary</h3>
             </div>
