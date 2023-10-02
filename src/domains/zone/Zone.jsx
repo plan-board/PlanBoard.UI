@@ -56,10 +56,10 @@ const Zone = () => {
           <div>
             <h3>Depot Wise Monthly Plan / Achievement</h3>
           </div>
-          <div className={toggleState === 1 ? "  " : " w3-hide  "} onClick={() => toggleTab(1)} >
+          <div className={toggleState === 1 ? "  " : " w3-hide  "}   >
             <DepoMonthWiseSalesReport selectedZone={selectedZone} selectedDepot={selectedDepot} />
           </div>
-          <div className={toggleState === 2 ? "  " : " w3-hide  "} onClick={() => toggleTab(1)} >
+          <div className={toggleState === 2 ? "  " : " w3-hide  "}  >
             <LogSummary actionType="Zone"  selectedId={selectedZone} />
           </div>
         </div>

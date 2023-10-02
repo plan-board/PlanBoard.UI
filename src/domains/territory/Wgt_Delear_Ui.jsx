@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
@@ -6,8 +6,32 @@ import CustomPopup from "../CustomPopup";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, formatDateTimes } from "../../utils/utils";
 import Loader from "../../common/Loader";
-
-const itemsPerPage = 10;
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Edit,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  Toolbar,
+  ExcelExport,
+  AggregateColumnDirective,
+  Sort,
+  ForeignKey,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import { getValue } from "@syncfusion/ej2-base";
+import ResponsePopup from "../../common/ResponsePopup";
+import ConfirmResponsePopup from "../../common/ResponsePopup/ConfirmResponse";
 const monthArr = [
   "Apr",
   "May",
@@ -27,18 +51,19 @@ const cMName = date.toLocaleString("default", { month: "short" });
 const mStartName = cMName.substring(0, 3);
 
 const Wgt_Delear_Ui = ({ data }) => {
-  console.log("-cMName", cMName);
   const dispatch = useDispatch();
+  let Wgt_DelearUiGridInstance = useRef();
+  let Wgt_DelearUiGridInstancePopup = useRef();
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
-
+  const [gridMonth, setGridMonth] = useState([]);
   const currentMonthCount =
     date.getMonth() < 3 ? date.getMonth() + 13 : date.getMonth() + 1;
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
   const [submitForm, setSubmitForm] = useState(false);
 
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState([]);
   const [sumValue, setSumValue] = useState(0);
   const [modalData, setModalData] = useState(null);
   const [monthName, setMonthName] = useState("");
@@ -51,26 +76,144 @@ const Wgt_Delear_Ui = ({ data }) => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [monthKey, setMonthKey] = useState(cMName + "_Month_Value_v1");
+  const [responseDetails, setResponseDetails] = useState({
+    type: "",
+    show: false,
+    message: "",
+  });
 
-  function onchangeInputs(e, id) {
-    setGetinputs({
-      ...getinputs,
-      [id]: { ...getinputs[id], [e.target.name]: e.target.value },
-    });
-  }
- 
-  const getMonthTarget = (item) => {
-    console.log("--getMonthTarget item", item);
-    setVisibility(true);
-    setSumValue(0);
-    setModalData(item);
-    fetchMonthDataById(item);
+  const [confirmResponseDetails, setConfirmResponseDetails] = useState({
+    type: "error",
+    show: false,
+    message: "Do you want to Lock",
+  });
+
+  useEffect(() => {
+    fetchDealerMaster();
+    sortMonth();
+  }, [data]);
+
+  const sortMonth = () => {
+    const headers = [];
+
+    for (let i = 0; i < monthArr.length; i++) {
+      const monName = monthArr[i];
+      if (monName === mStartName) {
+        break;
+      } else {
+        headers.push(monName);
+      }
+    }
+    setGridMonth([...headers]);
   };
 
+  const fetchDealerMaster = async () => {
+    setLoading(true);
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      TerritoryId: data,
+      DealerId: 0,
+    };
+    try {
+      const response = await axiosInstance.post("CustomerMonthPlan", payload);
+
+      if (response?.status === 200) {
+        if (response.data.Data.length > 0) {
+          let res = response.data.Data;
+          res.map((val) => {
+            let lydata =
+              val.potential != 0 ? (val.LY_Value * 100) / val.potential : 0;
+            val.lYActualShare = lydata.toFixed(2);
+
+            let YTDData =
+              val.potential != 0
+                ? ((val.YTD_Value + val[`${mStartName}_Month_Value_v1`]) *
+                    100) /
+                  val.potential
+                : 0;
+            val.YTDActualPlanShare = YTDData.toFixed(2);
+            val.tDue = val.creepage_value + val.OD;
+            let collectSum =
+              val.creepage_value + val.OD + val[`${mStartName}_Month_Value_v1`];
+            val.collectionVal = collectSum.toFixed(2);
+          });
+          setDealerlist(res);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+
+  const percentageFormatter = (field, data, column) => {
+    return getValue("lYActualShare", data) + " %";
+  };
+  const percentageFormatterYTD = (field, data, column) => {
+    return getValue("YTDActualPlanShare", data) + " %";
+  };
+  const templateCyTd = (args) => {
+    return (
+      <>
+        {args.CY_Value} <hr className="hr0" /> {args.YTD_Value}
+      </>
+    );
+  };
+
+  const nonCurMonTemp = (args, val) => {
+    return (
+      <>
+        {args[`${val}_Month_Value_v1`]}
+        <hr className="hr0" />
+        {args[`${val}_Month_Sale`]}
+      </>
+    );
+  };
+
+  const salesTemplate = (args) => {
+    return (
+      <>
+        {args[`${mStartName}_Month_Value`]}
+        <hr className="hr0" />
+        {args[`${mStartName}_Month_Value_v1`]}
+      </>
+    );
+  };
+
+  const lastTdTemplate = (args) => {
+    let YTDPlusV1 = args?.YTD_Value + args[`${mStartName}_Month_Value_v1`];
+
+    let llyYTTD =
+      YTDPlusV1 != 0
+        ? ((YTDPlusV1 - args?.LYYTDvsCYYTD) * 100) / args?.LYYTDvsCYYTD
+        : 0;
+    return (
+      <>
+        {args?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)}){" "}
+      </>
+    );
+  };
+
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
+  const getMonthTarget = (item) => {
+    let rowData = item.rowData;
+    setLoading(true);
+    setVisibility(true);
+    setSumValue(0);
+    setModalData(rowData);
+    fetchMonthDataById(rowData);
+  };
   const fetchMonthDataById = async (dataObj) => {
     const cMonth = new Date().getMonth() + 1;
     const date = new Date();
-    setMonthName(date.toLocaleString("default", { month: "long" }));
+    let monthName1 = date.toLocaleString("default", { month: "long" });
+    setMonthName(monthName1);
 
     const payload = {
       Token: localStorage.getItem("access_token"),
@@ -90,86 +233,59 @@ const Wgt_Delear_Ui = ({ data }) => {
 
       if (response?.status === 200) {
         const result = response?.data?.Data;
-        setSelectedRow(result); // add filterByDealer when data
-        console.log("=====GetFocusProductDealerWise==== 65", result);
-
+        if (result.length > 0) {
+          result.map((val, index) => {
+            val.serialNo = index + 1;
+          });
+        }
+        setSelectedRow(result);
         const sumValue = result.reduce((acc, item) => {
-          // Convert the Value property to a float, or use 0 if it's not a valid number
           const value = parseFloat(item.Value) || 0;
-
-          // Add the current item's value to the accumulator
           return acc + value;
         }, 0);
         const formattedSumValue = sumValue.toFixed(2);
 
         setSumValue(formattedSumValue);
       }
+
+      setLoading(false);
     } catch (error) {
-      // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
-
-  const fetchDealerMaster = async () => {
-    setLoading(true);
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      TerritoryId: data,
-      DealerId: 0,
-    };
-    try {
-      const response = await axiosInstance.post("CustomerMonthPlan", payload);
-
-      if (response?.status === 200) {
-        setDealerlist(response?.data?.Data);
-        console.log("=====api/Master/ZoneData==== 65", response);
-      }
-      setLoading(false);
-    } catch (error) {
-      // Handle errors
-      setLoading(false);
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  };
-
-  useEffect(() => {
-    fetchDealerMaster();
-  }, [data]);
-
   const popupCloseHandler = (e) => {
-    setVisibility(e);
-    // Close the modal by resetting the selected row and modal data
-    setSelectedRow(null);
+    setVisibility(false);
+    setSelectedRow([]);
     setModalData(null);
     setSumValue(0);
+    Wgt_DelearUiGridInstance.current.refresh();
   };
 
-  // Handle input changes for a specific row
-  const handleInputChange = (tableid, name, value, e) => {
-    // Create a copy of the form data with the updated value
-    const updatedFormData = selectedRow.map((row) =>
-      row.tableid === tableid ? { ...row, [name]: value } : row
-    );
+  const handleCellSaved = (args) => {
+    let change_records = [...selectedRow];
+    if (args.columnName == "Volume") {
+      change_records.map((val) => {
+        if (args.rowData.tableid == val.tableid) {
+          val.Volume = args.value;
+        }
+      });
+    }
+    if (args.columnName == "Value") {
+      change_records.map((val) => {
+        if (args.rowData.tableid == val.tableid) {
+          val.Value = args.value;
+        }
+      });
+    }
 
-    // Update the state with the new form data
-    setSelectedRow(updatedFormData);
-
-    const sumValue = updatedFormData.reduce((acc, item) => {
-      const value = parseFloat(item.Value) || 0;
-
-      // Add the current item's value to the accumulator
-      return acc + value;
-    }, 0);
-
-    const result = sumValue.toFixed(2);
-    setSumValue(result);
+    setSelectedRow([...change_records]);
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
+    setLoading(true);
     setSubmitForm(true);
-    event.preventDefault();  
-    console.log("Form Data:", selectedRow);
+    event.preventDefault();
+
     try {
       const payArr = selectedRow.map((item) => ({
         FYId: parseInt(item.FYId),
@@ -191,155 +307,49 @@ const Wgt_Delear_Ui = ({ data }) => {
       );
 
       if (response?.status === 200) {
-        console.log("=====aSetFocusedProductDealerWise==== 65", response);
-        setDealerlist([]) //clear data
-        fetchDealerMaster();
-        popupCloseHandler(false);
+        if (response?.data?.Status == true) {
+          setResponseDetails({
+            type: "success",
+            show: true,
+            message: response?.data?.Data[0].MESSAGE,
+          });
+          setDealerlist([]); //clear data
+          fetchDealerMaster();
+          popupCloseHandler(false);
+        } else {
+          setResponseDetails({
+            type: "error",
+            show: true,
+            message: response?.data?.Data[0].MESSAGE,
+          });
+        }
       }
       setSubmitForm(false);
-
+      setLoading(false);
     } catch (error) {
       setSubmitForm(false);
       // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
+  const handleCloseResponse = () => {
+    setConfirmResponseDetails({ show: false });
+    setResponseDetails({ show: false, message: "", type: "" });
+  };
 
-  const handleSort = (field) => {
-    if (sortField === field) {
-      // If the same column is clicked again, toggle the sort direction
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      // If a different column is clicked, set the new sort field and direction
-      setSortField(field);
-      setSortDirection("asc"); // Default to ascending order
+  const DataBoundFocused = (args) => {
+    if (selectedRow.length > 0) {
+      selectedRow.map((val, index) => {
+        if (val.IsFocused === 1) {
+          Wgt_DelearUiGridInstancePopup.current
+            .getRowByIndex(index)
+            .classList.add("IsFocused");
+        }
+      });
     }
   };
-  // Sort the data based on the current sorting field and direction
-  let sortedData = [...dealerlist];
-  if (sortField === "DelearName") {
-    sortedData.sort((a, b) => {
-      if (sortDirection === "asc") {
-        return a.dealer_name?.localeCompare(b.dealer_name);
-      } else {
-        return b.dealer_name?.localeCompare(a.dealer_name);
-      }
-    });
-  } else if (sortField === "DelearCode") {
-    sortedData.sort((a, b) => {
-      if (sortDirection === "asc") {
-        return a.dealer_code?.localeCompare(b.dealer_code);
-      } else {
-        return b.dealer_code?.localeCompare(a.dealer_code);
-      }
-    });
-  } else if (sortField === "Category") {
-    sortedData.sort((a, b) => {
-      if (sortDirection === "asc") {
-        return a.dealer_category?.localeCompare(b.dealer_category);
-      } else {
-        return b.dealer_category?.localeCompare(a.dealer_category);
-      }
-    });
-  } else if (sortField === "LY") {
-    sortedData.sort((a, b) => {
-      if (sortDirection === "asc") {
-        return (a.LY_Value || 0) - (b.LY_Value || 0);
-      } else {
-        return (b.LY_Value || 0) - (a.LY_Value || 0);
-      }
-    });
-  } else if (sortField === "YTD") {
-    sortedData.sort((a, b) => {
-      if (sortDirection === "asc") {
-        return (a.YTD_Value || 0) - (b.YTD_Value || 0);
-      } else {
-        return (b.YTD_Value || 0) - (a.YTD_Value || 0);
-      }
-    });
-  }
-
-  const filterData = (data) => {
-    const filterTextLowerCase = filterText.toLowerCase();
-    return data.filter(
-      (item) =>
-        (item?.dealer_name &&
-          item?.dealer_name?.toLowerCase().includes(filterTextLowerCase)) ||
-        (item?.dealer_code &&
-          item?.dealer_code?.toLowerCase().includes(filterTextLowerCase)) ||
-        (item?.dealer_category &&
-          item?.dealer_category?.toLowerCase().includes(filterTextLowerCase)) ||
-        (!isNaN(item.LY_Value) &&
-          item?.LY_Value.toString()
-            .toLowerCase()
-            .includes(filterTextLowerCase)) ||
-        (!isNaN(item.YTD_Value) &&
-          item?.YTD_Value.toString()
-            .toLowerCase()
-            .includes(filterTextLowerCase))  ||
-        (!isNaN(item.potential) &&
-          item?.potential.toString()
-            .toLowerCase()
-            .includes(filterTextLowerCase)) 
-    );
-  };
-
-  // Paginate the sorted data
-  const pageCount = Math.ceil(sortedData.length / itemsPerPage);
-  const offset = currentPage * itemsPerPage;
-  const dataToShow = sortedData.slice(offset, offset + itemsPerPage);
-
-  // Filter the paginated and sorted data
-  const filteredItems = filterData(dataToShow);
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleExportClick = () => {
-    const arrObj = dealerlist.map((element, index) => ({
-      "S.No": index + 1,
-      "Dealer Name": element.dealer_name,
-      "Dealer Code": element.dealer_code,
-      "Creation Date": formatDateTimes(element.customer_creationdate),
-      Category: element.dealer_category,
-      LY: element.LY_Value,
-      "CY Plan": element.CY_Value,
-      YTD: element.YTD_Value,
-      "6 month": element.LastSixMonth_Avg_Sales,
-      OS: element.OS,
-      OD: element.OD,
-      "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
-      Apr: element.Apr_Month_Value_v1,
-      "Apr Sale": element.Apr_Month_Sale,
-      May: element.May_Month_Value_v1,
-      "May Sale": element.May_Month_Sale,
-      Jun: element.Jun_Month_Value_v1,
-      "Jun Sale": element.Jun_Month_Sale,
-      Jul: element.Jul_Month_Value_v1,
-      "Jul Sale": element.Jul_Month_Sale,
-      Aug: element.Aug_Month_Value_v1,
-      "Aug Sale": element.Aug_Month_Sale,
-      Sep: element.Sep_Month_Value_v1,
-      "Sep Sale": element.Sep_Month_Sale,
-      Oct: element.Oct_Month_Value_v1,
-      "Oct Sale": element.Oct_Month_Sale,
-      Nov: element.Nov_Month_Value_v1,
-      "Nov Sale": element.Nov_Month_Sale,
-      Dec: element.Dec_Month_Value_v1,
-      "Dec Sale": element.Dec_Month_Sale,
-      Jan: element.Jan_Month_Value_v1,
-      "Jan Sale": element.Feb_Month_Sale,
-      Feb: element.Feb_Month_Value_v1,
-      "Feb Sale": element.Feb_Month_Sale,
-      Mar: element.Mar_Month_Value_v1,
-      "Mar Sale": element.Mar_Month_Sale,
-    }));
-    console.log("-arrObj", arrObj);
-    ExportExcel("ssDealer-Wise-Monthly-Plan-Achievement", arrObj);
-  };
-
   const lockData = async () => {
+    setLoading(true);
     const payload = {
       Token: localStorage.getItem("access_token"),
       islock_id: 0,
@@ -355,9 +365,10 @@ const Wgt_Delear_Ui = ({ data }) => {
       );
 
       if (response?.status === 200) {
-        console.log("=====api/Master/SetIsLockData=== 65", response);
         setIsLocked(true);
+        handleCloseResponse();
       }
+      setLoading(true);
     } catch (error) {
       // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
@@ -380,7 +391,6 @@ const Wgt_Delear_Ui = ({ data }) => {
       );
 
       if (response?.status === 200) {
-        console.log("=====api/Master/GetIsLockData=== 65", response);
         if (response?.data?.Data.length) {
           setIsLocked(true);
         } else {
@@ -396,475 +406,488 @@ const Wgt_Delear_Ui = ({ data }) => {
   useEffect(() => {
     getLockData();
   }, [data]);
-  console.log("-currentMonth", currentMonth);
 
-  const generateTableRows = (item) => {
-    const headers = [];
-    for (let i = 0; i < monthArr.length; i++) {
-      const monName = monthArr[i];
-      const YTDPlusV1 = item?.YTD_Value + item[`${monName}_Month_Value_v1`];
-      const llyYTTD = (YTDPlusV1 != 0) ? ((YTDPlusV1 - item?.LYYTDvsCYYTD) * 100) / item?.LYYTDvsCYYTD : 0;
-      if (monName == mStartName) {
-        headers.push(
-          <Fragment key={`header_${monName}`}>
-            <td style={{ minWidth: "52px" }}>{item?.OS}</td>
-            <td style={{ minWidth: "50px" }}>{item?.OD}</td>
-            <td style={{ minWidth: "100px" }}>{item?.creepage_value + item?.OD}</td>
-            <td style={{ minWidth: "100px", display: "flex" }}>
-              <span style={{ paddingTop: "13px", minWidth: "50px" }}>
-                {item[`${monName}_Month_Value`]}
-              </span>
-              {/* <br /> */}
-              <div
-                style={{
-                  minWidth: "100px",
-                  minHeight: "15px",
-                  paddingTop: "10px",
-                }}
-              >
-                <input
-                  type="number"
-                  readOnly={true}
-                  className="inp40 text-center"
-                  defaultValue={item[`${monName}_Month_Value_v1`]}
-                  name={`${item.id}_sales`}
-                  onChange={(e) => onchangeInputs(e, item.id)}
-                />
-              </div>
-              {/* <br /> */}
-              <div style={{ padding: "13px" }}>
-                <p onClick={() => getMonthTarget(item)}>
-                  <i
-                    className="fa fa-pencil c-pointer text-primary"
-                    title="Click to update"
-                  ></i>
-                </p>
-              </div>
-            </td>
-            <td style={{ minWidth: "100px" }}>{(item?.creepage_value + item?.OD + item[`${monName}_Month_Value_v1`]).toFixed(2)}</td>
-            <td style={{ minWidth: "125px" }}>{item?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)}) </td>
-          </Fragment>
-        );
-        break;
-      } else {
-        headers.push(
-          <Fragment key={`header_${monName}`}>
-            <td style={{ minWidth: "80px" }}>
-              {item[`${monName}_Month_Value_v1`]}
-              <hr className="hr0" />
-              {item[`${monName}_Month_Sale`]}
-            </td>
-          </Fragment>
-        );
-      }
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      Wgt_DelearUiGridInstance.current &&
+      args.item.id === "Wgt_DelearUiGrid_id_excelexport"
+    ) {
+      const arrObj = dealerlist.map((element, index) => ({
+        "S.No": index + 1,
+        "Dealer Name": element.dealer_name,
+        "Dealer Code": element.dealer_code,
+        "Creation Date": formatDateTimes(element.customer_creationdate),
+        Category: element.dealer_category,
+        LY: element.LY_Value,
+        "CY Plan": element.CY_Value,
+        YTD: element.YTD_Value,
+        "6 month": element.LastSixMonth_Avg_Sales,
+        OS: element.OS,
+        OD: element.OD,
+        "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
+        Apr: element.Apr_Month_Value_v1,
+        "Apr Sale": element.Apr_Month_Sale,
+        May: element.May_Month_Value_v1,
+        "May Sale": element.May_Month_Sale,
+        Jun: element.Jun_Month_Value_v1,
+        "Jun Sale": element.Jun_Month_Sale,
+        Jul: element.Jul_Month_Value_v1,
+        "Jul Sale": element.Jul_Month_Sale,
+        Aug: element.Aug_Month_Value_v1,
+        "Aug Sale": element.Aug_Month_Sale,
+        Sep: element.Sep_Month_Value_v1,
+        "Sep Sale": element.Sep_Month_Sale,
+        Oct: element.Oct_Month_Value_v1,
+        "Oct Sale": element.Oct_Month_Sale,
+        Nov: element.Nov_Month_Value_v1,
+        "Nov Sale": element.Nov_Month_Sale,
+        Dec: element.Dec_Month_Value_v1,
+        "Dec Sale": element.Dec_Month_Sale,
+        Jan: element.Jan_Month_Value_v1,
+        "Jan Sale": element.Feb_Month_Sale,
+        Feb: element.Feb_Month_Value_v1,
+        "Feb Sale": element.Feb_Month_Sale,
+        Mar: element.Mar_Month_Value_v1,
+        "Mar Sale": element.Mar_Month_Sale,
+      }));
+      ExportExcel("ssDealer-Wise-Monthly-Plan-Achievement", arrObj);
     }
-    return headers;
+  };
+  const tDueTemplate = () => {
+    return (
+      <span>
+        <th
+          style={{ textWrap: "nowrap", paddingLeft: "0px" }}
+          title="Creepage + OD"
+        >{`Total Due`}</th>
+      </span>
+    );
+  };
+  const salesHeadTemplate = () => {
+    return (
+      <>
+        <th title="V0 vs V1">{`Sales `}</th>
+      </>
+    );
   };
 
-  // Function to render a single row
-  const renderTableRow = (item, index) => {
-    const lYActualShare = (item.potential != 0) ? (item.LY_Value * 100) / item.potential : 0;
-    const YTDActualPlanShare = (item.potential != 0) ? ((item.YTD_Value + item[`${mStartName}_Month_Value_v1`]) * 100) / item.potential : 0;
-
-    return <tr key={index}>
-      <td className="text-center">
-        {formatDateTimes(item.customer_creationdate)}
-      </td>
-      <td className="text-center">{item.dealer_category}</td>
-      <td className="text-center">{item.potential}</td>
-      <td className="text-center">{lYActualShare.toFixed(2)}%</td>
-      <td className="text-center">{YTDActualPlanShare.toFixed(2)}%</td>
-      <td className="text-center">{item.LY_Value}</td>
-      <td className="text-center">
-        {item.CY_Value} <hr className="hr0" /> {item.YTD_Value}
-      </td>
-      <td className="text-center">{item.LastSixMonth_Avg_Sales}</td>
-      <td className="text-center">{item[`${mStartName}_Month_LY_Value`]}</td>
-
-      {generateTableRows(item)}</tr>;
-  };
-
-  const generateTableHeaders = () => {
-    const headers = [];
-
-    for (let i = 0; i < monthArr.length; i++) {
-      const monName = monthArr[i];
-      if (monName === mStartName) {
-        headers.push(
-          <Fragment key={`header_${monName}`}>
-            <td
-              colSpan={6}
-              key={`header_${monName}`}
-              style={{ width: "5%", textAlign: "center", fontWeight: "bolder" }}
-            >
-              {monName}
-              <tr> 
-                <th
-                  className="p-2 bg-green text-dark"
-                  style={{ minWidth: "50px" }}
-                >
-
-                  OS
-                </th>
-                <th
-                  className="p-2 bg-green text-dark"
-                  style={{ minWidth: "50px" }}
-                >
-
-                  OD
-                </th>
-                <th
-                  className="p-2 bg-green text-dark"
-                  style={{ minWidth: "100px" }}
-                  title="Creepage + OD"
-                >
-                  Total Due
-                </th>
-                <th
-                  className="p-2 bg-green text-dark"
-                  style={{ minWidth: "150px" }}
-                >
-
-                  Sales
-                </th>
-                <th
-                  className="p-2 bg-green text-dark"
-                  style={{ minWidth: "105px" }}
-                >
-
-                  Collection
-                </th>
-                <th
-                  className="p-2 bg-green text-dark"
-                  style={{ minWidth: "100px" }}
-                >
-
-                  LYYTD vs CYYTD
-                </th>
-              </tr>
-            </td>
-          </Fragment>
-        );
-        break;
-      } else {
-        headers.push(
-          <Fragment key={`header_${monName}`}>
-            <td rowSpan={3} style={{ width: "5%", textAlign: "center", fontWeight: "bolder" }}>{monName}</td>
-          </Fragment>
-          // </div>
-        );
-      }
-    }
-    return headers;
-  };
+  const Columns = [
+    {
+      field: "dealer_name",
+      headerText: "Dealer Name",
+      width: "170",
+      visible: true,
+      freeze: "left",
+    },
+    {
+      field: "dealer_code",
+      headerText: "Dealer Code",
+      width: "130",
+      visible: true,
+      freeze: "left",
+    },
+    {
+      field: "customer_creationdate",
+      headerText: "Creation Date",
+      width: "130",
+      visible: true,
+      textAlign: "center",
+      allowEditing: false,
+      type: "date",
+      format: "dd-MMM-yyyy",
+      allowFiltering: false,
+    },
+    {
+      field: "dealer_category",
+      headerText: "Category",
+      width: "130",
+      visible: true,
+      allowFiltering: true,
+    },
+    {
+      field: "potential",
+      headerText: "Potentials",
+      width: "115",
+      visible: true,
+      allowFiltering: false,
+    },
+    {
+      field: "lYActualShare",
+      headerText: "LY Actual Share",
+      width: "130",
+      visible: true,
+      allowFiltering: false,
+      valueAccessor: percentageFormatter,
+    },
+    {
+      field: "YTDActualPlanShare",
+      headerText: "Ytd Actual + Plan Share",
+      width: "130",
+      visible: true,
+      allowFiltering: false,
+      valueAccessor: percentageFormatterYTD,
+    },
+    {
+      field: "LY_Value",
+      headerText: "LY",
+      width: "100",
+      visible: true,
+      allowFiltering: false,
+    },
+    {
+      // field: "LY_Value",
+      headerText: "CY / YTD",
+      width: "100",
+      visible: true,
+      allowFiltering: false,
+      textAlign: "center",
+      template: templateCyTd,
+    },
+    {
+      field: "LastSixMonth_Avg_Sales",
+      headerText: "6 month Avg. sale",
+      width: "115",
+      visible: true,
+      allowFiltering: false,
+    },
+    {
+      field: `${mStartName}_Month_LY_Value`,
+      headerText: "LY Same Month",
+      width: "130",
+      visible: true,
+      allowFiltering: false,
+    },
+  ];
+  gridMonth.map((val) => {
+    Columns.push({
+      headerText: val,
+      width: "130",
+      allowFiltering: false,
+      textAlign: "center",
+      template: (args) => nonCurMonTemp(args, val),
+    });
+  });
+  Columns.push({
+    columns: [
+      {
+        // format: "C2",
+        field: "OS",
+        headerText: "OS",
+        width: 90,
+        allowEditing: false,
+        allowFiltering: false,
+      },
+      {
+        // format: "C2",
+        field: "OD",
+        headerText: "OD",
+        width: 90,
+        allowEditing: false,
+        allowFiltering: false,
+      },
+      {
+        // format: "C2",
+        field: "tDue",
+        headerText: "Total Due",
+        width: 100,
+        headerTemplate: tDueTemplate,
+        allowEditing: false,
+        allowFiltering: false,
+      },
+      {
+        // format: "C2",
+        field: "LY_Value",
+        headerTemplate: salesHeadTemplate,
+        width: 100,
+        textAlign: "center",
+        allowEditing: false,
+        allowFiltering: false,
+        template: salesTemplate,
+      },
+      {
+        // format: "C2",
+        field: "collectionVal",
+        headerText: "Collection",
+        width: 120,
+        allowEditing: false,
+        allowFiltering: false,
+      },
+      {
+        headerText: "LYYTD vs CYYTD",
+        width: 180,
+        textAlign: "center",
+        allowEditing: false,
+        allowFiltering: false,
+        template: lastTdTemplate,
+      },
+      {
+        headerTemplate: "Action",
+        textAlign: "center",
+        width: "100",
+        commands: commmandTemplate,
+      },
+    ],
+    headerText: mStartName,
+    textAlign: "center",
+  });
 
   return (
     <>
-      <div className="row w-100 mt-3">
-        <div className="one-half">
-          <div style={{ display: "flex" }}>
-            {dealerlist?.length ? (
-              <div>
-                <button className="w3-btn w3-gray" onClick={handleExportClick}>
-
-                  Export
-                </button>
-              </div>
-            ) : null}
-            <div>
-              {isLocked ? (
-                <button className="w3-btn btn-red">
-                  <i className="fa fa-lock  w3-text-red"></i>
-                </button>
-              ) : (
-                <button className="w3-btn btn-red" onClick={lockData}>
-                  <i className="fa fa-unlock  w3-text-yellow"></i>
-                </button>
-              )}
-            </div>
-          </div>
-
-          <br />
-          <input
-            className="w3-margin-bottom w3-input w3-border "
-            type="text"
-            placeholder="Filter By Dealer Name, code, category, LY and YTD "
-            aria-label="Search Input"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="table-container ">
-        <table
-          border="table-bordered table-striped1 "
-          style={{ width: "30%", marginBottom: "12px", padding: "0px" }}
+      <section>
+        {isLoading && <Loader />}
+        <Row>
+          <Col xl={2} lg={2} md={2} sm={2}>
+            {isLocked ? (
+              <button className="w3-btn btn-red">
+                <i className="fa fa-lock  w3-text-red"></i>
+              </button>
+            ) : (
+              <button
+                className="w3-btn btn-red"
+                onClick={() =>
+                  setConfirmResponseDetails({
+                    ...confirmResponseDetails,
+                    show: true,
+                  })
+                }
+              >
+                <i className="fa fa-unlock  w3-text-yellow"></i>
+              </button>
+            )}
+          </Col>
+        </Row>
+        <Row>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="Wgt_DelearUiGrid_id"
+              key="Wgt_DelearUiGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={dealerlist}
+              toolbar={toolbar}
+              toolbarClick={toolbarClick}
+              enableStickyHeader={true}
+              height={"500px"}
+              ref={Wgt_DelearUiGridInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={25}
+              pageSettings={{ pageSize: 15, pageCount: 10 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              frozenColumns={2}
+              allowExcelExport={true}
+              allowSorting={true}
+              commandClick={getMonthTarget}
+              columns={Columns}
+            >
+              <Inject
+                services={[
+                  CommandColumn,
+                  Freeze,
+                  Page,
+                  Filter,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                  ForeignKey,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
+        <CustomPopup
+          onClose={() => popupCloseHandler()}
+          show={visibility}
+          title={
+            modalData?.dealer_name +
+            "(" +
+            modalData?.dealer_code +
+            ") - Month : " +
+            monthName
+          }
         >
-          <thead style={{ height: "62px" }}>
-            <tr>
-              <th style={{ width: "4%" }} className="">
-                S.No
-              </th>
-              <th
-                style={{ width: "18%" }}
-                onClick={() => handleSort("DelearName")}
-              >
-                Delear Name
-                {sortField === "DelearName" &&
-                  (sortDirection === "asc" ? "▲" : "▼")}
-              </th>
-              <th
-                style={{ width: "8%" }}
-                onClick={() => handleSort("DelearCode")}
-              >
-                Delear Code
-                {sortField === "DelearCode" &&
-                  (sortDirection === "asc" ? "▲" : "▼")}
-              </th>
-            </tr>
-          </thead>
-          <tbody> 
-            {isLoading ? (
-              <><Loader /></>
-            ) : (
-              filteredItems?.map((item, index) => {
-                const itemIndex = currentPage * itemsPerPage + index + 1;
-                return (
-                  <tr key={itemIndex}>
-                    <td className="text-center">{itemIndex}</td>
-                    <td className="text-center">{item.dealer_name}</td>
-                    <td className="text-center">{item.dealer_code}</td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+          <span className="h6 w3-small">
+            (Dealer Month Sales Plan + Focus Sector Breakup )
+          </span>
+          <span className="h6 w3-small" style={{ color: "red" }}>
+            (Double click on row to edit* )
+          </span>
+          <hr />
 
-        <div class="table-scroll">
-          <table
-            border="1"
-            className="scrollable-container table-bordered  table-striped1"
-          >
-            <thead>
-              <tr>
-                <th style={{ width: "8%" }}> Creation Date</th>
-                <th
-                  style={{ width: "4%" }}
-                  onClick={() => handleSort("Category")}
-                  title="Category"
-                >
-                  Cat
-                  {sortField === "Category" &&
-                    (sortDirection === "asc" ? "▲" : "▼")}
-                </th>
-                <th>Potentials</th>
-                <th style={{ width: "8%" }}>LY Actual <br /> Share</th>
-                <th style={{ width: "10%" }}>Ytd Actal <br />+Plan Share</th>
-                <th onClick={() => handleSort("LY")} style={{ width: "10%" }}>
-                  LY {sortField === "LY" && (sortDirection === "asc" ? "▲" : "▼")}
-                </th>
-                <th onClick={() => handleSort("YTD")} style={{ width: "10%" }}>
-                  CY / YTD
-                  {sortField === "YTD" && (sortDirection === "asc" ? "▲" : "▼")}
-                </th>
-                <th style={{ width: "8%" }} className="" >
-
-                  6 month <br /> avg. sale
-                </th>
-                <th className="" style={{ width: "8%" }}>
-                  LY Same<br />Month
-                </th>
-                {generateTableHeaders()}
+          <form className="w3-container" onSubmit={handleSubmit}>
+            <table className="w3-table table-bordered w3-small ">
+              <tr className="w3-gray">
+                <td colspan="30">
+                  A : Sales Plan Produced by Dealer Level Rules
+                </td>
               </tr>
-            </thead>
-            <tbody>
-            {isLoading ? (
-              <><Loader /></>
-            ) : (
-              filteredItems?.map((item, index) => {
-                return renderTableRow(item, index);
-              })
-            )}
-
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* Pagination */}
-      <div className="pagination">
-        {Array.from({ length: pageCount }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index)}
-            className={`page-button ${currentPage === index ? "active" : ""}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
-
-      <CustomPopup
-        onClose={popupCloseHandler}
-        show={visibility}
-        title={
-          modalData?.dealer_name +
-          "(" +
-          modalData?.dealer_code +
-          ") - Month : " +
-          monthName
-        }
-      >
-        <span className="h6 w3-small">
-          (Dealer Month Sales Plan + Focus Sector Breakup )
-        </span>
-        <hr />
-        <form className="w3-container" onSubmit={handleSubmit}>
-          <table className="w3-table table-bordered w3-small ">
-            <tr className="w3-gray">
-              <td colspan="30">
-
-                A : Sales Plan Produced by Dealer Level Rules
-              </td>
-            </tr>
-            <tr className="">
-              <td style={{ width: "90%" }}>
-                Rule 1 : Active Dealer <br />
-                Rule 2 : Category based % impact <br />
-              </td>
-              <td style={{ width: "10%" }}>
-                <input
-                  type="text"
-                  value={modalData ? modalData[monthKey] : ""}
-                  className="inp40 text-center"
-                  readOnly={true}
-                />
-              </td>
-            </tr>
-          </table>
-
-          <table className="w3-table table-bordered w3-small ">
-            <tr className="w3-gray">
-              <td colspan="29">
-
-                B ( Focus Sector List for Month of {monthName} ) * Add values /
-                volume
-                <span style={{ float: "right" }}>
-                  Hight lighted rows are focus product for current month
-                </span>
-              </td>
-            </tr>
-            <tr className="w3-yellow">
-              <th style={{ width: "2%" }}>#</th>
-              <th style={{ width: "10%" }}>Focus Product Sector </th>
-              {/* <th style={{ width: "10%" }}>Product Name </th> */}
-              <th style={{ width: "5%" }}>LLY</th>
-              <th style={{ width: "5%" }}>LY</th>
-              <th style={{ width: "5%" }}>YTD</th>
-              <th style={{ width: "5%" }}> 6 Mo. Avg </th>
-              {/* <th style={{ width: "5%" }}>LY (Aug) Vol.</th> */}
-              <th style={{ width: "5%" }}>LY ({monthName}) Val.</th>
-              <th style={{ width: "5%" }}>Volume (Ltrs.) </th>
-              <th style={{ width: "5%" }}>Value (Lacs)</th>
-            </tr>
-            <>
-              {selectedRow?.length === 0 ? (
-                <tr className="">
-                  <td colSpan={10}>No Data found</td>
-                </tr>
-              ) : (
-                selectedRow?.map((item, index) => (
-                  <tr
-                    key={index}
-                    className={`${item.IsFocused === 1 ? "IsFocused" : ""}`}
-                  >
-                    <td>{index + 1}</td>
-                    <td>{item?.MarketSectorName}</td>
-                    {/* <td>{item?.ProductName} <br /> ({item?.ProductCode}) </td> */}
-                    <td>{item?.LLY}</td>
-                    <td>{item?.LY}</td>
-                    <td>{item?.YTD}</td>
-                    <td>{item?.Last6MonthAvgSales}</td>
-                    {/* <td>{item?.SameMonthLY}</td> */}
-                    <td>{item?.SameMonthLY}</td>
-                    <td>
-                      <input
-                        type="number"
-                        pattern="[0-9]*[.]?[0-9]*"
-                        value={item?.Volume}
-                        className="inp40 text-center"
-                        name="Volume"
-                        onChange={(e) =>
-                          handleInputChange(
-                            item.tableid,
-                            "Volume",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        pattern="[0-9]*[.]?[0-9]*"
-                        value={item?.Value}
-                        className="inp40 text-center"
-                        name="Value"  
-                        onChange={(e) =>
-                          handleInputChange(
-                            item.tableid,
-                            "Value",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-              <tr>
-                <td colSpan={8}></td>
-                <td>
+              <tr className="">
+                <td style={{ width: "90%" }}>
+                  Rule 1 : Active Dealer <br />
+                  Rule 2 : Category based % impact <br />
+                </td>
+                <td style={{ width: "10%" }}>
                   <input
                     type="text"
-                    value={sumValue}
-                    disabled={true}
+                    value={modalData ? modalData[monthKey] : ""}
                     className="inp40 text-center"
+                    readOnly={true}
                   />
                 </td>
               </tr>
-            </>
-          </table>
-          <table className="w3-table table-bordered w3-small ">
-            <tr className="w3-gray">
-              <td colspan="30">
+            </table>
+            <GridComponent
+              locale="en-Us"
+              id="Wgt_DelearUiGridPopup_id"
+              key="Wgt_DelearUiGridPopup_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={selectedRow}
+              enableStickyHeader={true}
+              height={"400px"}
+              ref={Wgt_DelearUiGridInstancePopup}
+              allowPaging={true}
+              gridLines="Both"
+              editSettings={{
+                allowEditing: true,
+                mode: "Normal",
+                persistSelection: true,
+                // showConfirmDialog: false,
+              }}
+              rowHeight={25}
+              pageSettings={{ pageSize: 15, pageCount: 10 }}
+              dataBound={DataBoundFocused}
+              cellSaved={handleCellSaved}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="serialNo"
+                  headerText="#"
+                  width="90"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="tableid"
+                  haederText="table Id"
+                  visible={false}
+                  isPrimaryKey={true}
+                />
+                <ColumnDirective
+                  field="MarketSectorName"
+                  headerText="Focus Product Sector"
+                  width="150"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="LLY"
+                  headerText="LLY"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="LY"
+                  headerText="LY"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="YTD"
+                  headerText="YTD"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="Last6MonthAvgSales"
+                  headerText="6 Mo. Avg"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="SameMonthLY"
+                  headerText={`LY (${mStartName})`}
+                  width="150"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="Volume"
+                  headerText="Volume (Ltrs.)"
+                  width="150"
+                  textAlign="center"
+                  editType="numericedit"
+                  allowEditing={true}
+                />
+                <ColumnDirective
+                  field="Value"
+                  headerText="Value (Lacs)"
+                  width="150"
+                  editType="numericedit"
+                  textAlign="center"
+                  allowEditing={true}
+                />
+              </ColumnsDirective>
+              <AggregatesDirective>
+                <AggregateDirective>
+                  <AggregateColumnsDirective>
+                    <AggregateColumnDirective
+                      field="Value"
+                      type="Sum"
+                      format="N2"
+                    />
+                  </AggregateColumnsDirective>
+                </AggregateDirective>
+              </AggregatesDirective>
 
-                Net Sales Plan ( {monthName} ) Total Sale A + B
-              </td>
-            </tr>
-            <tr className="">
-              <td style={{ width: "80%" }}>
-
-                ( This total will be updated to Dealers Sales Plan ( v1 ) and
-                the list will will be added in transaction table as dealers
-                breakup )
-              </td>
-              <td style={{ width: "10%" }} align="right">
-                {isLocked ? null : (
-                  submitForm ? (
+              <Inject services={[Edit, Page, Sort, Aggregate, CommandColumn]} />
+            </GridComponent>
+            <table className="w3-table table-bordered w3-small ">
+              <tr className="w3-gray">
+                <td colspan="30">
+                  Net Sales Plan ( {monthName} ) Total Sale A + B
+                </td>
+              </tr>
+              <tr className="">
+                <td style={{ width: "80%" }}>
+                  ( This total will be updated to Dealers Sales Plan ( v1 ) and
+                  the list will will be added in transaction table as dealers
+                  breakup )
+                </td>
+                <td style={{ width: "10%" }} align="right">
+                  {isLocked ? null : submitForm ? (
                     <i className="w3-button fa fa-spinner"></i>
                   ) : (
                     <button className="w3-button w3-indigo">Submit</button>
-                  )
-                )}
-              </td>
-            </tr>
-          </table>
-        </form>
-      </CustomPopup>
+                  )}
+                </td>
+              </tr>
+            </table>
+          </form>
+        </CustomPopup>
+        <ResponsePopup
+          show={responseDetails.show}
+          text={responseDetails.message}
+          type={responseDetails.type}
+          onClose={() => handleCloseResponse()}
+        />
+        <ConfirmResponsePopup
+          show={confirmResponseDetails.show}
+          type={confirmResponseDetails.type}
+          text={confirmResponseDetails.message}
+          onConfirm={lockData}
+          onClose={() => handleCloseResponse()}
+        />
+      </section>
     </>
   );
 };
-
 export default Wgt_Delear_Ui;

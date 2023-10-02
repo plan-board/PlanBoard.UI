@@ -142,7 +142,7 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredItems?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => (
+                            {filteredItems?.sort((a, b) => a.Month.toString()?.localeCompare(b.Month.toString())).map((item, index) => (
                                 <tr className="h6 w3-small" key={item?.dealerid}>
                                     <td className="">
                                         {++index}

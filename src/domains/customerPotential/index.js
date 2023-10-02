@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AllFigureText from "../components/AllFigureText";
 import { CustomerPotentialForm } from "./customerPotentialForm";
 import axiosInstance from "../../auth/api";
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const CustomerPotential = () => {
   const dispatch = useDispatch();
+  let customterGridInstance = useRef();
   const { AuthData } = useSelector((state) => state?.auth);
 
   const [isLoading, setLoading] = useState(false);
@@ -28,7 +29,7 @@ const CustomerPotential = () => {
   }, []);
 
   useEffect(() => {
-    if(territortId){
+    if (territortId) {
       fetchCustomerList();
     }
   }, [territortId]);
@@ -42,13 +43,13 @@ const CustomerPotential = () => {
     const codeMatch =
       filterCode === "" ||
       item.CustomerCode.toLowerCase().includes(filterCode.toLowerCase());
-  
+
     const nameMatch =
       filterCode === "" ||
       item.CustomerName.toLowerCase().includes(filterCode.toLowerCase());
-  
+
     return codeMatch || nameMatch;
-  }); 
+  });
 
   const fetchCustomerList = async () => {
     const payload = {
@@ -63,7 +64,8 @@ const CustomerPotential = () => {
       );
 
       if (response?.status === 200) {
-        response.data.Data.map((val) => {
+        response.data.Data.map((val, index) => {
+          val.serialNo = index + 1;
           val.change = false;
         });
         setEmployeeList(response.data.Data != null ? response.data.Data : []);
@@ -86,11 +88,13 @@ const CustomerPotential = () => {
     try {
       const response = await axiosInstance.post("TerritoryMonthPlan", payload);
 
-      if (response?.status === 200) { 
+      if (response?.status === 200) {
         const filteredTerr = (response?.data?.Data || []).filter((obj1) =>
-          (AuthData?.Territory || []).some((obj2) => obj1.territoryid === obj2.TerritoryID)
+          (AuthData?.Territory || []).some(
+            (obj2) => obj1.territoryid === obj2.TerritoryID
+          )
         );
-        setTerritoryList(filteredTerr); 
+        setTerritoryList(filteredTerr);
       }
       setLoading(false);
     } catch (error) {
@@ -101,8 +105,8 @@ const CustomerPotential = () => {
   const TerritoryDropdown = () => {
     return territoryList.map((item, index) => (
       <option key={index} value={item?.territoryid}>
-      {item.territory_name}
-    </option>
+        {item.territory_name}
+      </option>
     ));
   };
 
@@ -110,34 +114,22 @@ const CustomerPotential = () => {
     if (e.target.name === "territoryId") {
       setTerritoryId(e.target.value);
     }
-    if (e.target.name === "PotentialValue") {
-      // console.log(e.target.name, e.target.value, args);
-      if (args) {
-        let data = [...employeeList];
-        let matchIndex = data.findIndex(
-          (val) => val.CustomerId === args.CustomerId
-        );
-
-        if (matchIndex != -1) {
-          data[matchIndex].PotentialValue = parseInt(e.target.value);
-          data[matchIndex].change = true;
-        }
-        setEmployeeList([...data]);
-      }
-    }
   };
 
   const handleSave = async () => {
     let ApiData = [];
+    let changed_records = [];
+    if (employeeList.length > 0) {
+      changed_records =
+        customterGridInstance.current.getBatchChanges().changedRecords;
+    }
 
-    employeeList.map((val) => {
-      if (val.change == true) {
-        let changedData = {
-          CustomerId: val.CustomerId,
-          PotentialValue: val.PotentialValue,
-        };
-        ApiData.push(changedData);
-      }
+    changed_records.map((val) => {
+      let changedData = {
+        CustomerId: val.CustomerId,
+        PotentialValue: val.PotentialValue,
+      };
+      ApiData.push(changedData);
     });
 
     if (ApiData.length > 0) {
@@ -160,7 +152,7 @@ const CustomerPotential = () => {
               type: "success",
             });
             fetchCustomerList();
-            setTerritoryId("");
+            setTerritoryId(0);
           } else {
             setResponseDetails({
               show: true,
@@ -233,6 +225,8 @@ const CustomerPotential = () => {
                 territortId={territortId}
                 TerritoryDropdown={TerritoryDropdown}
                 handleChange={handleChange}
+                handleSave={handleSave}
+                customterGridInstance={customterGridInstance}
                 employeeList={filteredData}
                 subHeaderComponentMemo={subHeaderComponentMemo}
               />

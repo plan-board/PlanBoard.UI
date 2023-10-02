@@ -30,7 +30,11 @@ const Settings = () => {
           >
             <span className="h6">
               {" "}
-              <i className="fa fa-gear"></i> Focus Sector Master{" "}
+              <i className="fa fa-gear"></i>
+              <span style={{ fontFamily: "Nunito Sans" }}>
+                {" "}
+                Focus Sector Master
+              </span>{" "}
             </span>
           </div>
           <div
@@ -41,7 +45,10 @@ const Settings = () => {
           >
             <span className="h6">
               {" "}
-              <i className="fa fa-gear"> Zone Master</i>{" "}
+              <i className="fa fa-gear">
+                {" "}
+                <span style={{ fontFamily: "Nunito Sans" }}>Zone Master</span>
+              </i>{" "}
             </span>
           </div>
           <div
@@ -52,7 +59,12 @@ const Settings = () => {
           >
             <span className="h6">
               {" "}
-              <i className="fa fa-gear"> Depot Master</i>{" "}
+              <i className="fa fa-gear">
+                <span style={{ fontFamily: "Nunito Sans" }}>
+                  {" "}
+                  Depot Master{" "}
+                </span>
+              </i>{" "}
             </span>
           </div>
           <div
@@ -63,7 +75,12 @@ const Settings = () => {
           >
             <span className="h6">
               {" "}
-              <i className="fa fa-gear"> Territory Master</i>{" "}
+              <i className="fa fa-gear">
+                <span style={{ fontFamily: "Nunito Sans" }}>
+                  {" "}
+                  Territory Master
+                </span>
+              </i>{" "}
             </span>
           </div>
           <div
@@ -74,7 +91,12 @@ const Settings = () => {
           >
             <span className="h6">
               {" "}
-              <i className="fa fa-gear"> Employee Master</i>{" "}
+              <i className="fa fa-gear">
+                <span style={{ fontFamily: "Nunito Sans" }}>
+                  {" "}
+                  Employee Master
+                </span>
+              </i>{" "}
             </span>
           </div>
         </div>

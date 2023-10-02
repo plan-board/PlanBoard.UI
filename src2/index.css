@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+/* .rt-tr {
+  visibility: hidden;
+} */
+/* Customize the CSS to fix the first column */
+/* .rdt_TableCell:nth-child(1),
+.rdt_TableCell:nth-child(2),
+.rdt_TableCell:nth-child(3),
+.rdt_TableCell:nth-child(4),
+.rdt_TableCell:nth-child(5),
+.rdt_TableCell:nth-child(6) {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: #fff;
+  border-right: 1px solid #afafaf;
+} */
+
+/* .rdt_TableHeadRow:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+} */
+/* 
+.rdt_TableCol:nth-child(1),
+.rdt_TableCol:nth-child(2),
+.rdt_TableCol:nth-child(3),
+.rdt_TableCol:nth-child(4),
+.rdt_TableCol:nth-child(5),
+.rdt_TableCol:nth-child(6) {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  border-right: 1px solid #afafaf;
+  background-color: #ffeb3b;
+} */
+.rthfc-td-fixed-left {
+  text-align: center !important;
+}
+.rt-tr .rt-td {
+  text-align: center;
+}
+.-headerGroups {
+  display: none !important;
+}
+.-header {
+  top: 0 !important;
+}
