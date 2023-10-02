@@ -103,6 +103,7 @@ export const CustomerPotentialForm = ({
               allowFiltering={true}
               filterSettings={{ type: "Excel" }}
               allowExcelExport={true}
+              allowSorting={true}
             >
               <ColumnsDirective>
                 <ColumnDirective

@@ -19,8 +19,17 @@ import {
   Filter,
   Toolbar,
   ExcelExport,
+  AggregateColumnDirective,
+  Sort,
 } from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
 import { getValue } from "@syncfusion/ej2-base";
+import ResponsePopup from "../../common/ResponsePopup";
 const monthArr = [
   "Apr",
   "May",
@@ -42,6 +51,7 @@ const mStartName = cMName.substring(0, 3);
 const Wgt_Delear_Ui = ({ data }) => {
   const dispatch = useDispatch();
   let Wgt_DelearUiGridInstance = useRef();
+  let Wgt_DelearUiGridInstancePopup = useRef();
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
   const [gridMonth, setGridMonth] = useState([]);
@@ -51,7 +61,7 @@ const Wgt_Delear_Ui = ({ data }) => {
   const [visibility, setVisibility] = useState(false);
   const [submitForm, setSubmitForm] = useState(false);
 
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState([]);
   const [sumValue, setSumValue] = useState(0);
   const [modalData, setModalData] = useState(null);
   const [monthName, setMonthName] = useState("");
@@ -64,18 +74,17 @@ const Wgt_Delear_Ui = ({ data }) => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [monthKey, setMonthKey] = useState(cMName + "_Month_Value_v1");
+  const [responseDetails, setResponseDetails] = useState({
+    type: "",
+    show: false,
+    message: "",
+  });
 
   useEffect(() => {
     fetchDealerMaster();
     sortMonth();
   }, [data]);
 
-  function onchangeInputs(e, id) {
-    setGetinputs({
-      ...getinputs,
-      [id]: { ...getinputs[id], [e.target.name]: e.target.value },
-    });
-  }
   const sortMonth = () => {
     const headers = [];
 
@@ -178,23 +187,19 @@ const Wgt_Delear_Ui = ({ data }) => {
     );
   };
 
-  const commmandTemplate = (args) => {
-    return (
-      <p onClick={() => getMonthTarget(args)}>
-        <i
-          className="fa fa-pencil c-pointer text-primary"
-          title="Click to update"
-        ></i>
-      </p>
-    );
-  };
-
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
   const getMonthTarget = (item) => {
-    // setVisibility(true);
-    // setSumValue(0);
-    // setModalData(item);
-    // fetchMonthDataById(item);
-    console.log("working");
+    let rowData = item.rowData;
+    setLoading(true);
+    setVisibility(true);
+    setSumValue(0);
+    setModalData(rowData);
+    fetchMonthDataById(rowData);
   };
   const fetchMonthDataById = async (dataObj) => {
     const cMonth = new Date().getMonth() + 1;
@@ -219,55 +224,56 @@ const Wgt_Delear_Ui = ({ data }) => {
 
       if (response?.status === 200) {
         const result = response?.data?.Data;
-        setSelectedRow(result); // add filterByDealer when data
-        console.log("=====GetFocusProductDealerWise==== 65", result);
-
+        if (result.length > 0) {
+          result.map((val, index) => {
+            val.serialNo = index + 1;
+          });
+        }
+        setSelectedRow(result);
         const sumValue = result.reduce((acc, item) => {
-          // Convert the Value property to a float, or use 0 if it's not a valid number
           const value = parseFloat(item.Value) || 0;
-
-          // Add the current item's value to the accumulator
           return acc + value;
         }, 0);
         const formattedSumValue = sumValue.toFixed(2);
 
         setSumValue(formattedSumValue);
       }
+      setLoading(false);
     } catch (error) {
-      // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
   const popupCloseHandler = (e) => {
-    setVisibility(e);
-    // Close the modal by resetting the selected row and modal data
-    setSelectedRow(null);
+    setVisibility(false);
+    setSelectedRow([]);
     setModalData(null);
     setSumValue(0);
   };
-  const handleInputChange = (tableid, name, value, e) => {
-    // Create a copy of the form data with the updated value
-    const updatedFormData = selectedRow.map((row) =>
-      row.tableid === tableid ? { ...row, [name]: value } : row
-    );
 
-    // Update the state with the new form data
-    setSelectedRow(updatedFormData);
+  const handleCellSaved = (args) => {
+    let change_records = [...selectedRow];
+    if (args.columnName == "Volume") {
+      change_records.map((val) => {
+        if (args.rowData.tableid == val.tableid) {
+          val.Volume = args.value;
+        }
+      });
+    }
+    if (args.columnName == "Value") {
+      change_records.map((val) => {
+        if (args.rowData.tableid == val.tableid) {
+          val.Value = args.value;
+        }
+      });
+    }
 
-    const sumValue = updatedFormData.reduce((acc, item) => {
-      const value = parseFloat(item.Value) || 0;
-
-      // Add the current item's value to the accumulator
-      return acc + value;
-    }, 0);
-
-    const result = sumValue.toFixed(2);
-    setSumValue(result);
+    setSelectedRow([...change_records]);
   };
+
   const handleSubmit = async (event) => {
+    setLoading(true);
     setSubmitForm(true);
     event.preventDefault();
-    console.log("Form Data:", selectedRow);
     try {
       const payArr = selectedRow.map((item) => ({
         FYId: parseInt(item.FYId),
@@ -289,15 +295,44 @@ const Wgt_Delear_Ui = ({ data }) => {
       );
 
       if (response?.status === 200) {
-        setDealerlist([]); //clear data
-        fetchDealerMaster();
-        popupCloseHandler(false);
+        if (response?.data?.Status == true) {
+          setResponseDetails({
+            type: "success",
+            show: true,
+            message: response?.data?.Data[0].MESSAGE,
+          });
+          setDealerlist([]); //clear data
+          fetchDealerMaster();
+          popupCloseHandler(false);
+        } else {
+          setResponseDetails({
+            type: "error",
+            show: true,
+            message: response?.data?.Data[0].MESSAGE,
+          });
+        }
       }
       setSubmitForm(false);
+      setLoading(false);
     } catch (error) {
       setSubmitForm(false);
       // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+  const handleCloseResponse = () => {
+    setResponseDetails({ show: false, message: "", type: "" });
+  };
+
+  const DataBoundFocused = (args) => {
+    if (selectedRow.length > 0) {
+      selectedRow.map((val, index) => {
+        if (val.IsFocused === 1) {
+          Wgt_DelearUiGridInstancePopup.current
+            .getRowByIndex(index)
+            .classList.add("IsFocused");
+        }
+      });
     }
   };
   const lockData = async () => {
@@ -323,6 +358,8 @@ const Wgt_Delear_Ui = ({ data }) => {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
+
+  // Lock / Unlock
   const getLockData = async () => {
     const payload = {
       Token: localStorage.getItem("access_token"),
@@ -338,7 +375,6 @@ const Wgt_Delear_Ui = ({ data }) => {
       );
 
       if (response?.status === 200) {
-        console.log("=====api/Master/GetIsLockData=== 65", response);
         if (response?.data?.Data.length) {
           setIsLocked(true);
         } else {
@@ -351,9 +387,74 @@ const Wgt_Delear_Ui = ({ data }) => {
     }
   };
 
-  // useEffect(() => {
-  //   getLockData();
-  // }, [data]);
+  useEffect(() => {
+    getLockData();
+  }, [data]);
+
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      Wgt_DelearUiGridInstance.current &&
+      args.item.id === "Wgt_DelearUiGrid_id_excelexport"
+    ) {
+      const arrObj = dealerlist.map((element, index) => ({
+        "S.No": index + 1,
+        "Dealer Name": element.dealer_name,
+        "Dealer Code": element.dealer_code,
+        "Creation Date": formatDateTimes(element.customer_creationdate),
+        Category: element.dealer_category,
+        LY: element.LY_Value,
+        "CY Plan": element.CY_Value,
+        YTD: element.YTD_Value,
+        "6 month": element.LastSixMonth_Avg_Sales,
+        OS: element.OS,
+        OD: element.OD,
+        "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
+        Apr: element.Apr_Month_Value_v1,
+        "Apr Sale": element.Apr_Month_Sale,
+        May: element.May_Month_Value_v1,
+        "May Sale": element.May_Month_Sale,
+        Jun: element.Jun_Month_Value_v1,
+        "Jun Sale": element.Jun_Month_Sale,
+        Jul: element.Jul_Month_Value_v1,
+        "Jul Sale": element.Jul_Month_Sale,
+        Aug: element.Aug_Month_Value_v1,
+        "Aug Sale": element.Aug_Month_Sale,
+        Sep: element.Sep_Month_Value_v1,
+        "Sep Sale": element.Sep_Month_Sale,
+        Oct: element.Oct_Month_Value_v1,
+        "Oct Sale": element.Oct_Month_Sale,
+        Nov: element.Nov_Month_Value_v1,
+        "Nov Sale": element.Nov_Month_Sale,
+        Dec: element.Dec_Month_Value_v1,
+        "Dec Sale": element.Dec_Month_Sale,
+        Jan: element.Jan_Month_Value_v1,
+        "Jan Sale": element.Feb_Month_Sale,
+        Feb: element.Feb_Month_Value_v1,
+        "Feb Sale": element.Feb_Month_Sale,
+        Mar: element.Mar_Month_Value_v1,
+        "Mar Sale": element.Mar_Month_Sale,
+      }));
+      ExportExcel("ssDealer-Wise-Monthly-Plan-Achievement", arrObj);
+    }
+  };
+  const tDueTemplate = () => {
+    return (
+      <>
+        <th
+          style={{ textWrap: "nowrap" }}
+          title="Creepage + OD"
+        >{`Total Due (${mStartName})`}</th>
+      </>
+    );
+  };
+  const salesHeadTemplate = () => {
+    return (
+      <>
+        <th title="V0 vs V1">{`Sales (${mStartName})`}</th>
+      </>
+    );
+  };
 
   return (
     <>
@@ -365,7 +466,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               <i className="fa fa-lock  w3-text-red"></i>
             </button>
           ) : (
-            <button className="w3-btn btn-red">
+            <button className="w3-btn btn-red" onClick={lockData}>
               <i className="fa fa-unlock  w3-text-yellow"></i>
             </button>
           )}
@@ -380,8 +481,8 @@ const Wgt_Delear_Ui = ({ data }) => {
             allowTextWrap={true}
             allowResizing={false}
             dataSource={dealerlist}
-            // toolbar={toolbar}
-            // toolbarClick={toolbarClick}
+            toolbar={toolbar}
+            toolbarClick={toolbarClick}
             enableStickyHeader={true}
             height={"500px"}
             ref={Wgt_DelearUiGridInstance}
@@ -400,11 +501,13 @@ const Wgt_Delear_Ui = ({ data }) => {
             filterSettings={{ type: "Excel" }}
             frozenColumns={2}
             allowExcelExport={true}
+            allowSorting={true}
+            commandClick={getMonthTarget}
           >
             <ColumnsDirective>
               <ColumnDirective
                 field="dealer_name"
-                headerText={"Delear Name"}
+                headerText={"Dealer Name"}
                 width="170"
                 visible={true}
                 textAlign="center"
@@ -413,7 +516,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               />
               <ColumnDirective
                 field="dealer_code"
-                headerText={"Delear Code"}
+                headerText={"Dealer Code"}
                 width="130"
                 visible={true}
                 textAlign="center"
@@ -463,7 +566,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               />
               <ColumnDirective
                 field="YTDActualPlanShare"
-                headerText={" Ytd Actal + Plan Share"}
+                headerText={" Ytd Actual + Plan Share"}
                 width="130"
                 visible={true}
                 textAlign="center"
@@ -524,6 +627,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 field="OS"
                 headerText={`OS (${mStartName})`}
                 width="120"
+                textAlign="center"
                 allowFiltering={false}
                 allowEditing={false}
               />
@@ -537,7 +641,8 @@ const Wgt_Delear_Ui = ({ data }) => {
               />
               <ColumnDirective
                 field="tDue"
-                headerText={`Total Due (${mStartName})`}
+                headerTemplate={tDueTemplate}
+                // headerText={`Total Due (${mStartName})`}
                 width="150"
                 textAlign="center"
                 allowFiltering={false}
@@ -545,7 +650,7 @@ const Wgt_Delear_Ui = ({ data }) => {
               />
               <ColumnDirective
                 // field="OS"
-                headerText={`Sales (${mStartName})`}
+                headerTemplate={salesHeadTemplate}
                 width="100"
                 textAlign="center"
                 allowFiltering={false}
@@ -572,7 +677,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 headerTemplate={"Action"}
                 textAlign="Center"
                 width="100"
-                template={commmandTemplate}
+                commands={commmandTemplate}
               />
             </ColumnsDirective>
             <Inject
@@ -584,11 +689,188 @@ const Wgt_Delear_Ui = ({ data }) => {
                 Filter,
                 Toolbar,
                 ExcelExport,
+                Sort,
               ]}
             />
           </GridComponent>
         </Col>
       </Row>
+      <CustomPopup
+        onClose={popupCloseHandler}
+        show={visibility}
+        title={
+          modalData?.dealer_name +
+          "(" +
+          modalData?.dealer_code +
+          ") - Month : " +
+          monthName
+        }
+      >
+        <span className="h6 w3-small">
+          (Dealer Month Sales Plan + Focus Sector Breakup )
+        </span>
+        <hr />
+        <form className="w3-container" onSubmit={handleSubmit}>
+          <table className="w3-table table-bordered w3-small ">
+            <tr className="w3-gray">
+              <td colspan="30">
+                A : Sales Plan Produced by Dealer Level Rules
+              </td>
+            </tr>
+            <tr className="">
+              <td style={{ width: "90%" }}>
+                Rule 1 : Active Dealer <br />
+                Rule 2 : Category based % impact <br />
+              </td>
+              <td style={{ width: "10%" }}>
+                <input
+                  type="text"
+                  value={modalData ? modalData[monthKey] : ""}
+                  className="inp40 text-center"
+                  readOnly={true}
+                />
+              </td>
+            </tr>
+          </table>
+          <GridComponent
+            locale="en-Us"
+            id="Wgt_DelearUiGridPopup_id"
+            key="Wgt_DelearUiGridPopup_id"
+            allowTextWrap={true}
+            allowResizing={false}
+            dataSource={selectedRow}
+            enableStickyHeader={true}
+            height={"400px"}
+            ref={Wgt_DelearUiGridInstancePopup}
+            allowPaging={true}
+            gridLines="Both"
+            editSettings={{
+              allowEditing: true,
+              mode: "Batch",
+              persistSelection: true,
+              showConfirmDialog: false,
+            }}
+            rowHeight={25}
+            pageSettings={{ pageSize: 15, pageCount: 10 }}
+            dataBound={DataBoundFocused}
+            cellSaved={handleCellSaved}
+          >
+            <ColumnsDirective>
+              <ColumnDirective
+                field="serialNo"
+                headerText="#"
+                width="90"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="tableid"
+                haederText="table Id"
+                visible={false}
+                isPrimaryKey={true}
+              />
+              <ColumnDirective
+                field="MarketSectorName"
+                headerText="Focus Product Sector"
+                width="150"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="LLY"
+                headerText="LLY"
+                width="100"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="LY"
+                headerText="LY"
+                width="100"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="YTD"
+                headerText="YTD"
+                width="100"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="Last6MonthAvgSales"
+                headerText="6 Mo. Avg"
+                width="100"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="SameMonthLY"
+                headerText={`LY ${monthName}`}
+                width="100"
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="Volume"
+                headerText="Volume (Ltrs.)"
+                width="150"
+                textAlign="center"
+                editType="numericedit"
+                allowEditing={true}
+              />
+              <ColumnDirective
+                field="Value"
+                headerText="Value (Lacs)"
+                width="150"
+                editType="numericedit"
+                textAlign="center"
+                allowEditing={true}
+              />
+            </ColumnsDirective>
+            <AggregatesDirective>
+              <AggregateDirective>
+                <AggregateColumnsDirective>
+                  <AggregateColumnDirective
+                    field="Value"
+                    type="Sum"
+                    format="N2"
+                  />
+                </AggregateColumnsDirective>
+              </AggregateDirective>
+            </AggregatesDirective>
+
+            <Inject services={[Edit, Page, Sort, Aggregate]} />
+          </GridComponent>
+          <table className="w3-table table-bordered w3-small ">
+            <tr className="w3-gray">
+              <td colspan="30">
+                Net Sales Plan ( {monthName} ) Total Sale A + B
+              </td>
+            </tr>
+            <tr className="">
+              <td style={{ width: "80%" }}>
+                ( This total will be updated to Dealers Sales Plan ( v1 ) and
+                the list will will be added in transaction table as dealers
+                breakup )
+              </td>
+              <td style={{ width: "10%" }} align="right">
+                {isLocked ? null : submitForm ? (
+                  <i className="w3-button fa fa-spinner"></i>
+                ) : (
+                  <button className="w3-button w3-indigo">Submit</button>
+                )}
+              </td>
+            </tr>
+          </table>
+        </form>
+      </CustomPopup>
+      <ResponsePopup
+        show={responseDetails.show}
+        text={responseDetails.message}
+        type={responseDetails.type}
+        onClose={handleCloseResponse}
+      />
     </>
   );
 };
