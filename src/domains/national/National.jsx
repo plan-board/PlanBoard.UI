@@ -21,13 +21,13 @@ const National = () => {
   const [selectedZone, setSelectedZone] = useState(0);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(
     AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0
-  ); 
- 
+  );
+
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
     setToggleState(index);
   };
- 
+
   const handleSelectionChangeDrop = (newValue) => {
     setSelectedZoneDrop(newValue);
   };
@@ -46,7 +46,9 @@ const National = () => {
   return (
     <div className="main">
       <div className="w3-row">
-        <span className="main-title">Shalimar Paints Limited   <AllFigureText /></span>
+        <span className="main-title">
+          Shalimar Paints Limited <AllFigureText />
+        </span>
       </div>
       <CommonTopSales actionType="hod" selectedZone={0} />
       <div id="Wgt_Zone_Id" className="card-box lightblue">
@@ -106,9 +108,7 @@ const National = () => {
         <div className="w3-bar tab-container">
           <div
             className={
-              toggleState === 1
-                ? "w3-button tab tab-active"
-                : "w3-button tab"
+              toggleState === 1 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
@@ -116,9 +116,7 @@ const National = () => {
           </div>
           <div
             className={
-              toggleState === 2
-                ? "w3-button tab tab-active"
-                : "w3-button tab"
+              toggleState === 2 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(2)}
           >
@@ -126,9 +124,7 @@ const National = () => {
           </div>
           <div
             className={
-              toggleState === 3
-                ? "w3-button tab tab-active"
-                : "w3-button tab"
+              toggleState === 3 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(3)}
           >
@@ -142,10 +138,9 @@ const National = () => {
             onClick={() => toggleTab(4)}
           >
             <span className="h6">
-              <i className="fa fa-list"> Log Summary</i>
+              <i className="fa fa-list"> Lock Summary</i>
             </span>
           </div>
-
         </div>
 
         <div class="w-100">
@@ -184,14 +179,13 @@ const National = () => {
           {toggleState === 4 && (
             <>
               <div>
-                <h3>Log Summary</h3>
+                <h3>Lock Summary</h3>
               </div>
-              <LogSummary actionType="HOD" selectedId={0}/>
+              <LogSummary actionType="HOD" selectedId={0} />
             </>
           )}
         </div>
       </div>
-
     </div>
   );
 };
