@@ -105,7 +105,8 @@ const Depot = () => {
           >
             <span className="h6">
               {" "}
-              <i className="fa fa-list"></i> Lock Summary
+              <i className="fa fa-list"></i>
+              <span style={{ fontFamily: "Nunito sans" }}>Lock Summary</span>
             </span>
           </div>
         </div>
@@ -120,7 +121,7 @@ const Depot = () => {
           </div>
           <div className={toggleState === 2 ? "  " : " w3-hide  "}>
             <div>
-              <h3>Lock Summary</h3>
+              <h3 style={{ fontFamily: "Nunito sans" }}>Lock Summary</h3>
             </div>
             <LogSummary actionType="Depot" selectedId={selectedDepot} />
           </div>

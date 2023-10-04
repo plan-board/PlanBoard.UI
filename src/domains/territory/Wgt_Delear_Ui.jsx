@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
@@ -254,11 +254,12 @@ const Wgt_Delear_Ui = ({ data }) => {
     }
   };
   const popupCloseHandler = (e) => {
+    Wgt_DelearUiGridInstance.current.refresh();
+
     setVisibility(false);
     setSelectedRow([]);
     setModalData(null);
     setSumValue(0);
-    Wgt_DelearUiGridInstance.current.refresh();
   };
 
   const handleCellSaved = (args) => {
@@ -338,14 +339,10 @@ const Wgt_Delear_Ui = ({ data }) => {
   };
 
   const DataBoundFocused = (args) => {
-    if (selectedRow.length > 0) {
-      selectedRow.map((val, index) => {
-        if (val.IsFocused === 1) {
-          Wgt_DelearUiGridInstancePopup.current
-            .getRowByIndex(index)
-            .classList.add("IsFocused");
-        }
-      });
+    if (args.row) {
+      if (getValue("IsFocused", args.data) === 1) {
+        args.row.classList.add("IsFocused");
+      }
     }
   };
   const lockData = async () => {
@@ -419,6 +416,9 @@ const Wgt_Delear_Ui = ({ data }) => {
         "Dealer Code": element.dealer_code,
         "Creation Date": formatDateTimes(element.customer_creationdate),
         Category: element.dealer_category,
+        Potential: element.potential,
+        "LY Actual Share (%)": element.lYActualShare,
+        "Ytd Actual + Plan Share(%)": element.YTDActualPlanShare,
         LY: element.LY_Value,
         "CY Plan": element.CY_Value,
         YTD: element.YTD_Value,
@@ -472,20 +472,20 @@ const Wgt_Delear_Ui = ({ data }) => {
     );
   };
 
-  const Columns = [
+  const rows = [
     {
       field: "dealer_name",
       headerText: "Dealer Name",
       width: "170",
       visible: true,
-      freeze: "left",
+      freeze: "Left",
     },
     {
       field: "dealer_code",
       headerText: "Dealer Code",
       width: "130",
       visible: true,
-      freeze: "left",
+      freeze: "Left",
     },
     {
       field: "customer_creationdate",
@@ -558,9 +558,16 @@ const Wgt_Delear_Ui = ({ data }) => {
       visible: true,
       allowFiltering: false,
     },
+    {
+      headerTemplate: "Action",
+      textAlign: "center",
+      width: "100",
+      commands: commmandTemplate,
+      freeze: "Right",
+    },
   ];
   gridMonth.map((val) => {
-    Columns.push({
+    rows.push({
       headerText: val,
       width: "130",
       allowFiltering: false,
@@ -568,7 +575,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       template: (args) => nonCurMonTemp(args, val),
     });
   });
-  Columns.push({
+  rows.push({
     columns: [
       {
         // format: "C2",
@@ -607,7 +614,7 @@ const Wgt_Delear_Ui = ({ data }) => {
       },
       {
         // format: "C2",
-        field: "collectionVal",
+        field: "tDue",
         headerText: "Collection",
         width: 120,
         allowEditing: false,
@@ -621,16 +628,19 @@ const Wgt_Delear_Ui = ({ data }) => {
         allowFiltering: false,
         template: lastTdTemplate,
       },
-      {
-        headerTemplate: "Action",
-        textAlign: "center",
-        width: "100",
-        commands: commmandTemplate,
-      },
     ],
     headerText: mStartName,
     textAlign: "center",
   });
+
+  const handleRowDataBound = (args) => {
+    if (args.row) {
+      let limitPercentage = (20 / 100) * getValue("OS", args.data);
+      if (getValue("OD", args.data) > limitPercentage) {
+        args.row.classList.add("below-20");
+      }
+    }
+  };
 
   return (
     <>
@@ -668,7 +678,6 @@ const Wgt_Delear_Ui = ({ data }) => {
               dataSource={dealerlist}
               toolbar={toolbar}
               toolbarClick={toolbarClick}
-              enableStickyHeader={true}
               height={"500px"}
               ref={Wgt_DelearUiGridInstance}
               allowPaging={true}
@@ -678,11 +687,12 @@ const Wgt_Delear_Ui = ({ data }) => {
               pageSettings={{ pageSize: 15, pageCount: 10 }}
               allowFiltering={true}
               filterSettings={{ type: "Excel" }}
-              frozenColumns={2}
+              frozenColumns={3}
               allowExcelExport={true}
               allowSorting={true}
               commandClick={getMonthTarget}
-              columns={Columns}
+              columns={rows}
+              rowDataBound={handleRowDataBound}
             >
               <Inject
                 services={[
@@ -714,7 +724,7 @@ const Wgt_Delear_Ui = ({ data }) => {
             (Dealer Month Sales Plan + Focus Sector Breakup )
           </span>
           <span className="h6 w3-small" style={{ color: "red" }}>
-            (Double click on row to edit* )
+            (Double click on Cell to edit* )
           </span>
           <hr />
 
@@ -740,6 +750,17 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </td>
               </tr>
             </table>
+            <table className="w3-table table-bordered w3-small ">
+              <tr className="w3-gray">
+                <td colspan="29">
+                  B ( Focus Sector List for Month of {monthName} ) * Add values
+                  / volume
+                  <span style={{ float: "right" }}>
+                    Hight lighted rows are focus product for current month
+                  </span>
+                </td>
+              </tr>
+            </table>
             <GridComponent
               locale="en-Us"
               id="Wgt_DelearUiGridPopup_id"
@@ -750,27 +771,20 @@ const Wgt_Delear_Ui = ({ data }) => {
               enableStickyHeader={true}
               height={"400px"}
               ref={Wgt_DelearUiGridInstancePopup}
-              allowPaging={true}
+              allowPaging={false}
               gridLines="Both"
               editSettings={{
                 allowEditing: true,
-                mode: "Normal",
+                mode: "Batch",
                 persistSelection: true,
                 // showConfirmDialog: false,
               }}
               rowHeight={25}
-              pageSettings={{ pageSize: 15, pageCount: 10 }}
-              dataBound={DataBoundFocused}
+              rowDataBound={DataBoundFocused}
               cellSaved={handleCellSaved}
+              frozenColumns={1}
             >
               <ColumnsDirective>
-                <ColumnDirective
-                  field="serialNo"
-                  headerText="#"
-                  width="90"
-                  textAlign="center"
-                  allowEditing={false}
-                />
                 <ColumnDirective
                   field="tableid"
                   haederText="table Id"
@@ -781,8 +795,9 @@ const Wgt_Delear_Ui = ({ data }) => {
                   field="MarketSectorName"
                   headerText="Focus Product Sector"
                   width="150"
-                  textAlign="center"
+                  textAlign="left"
                   allowEditing={false}
+                  freeze="Left"
                 />
                 <ColumnDirective
                   field="LLY"
@@ -815,7 +830,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 <ColumnDirective
                   field="SameMonthLY"
                   headerText={`LY (${mStartName})`}
-                  width="150"
+                  width="80"
                   textAlign="center"
                   allowEditing={false}
                 />
@@ -848,7 +863,9 @@ const Wgt_Delear_Ui = ({ data }) => {
                 </AggregateDirective>
               </AggregatesDirective>
 
-              <Inject services={[Edit, Page, Sort, Aggregate, CommandColumn]} />
+              <Inject
+                services={[Edit, Sort, Aggregate, CommandColumn, Freeze]}
+              />
             </GridComponent>
             <table className="w3-table table-bordered w3-small ">
               <tr className="w3-gray">
