@@ -365,7 +365,7 @@ const Wgt_Delear_Ui = ({ data }) => {
         setIsLocked(true);
         handleCloseResponse();
       }
-      setLoading(true);
+      setLoading(false);
     } catch (error) {
       // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
@@ -558,13 +558,6 @@ const Wgt_Delear_Ui = ({ data }) => {
       visible: true,
       allowFiltering: false,
     },
-    {
-      headerTemplate: "Action",
-      textAlign: "center",
-      width: "100",
-      commands: commmandTemplate,
-      freeze: "Right",
-    },
   ];
   gridMonth.map((val) => {
     rows.push({
@@ -628,6 +621,13 @@ const Wgt_Delear_Ui = ({ data }) => {
         allowFiltering: false,
         template: lastTdTemplate,
       },
+      {
+        headerTemplate: "Action",
+        textAlign: "center",
+        width: "100",
+        commands: commmandTemplate,
+        // freeze: "Right",
+      },
     ],
     headerText: mStartName,
     textAlign: "center",
@@ -687,12 +687,12 @@ const Wgt_Delear_Ui = ({ data }) => {
               pageSettings={{ pageSize: 15, pageCount: 10 }}
               allowFiltering={true}
               filterSettings={{ type: "Excel" }}
-              frozenColumns={3}
+              frozenColumns={2}
               allowExcelExport={true}
               allowSorting={true}
               commandClick={getMonthTarget}
-              columns={rows}
               rowDataBound={handleRowDataBound}
+              columns={rows}
             >
               <Inject
                 services={[
@@ -844,7 +844,7 @@ const Wgt_Delear_Ui = ({ data }) => {
                 />
                 <ColumnDirective
                   field="Value"
-                  headerText="Value (Lacs)"
+                  headerText="Value (Rs.)"
                   width="150"
                   editType="numericedit"
                   textAlign="center"
