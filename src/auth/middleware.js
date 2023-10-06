@@ -2,13 +2,13 @@ export const permissions = [
   {
     roleId: "HOD",
     permission: [
-      'national',
+      "national",
       "zone",
       "depot",
       "territory",
       "dealer",
       "dashscheduleboard",
-      "change-password"
+      "change-password",
     ],
   },
   {
@@ -19,35 +19,31 @@ export const permissions = [
       "territory",
       "dealer",
       "dashscheduleboard",
-      "change-password"
+      "change-password",
     ],
   },
   {
-    roleId:"DM",
-    permission: [       
+    roleId: "DM",
+    permission: [
       "depot",
       "territory",
       "dealer",
       "dashscheduleboard",
-      "change-password"
+      "change-password",
     ],
   },
   {
-    roleId:"TM",
-    permission: [             
-      "territory",
-      "dealer",
-      "dashscheduleboard",
-      "change-password"
-    ],
-  },{
-    roleId:"AM",
-    permission: [             
+    roleId: "TM",
+    permission: ["territory", "dealer", "dashscheduleboard", "change-password"],
+  },
+  {
+    roleId: "AM",
+    permission: [
       "territory",
       "dealer",
       "dashscheduleboard",
       "customer-potential",
-      "change-password"
+      "change-password",
     ],
   },
 ];
@@ -57,10 +53,8 @@ const zonepermision = [
     roleId: 1,
     permissions: [1, 2, 3, 4],
   },
-  
 ];
 export function hasPermission(roleId, permissionToCheck) {
-
   const role = permissions.find((role) => {
     return role.roleId === roleId;
   });

@@ -15,7 +15,7 @@ import CustomPopup from "../CustomPopup";
 import DelearActivityPlan from "./DelearActivityPlan";
 import AllFigureText from "../components/AllFigureText";
 import PainterMeet from "./PainterMeet";
-
+import { DealarPopup } from "./newDealerPopup";
 const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
   let Wgt_DelearUiGridInstance = useRef();
@@ -38,6 +38,7 @@ const Territory = () => {
   const [selectedTerritory, setSelectedTerritory] = useState(territoryId ?? 0);
 
   const [toggleState, setToggleState] = useState(1);
+  const [visibilityForPopup, setVisibilityForPopup] = useState(false);
   const toggleTab = (index) => {
     setToggleState(index);
   };
@@ -55,6 +56,12 @@ const Territory = () => {
   const onSelectedTerritoryChange = (newValue) => {
     setSelectedTerritory(newValue);
     console.log("45-setselectedTerritory", newValue);
+  };
+  const handleDealerPopup = () => {
+    setVisibilityForPopup(true);
+  };
+  const handleCloseDealerPopup = () => {
+    setVisibilityForPopup(false);
   };
 
   return (
@@ -173,10 +180,16 @@ const Territory = () => {
           <div className={toggleState === 1 ? "w-100" : "w3-hide"}>
             <h3>Dealer Wise Monthly Plan / Achievement</h3>
             {selectedTerritory ? (
-              <Wgt_Delear_Ui
-                data={selectedTerritory}
-                Wgt_DelearUiGridInstance={Wgt_DelearUiGridInstance}
-              />
+              <>
+                <Wgt_Delear_Ui
+                  data={selectedTerritory}
+                  handleDealerPopup={handleDealerPopup}
+                />
+                {/* <DealarPopup
+                  visibility={visibilityForPopup}
+                  handleOnClose={handleCloseDealerPopup}
+                /> */}
+              </>
             ) : (
               <>Select Territory</>
             )}

@@ -2349,12 +2349,26 @@
   dependencies:
     "@syncfusion/ej2-icons" "~22.2.5"
 
+"@syncfusion/ej2-base@~23.1.36", "@syncfusion/ej2-base@~23.1.38":
+  "integrity" "sha512-48nRJLJ8uyfJi2ne/9Jwkwu78Cz1njDnt2jsq3n+6A9ebZFEqMlYC4pO177kTz/XTnd47CsJT3vsyKpt0haG5g=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-base/-/ej2-base-23.1.38.tgz"
+  "version" "23.1.38"
+  dependencies:
+    "@syncfusion/ej2-icons" "~23.1.36"
+
 "@syncfusion/ej2-buttons@~22.2.5", "@syncfusion/ej2-buttons@~22.2.9":
   "integrity" "sha512-D4QbitRDTuO1xuDIAWbMABYGXpKWCOyUZEq9NbUn68zMCaXFX4u4clwAFcxN24XX98mey4pFPL6GLvNnpXWdHQ=="
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-buttons/-/ej2-buttons-22.2.9.tgz"
   "version" "22.2.9"
   dependencies:
     "@syncfusion/ej2-base" "~22.2.9"
+
+"@syncfusion/ej2-buttons@~23.1.36":
+  "integrity" "sha512-29L3b8Yd5y+vGJBLVnyM4iOTl6eDtKdrjxhM13p6YalSJy4M/2eaNBiQgJMGFW7DYlZ3fOtNXaj2Lh32d88+iQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-buttons/-/ej2-buttons-23.1.39.tgz"
+  "version" "23.1.39"
+  dependencies:
+    "@syncfusion/ej2-base" "~23.1.38"
 
 "@syncfusion/ej2-calendars@~22.2.12":
   "integrity" "sha512-r2a+IqZ22a1nxMqAwX+4rjXZO/f9wnop+zdNRQ+XdqMY6GXx3A2sUl6W+3j7jB47zc0O4Ncs/8l5CgC36hrZGA=="
@@ -2432,6 +2446,11 @@
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-icons/-/ej2-icons-22.2.5.tgz"
   "version" "22.2.5"
 
+"@syncfusion/ej2-icons@~23.1.36":
+  "integrity" "sha512-Q7S50bOzXL9X46doNIGSGr61RCY/1RW9iz1U7yyARr2XBQhWnijk+t/FVBk1piR0nioRXbKQcPZOLiEo6zf1xw=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-icons/-/ej2-icons-23.1.36.tgz"
+  "version" "23.1.36"
+
 "@syncfusion/ej2-inputs@~22.2.12", "@syncfusion/ej2-inputs@~22.2.9":
   "integrity" "sha512-TOmoOjP4DaLzrN1iSff7noGSCHPI913ACprEYQLGCBIHZTsYt/2TxxLYB1u/3TdgPxrJmk/G0TQb80QLFAXAHA=="
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-inputs/-/ej2-inputs-22.2.12.tgz"
@@ -2487,12 +2506,27 @@
     "@syncfusion/ej2-base" "~22.2.10"
     "@syncfusion/ej2-buttons" "~22.2.9"
 
+"@syncfusion/ej2-popups@23.1.38":
+  "integrity" "sha512-mnhJ1YLFYcJfetYJIdWbjy8CDbhxhLn9nUkWtld9388Xj7NPychVIyvvrFQQ+Nu839qG/VU08NOuVx+8Z9QU8g=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-popups/-/ej2-popups-23.1.38.tgz"
+  "version" "23.1.38"
+  dependencies:
+    "@syncfusion/ej2-base" "~23.1.38"
+    "@syncfusion/ej2-buttons" "~23.1.36"
+
 "@syncfusion/ej2-react-base@~22.2.5":
   "integrity" "sha512-EoYaVKOpgcFB5NXySLcZDxvwS6ER8Y2QrWVcHLVgCGfnTqbzfbpiXjkWLIKGI4V9C8OsOENrhn/ta1NboevbVA=="
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-base/-/ej2-react-base-22.2.5.tgz"
   "version" "22.2.5"
   dependencies:
     "@syncfusion/ej2-base" "~22.2.5"
+
+"@syncfusion/ej2-react-base@~23.1.36":
+  "integrity" "sha512-tjBondPukYCVnM9wqgkxdjeF/Le16OmGuzgJJMLEuMnXJE5SnSi+oqkfudXdn/4yBSm8kt11stwxHP9FE6NdIQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-base/-/ej2-react-base-23.1.36.tgz"
+  "version" "23.1.36"
+  dependencies:
+    "@syncfusion/ej2-base" "~23.1.36"
 
 "@syncfusion/ej2-react-grids@^22.2.12":
   "integrity" "sha512-xtemvYwHLZmaJgRbuwe1Cw5pVHcfhFQaajcBQXJfN3wMhD2rJbE82b0Tzfy0UNayHeuiDdwthCpxKUg6Kg7WaA=="
@@ -2502,6 +2536,15 @@
     "@syncfusion/ej2-base" "~22.2.12"
     "@syncfusion/ej2-grids" "22.2.12"
     "@syncfusion/ej2-react-base" "~22.2.5"
+
+"@syncfusion/ej2-react-popups@^23.1.38":
+  "integrity" "sha512-/TFQPnvmEu/Qomu33kidAbNXhwf9wSYzVbtVBbf3mkyf3O9pWlwOsIGxniNoiAEFdTokrhwXC+FQPGBokV5PXQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-popups/-/ej2-react-popups-23.1.38.tgz"
+  "version" "23.1.38"
+  dependencies:
+    "@syncfusion/ej2-base" "~23.1.38"
+    "@syncfusion/ej2-popups" "23.1.38"
+    "@syncfusion/ej2-react-base" "~23.1.36"
 
 "@syncfusion/ej2-splitbuttons@~22.2.8":
   "integrity" "sha512-+zo3enSHDtD7yDx1frm2+XlFEQV6uKBriE2wGt+vtZnnyzaESqRFEqxOAtQCFxN3RDMmGRiUT6qwiNSXY4rDeQ=="

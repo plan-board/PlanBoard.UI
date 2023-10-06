@@ -2254,7 +2254,9 @@ table.table-striped tbody tr:nth-child(odd) {
 }
 
 input[type="text"],
-input[type="email"] {
+input[type="email"],
+input[type="date"],
+input[type="number"] {
   width: 100%;
   padding: 7px;
   border: 1px solid #ccc;
@@ -2427,4 +2429,65 @@ table.table-striped1 tbody tr:nth-child(odd) {
 .e-grid .e-row.below-20 .e-rowcell {
   background: rgb(208, 103, 103);
   color: white;
+}
+
+.buttonForMainUi {
+  background-color: #15872f;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  max-height: 50px;
+  text-wrap: nowrap;
+
+  /* You can add more styles or customize as needed */
+}
+
+.buttonForMainUi:hover {
+  background-color: #014218; /* Darker shade of blue on hover */
+}
+
+.icon-button {
+  background-color: #000102;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon-button i {
+  margin-right: 5px;
+}
+
+.icon-button:hover {
+  background-color: #000000;
+  transform: scale(1.05);
+}
+
+.icon-button:focus {
+  box-shadow: 0 0 6px rgba(52, 152, 219, 0.5);
+}
+
+.titlePopupHeader {
+  font-size: 24px; /* Adjust the font size as needed */
+  font-weight: bold; /* Make the text bold if desired */
+  text-align: center; /* Center-align the text */
+  color: #333;
+}
+.e-redicon {
+  color: red;
 }
