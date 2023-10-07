@@ -33,6 +33,7 @@ import { getValue } from "@syncfusion/ej2-base";
 import ResponsePopup from "../../common/ResponsePopup";
 import ConfirmResponsePopup from "../../common/ResponsePopup/ConfirmResponse";
 import Popup from "../../common/DialogPopup/DialogPopup";
+import { formatDate } from "../../common/dateFormat";
 // import CustomPopup1 from "../../common/DialogPopup/DialogPopup";
 const monthArr = [
   "Apr",
@@ -101,6 +102,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     city: "",
     SalesValPlan: "",
     EstOnBoardDate: "",
+    potential: "",
   });
 
   const [confirmResponseDetails, setConfirmResponseDetails] = useState({
@@ -113,7 +115,43 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   useEffect(() => {
     fetchDealerMaster();
     sortMonth();
+    getNewDealerData();
   }, [data]);
+
+  const getNewDealerData = async () => {
+    const cMonth = new Date().getMonth() + 1;
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      TerritoryId: data,
+      Month: cMonth,
+    };
+
+    try {
+      const response = await axiosInstance.post("GetNewDealerPlan", payload);
+
+      if (response?.status === 200) {
+        const result = response?.data?.Data;
+        let changeFormat = [];
+        if (result.length > 0) {
+          result.map((val, index) => {
+            changeFormat.push({
+              Sno: val.tableid,
+              dealer_name: val.dealer_name,
+              city: val.city,
+              potential: parseInt(val.potential),
+              SalesValPlan: parseInt(val.salesvalueplan),
+              EstOnBoardDate: val.salesvalueplan,
+            });
+          });
+          setDealerPoupGridData([...changeFormat]);
+        }
+      }
+
+      setLoading(false);
+    } catch (error) {
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
 
   const sortMonth = () => {
     const headers = [];
@@ -688,11 +726,19 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     let value = e.target.value;
     const ErrorMsg = "This Field Can't be Blank";
     if (e.target) {
-      setFormDetails({ ...formDetails, [name]: value });
-      setErrorDetails({
-        ...errors,
-        [name]: value ? "" : ErrorMsg,
-      });
+      if (name === "potential" || name === "SalesValPlan") {
+        setFormDetails({ ...formDetails, [name]: parseInt(value) });
+        setErrorDetails({
+          ...errors,
+          [name]: value ? "" : ErrorMsg,
+        });
+      } else {
+        setFormDetails({ ...formDetails, [name]: value });
+        setErrorDetails({
+          ...errors,
+          [name]: value ? "" : ErrorMsg,
+        });
+      }
     }
   };
   const validateForm = () => {
@@ -711,6 +757,10 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
       formIsValid = false;
       error["SalesValPlan"] = ErrorMsg;
     }
+    if (formDetails["potential"] == "" || formDetails["potential"] == 0) {
+      formIsValid = false;
+      error["potential"] = ErrorMsg;
+    }
     if (formDetails["EstOnBoardDate"] == "") {
       formIsValid = false;
       error["EstOnBoardDate"] = ErrorMsg;
@@ -727,14 +777,10 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         newDetails.Sno = dealerPopupGridData.length + 1;
       }
       setDealerPoupGridData([...dealerPopupGridData, newDetails]);
-
-      // if(dealerPopupGridData.length)
-      // setDealerPoupGridData([...dealerPopupGridData, formDetails]);
     }
   };
 
-  const handlePopupDataSubmit = () => {
-    console.log(dealerPopupInstance.current.getBatchChanges());
+  const handlePopupDataSubmit = async () => {
     let apidata = [...dealerPopupGridData];
     let change_records =
       dealerPopupInstance.current.getBatchChanges().changedRecords;
@@ -756,7 +802,62 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         }
       });
     }
-    console.log(apidata);
+    //  const
+    const cMonth = new Date().getMonth() + 1;
+
+    let newDealerPayload = [];
+    apidata.map((val) => {
+      newDealerPayload.push({
+        TerritoryId: data,
+        Month: cMonth,
+        DealerName: val.dealer_name,
+        City: val.city,
+        Potential: parseInt(val.potential),
+        SalesValuePlan: parseInt(val.SalesValPlan),
+        OnBoaringDate: formatDate(val.EstOnBoardDate),
+      });
+    });
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      PlanNewDealerParam: newDealerPayload,
+    };
+
+    try {
+      const response = await axiosInstance.post("SetNewDealerPlan", payload);
+      if (response?.status === 200) {
+        if (response?.data?.Status == true) {
+          setopenDealerPopup(false);
+
+          setTimeout(() => {
+            setResponseDetails({
+              type: "success",
+              show: true,
+              message: response.data.Message,
+            });
+          }, 2000);
+          setFormDetails({
+            Sno: 0,
+            dealer_name: "",
+            city: "",
+            potential: 0,
+            SalesValPlan: 0,
+            EstOnBoardDate: "",
+          });
+          setDealerPoupGridData([]);
+        } else {
+          setResponseDetails({
+            type: "error",
+            show: true,
+            message: response.data.Message,
+          });
+        }
+      }
+
+      setLoading(false);
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
   };
 
   return (
@@ -1037,189 +1138,203 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         />
         {openDealerPopup ? (
           <Popup isOpen={openDealerPopup} onClose={handleDealerPopupClose}>
-            <div className="titlePopupHeader">New Dealer Planning</div>
-            <div
-              className="employeeForm-component"
-              style={{ marginBottom: "10px" }}
-            >
-              <Row>
-                <Col xl={4} lg={4} md={4} sm={4} xs={4}>
-                  <label className="formlabel">Dealer Name*</label>
-                  <input
-                    type="text"
-                    name="dealer_name"
-                    value={formDetails.dealer_name}
-                    onChange={handleChange}
+            <div className="paddingForPopupTerritory">
+              <div className="titlePopupHeader">New Dealer Planning</div>
+              <div
+                className="employeeForm-component"
+                style={{ marginBottom: "10px" }}
+              >
+                <Row>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">Dealer Name*</label>
+                    <input
+                      type="text"
+                      name="dealer_name"
+                      value={formDetails.dealer_name}
+                      onChange={handleChange}
+                    />
+                    {errors.dealer_name && (
+                      <span style={{ color: "red" }}>{errors.dealer_name}</span>
+                    )}
+                  </Col>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">City*</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formDetails.city}
+                      onChange={handleChange}
+                    />
+                    {errors.city && (
+                      <span style={{ color: "red" }}>{errors.city}</span>
+                    )}
+                  </Col>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">Potentail(Lacs)</label>
+                    <input
+                      type="number"
+                      name="potential"
+                      value={formDetails.potential}
+                      onChange={handleChange}
+                    />
+                    {errors.potential && (
+                      <span style={{ color: "red" }}>{errors.potential}</span>
+                    )}
+                  </Col>
+                </Row>
+                <Row style={{ marginTop: "10px" }}>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">Sales Value Plan(Rs.)*</label>
+                    <input
+                      type="number"
+                      name="SalesValPlan"
+                      value={formDetails.SalesValPlan}
+                      onChange={handleChange}
+                    />
+                    {errors.SalesValPlan && (
+                      <span style={{ color: "red" }}>
+                        {errors.SalesValPlan}
+                      </span>
+                    )}
+                  </Col>
+                  <Col xl={4} lg={4} md={5} sm={5} xs={5}>
+                    <label className="formlabel">
+                      Estimated Onboarding Date
+                    </label>
+                    <input
+                      type="date"
+                      name="EstOnBoardDate"
+                      min={minDate}
+                      value={formDetails.EstOnBoardDate}
+                      onChange={handleChange}
+                    />
+                    {errors.EstOnBoardDate && (
+                      <span style={{ color: "red" }}>
+                        {errors.EstOnBoardDate}
+                      </span>
+                    )}
+                  </Col>
+                  <Col xl={2} lg={2} md={2} sm={2}>
+                    <div style={{ marginTop: "20px" }}>
+                      <button
+                        className="buttonForMainUi"
+                        onClick={() => handleAdd()}
+                      >
+                        <span style={{ fontFamily: "Nunito sans" }}>Add</span>
+                      </button>{" "}
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div id={"hjfcjh"}>
+                <GridComponent
+                  locale="en-Us"
+                  id="new_DelearUiGridPopup_id"
+                  key="new_DelearUiGridPopup_id"
+                  allowTextWrap={true}
+                  allowResizing={false}
+                  dataSource={dealerPopupGridData}
+                  editSettings={{
+                    allowEditing: true,
+                    mode: "Batch",
+                    persistSelection: true,
+                    allowDeleting: true,
+                    // showConfirmDialog: false,
+                  }}
+                  enableStickyHeader={true}
+                  height={"300px"}
+                  toolbar={["Delete"]}
+                  ref={dealerPopupInstance}
+                  allowPaging={false}
+                  gridLines="Both"
+                  rowHeight={25}
+                >
+                  <ColumnsDirective>
+                    <ColumnDirective
+                      field="Sno"
+                      haederText="S No."
+                      visible={false}
+                      width="50"
+                      isPrimaryKey={true}
+                    />
+                    <ColumnDirective
+                      field="dealer_name"
+                      headerText="Dealer Name"
+                      width="100"
+                      textAlign="left"
+                      allowEditing={true}
+                    />
+                    <ColumnDirective
+                      field="city"
+                      headerText="City"
+                      width="100"
+                      textAlign="left"
+                      allowEditing={true}
+                    />
+                    <ColumnDirective
+                      field="potential"
+                      headerText="Potential(Lacs)"
+                      width="100"
+                      textAlign="center"
+                      editType="numericedit"
+                      allowEditing={true}
+                    />
+                    <ColumnDirective
+                      field="SalesValPlan"
+                      headerText="Sales Value Plan(Rs)"
+                      width="100"
+                      textAlign="center"
+                      editType="numericedit"
+                      allowEditing={true}
+                    />
+
+                    <ColumnDirective
+                      field="EstOnBoardDate"
+                      headerText="Estimated Onboarding Date"
+                      width="130"
+                      textAlign="center"
+                      allowEditing={true}
+                      editType="datepickeredit"
+                      type="date"
+                      format="dd-MMM-yyyy"
+                    />
+                  </ColumnsDirective>
+                  <AggregatesDirective>
+                    <AggregateDirective>
+                      <AggregateColumnsDirective>
+                        <AggregateColumnDirective
+                          field="potential"
+                          type="Sum"
+                          format="N2"
+                        />
+                        <AggregateColumnDirective
+                          field="SalesValPlan"
+                          type="Sum"
+                          format="N2"
+                        />
+                      </AggregateColumnsDirective>
+                    </AggregateDirective>
+                  </AggregatesDirective>
+
+                  <Inject
+                    services={[Edit, Sort, Aggregate, CommandColumn, Freeze]}
                   />
-                  {errors.dealer_name && (
-                    <span style={{ color: "red" }}>{errors.dealer_name}</span>
-                  )}
-                </Col>
-                <Col xl={4} lg={4} md={4} sm={4} xs={4}>
-                  <label className="formlabel">City*</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formDetails.city}
-                    onChange={handleChange}
-                  />
-                  {errors.city && (
-                    <span style={{ color: "red" }}>{errors.city}</span>
-                  )}
-                </Col>
-                <Col xl={4} lg={4} md={4} sm={4} xs={4}>
-                  <label className="formlabel">Potentail(Lacs)</label>
-                  <input
-                    type="number"
-                    name="potential"
-                    value={formDetails.potential}
-                    onChange={handleChange}
-                  />
-                </Col>
-              </Row>
-              <Row style={{ marginTop: "10px" }}>
-                <Col xl={4} lg={4} md={4} sm={4} xs={4}>
-                  <label className="formlabel">Sales Value Plan(Rs.)*</label>
-                  <input
-                    type="number"
-                    name="SalesValPlan"
-                    value={formDetails.SalesValPlan}
-                    onChange={handleChange}
-                  />
-                  {errors.SalesValPlan && (
-                    <span style={{ color: "red" }}>{errors.SalesValPlan}</span>
-                  )}
-                </Col>
-                <Col xl={4} lg={4} md={5} sm={5} xs={5}>
-                  <label className="formlabel">Estimated Onboarding Date</label>
-                  <input
-                    type="date"
-                    name="EstOnBoardDate"
-                    min={minDate}
-                    value={formDetails.EstOnBoardDate}
-                    onChange={handleChange}
-                  />
-                  {errors.EstOnBoardDate && (
-                    <span style={{ color: "red" }}>
-                      {errors.EstOnBoardDate}
+                </GridComponent>
+              </div>
+              {isLocked ? null : (
+                <div className="titlePopupHeader" style={{ marginTop: "10px" }}>
+                  <button
+                    className="buttonForMainUi"
+                    style={{ backgroundColor: "#5a240e" }}
+                    onClick={handlePopupDataSubmit}
+                  >
+                    <span style={{ fontFamily: "Nunito sans" }}>
+                      {" "}
+                      Save Details
                     </span>
-                  )}
-                </Col>
-                <Col xl={2} lg={2} md={2} sm={2}>
-                  <div style={{ marginTop: "20px" }}>
-                    <button
-                      className="buttonForMainUi"
-                      onClick={() => handleAdd()}
-                    >
-                      <span style={{ fontFamily: "Nunito sans" }}>Add</span>
-                    </button>{" "}
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div id={"hjfcjh"}>
-              <GridComponent
-                locale="en-Us"
-                id="new_DelearUiGridPopup_id"
-                key="new_DelearUiGridPopup_id"
-                allowTextWrap={true}
-                allowResizing={false}
-                dataSource={dealerPopupGridData}
-                editSettings={{
-                  allowEditing: true,
-                  mode: "Batch",
-                  persistSelection: true,
-                  allowDeleting: true,
-                  // showConfirmDialog: false,
-                }}
-                enableStickyHeader={true}
-                height={"300px"}
-                toolbar={["Delete"]}
-                ref={dealerPopupInstance}
-                allowPaging={false}
-                gridLines="Both"
-                rowHeight={25}
-              >
-                <ColumnsDirective>
-                  <ColumnDirective
-                    field="Sno"
-                    haederText="S No."
-                    visible={false}
-                    width="50"
-                    isPrimaryKey={true}
-                  />
-                  <ColumnDirective
-                    field="dealer_name"
-                    headerText="Dealer Name"
-                    width="100"
-                    textAlign="left"
-                    allowEditing={true}
-                  />
-                  <ColumnDirective
-                    field="city"
-                    headerText="City"
-                    width="100"
-                    textAlign="left"
-                    allowEditing={true}
-                  />
-                  <ColumnDirective
-                    field="potential"
-                    headerText="Potential(Lacs)"
-                    width="100"
-                    textAlign="center"
-                    editType="numericedit"
-                    allowEditing={true}
-                  />
-                  <ColumnDirective
-                    field="SalesValPlan"
-                    headerText="Sales Value Plan(Rs)"
-                    width="100"
-                    textAlign="center"
-                    editType="numericedit"
-                    allowEditing={true}
-                  />
-
-                  <ColumnDirective
-                    field="EstOnBoardDate"
-                    headerText="Estimated Onboarding Date"
-                    width="130"
-                    textAlign="center"
-                    allowEditing={true}
-                    editType="datepickeredit"
-                    type="date"
-                    format="dd-MMM-yyyy"
-                  />
-                </ColumnsDirective>
-                <AggregatesDirective>
-                  <AggregateDirective>
-                    <AggregateColumnsDirective>
-                      <AggregateColumnDirective
-                        field="potential"
-                        type="Sum"
-                        format="N2"
-                      />
-                      <AggregateColumnDirective
-                        field="SalesValPlan"
-                        type="Sum"
-                        format="N2"
-                      />
-                    </AggregateColumnsDirective>
-                  </AggregateDirective>
-                </AggregatesDirective>
-
-                <Inject
-                  services={[Edit, Sort, Aggregate, CommandColumn, Freeze]}
-                />
-              </GridComponent>
-            </div>
-            <div className="titlePopupHeader" style={{ marginTop: "10px" }}>
-              <button
-                className="buttonForMainUi"
-                style={{ backgroundColor: "#5a240e" }}
-                onClick={handlePopupDataSubmit}
-              >
-                <span style={{ fontFamily: "Nunito sans" }}> Save Details</span>
-              </button>
+                  </button>
+                </div>
+              )}
             </div>
           </Popup>
         ) : null}

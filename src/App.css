@@ -2491,3 +2491,7 @@ table.table-striped1 tbody tr:nth-child(odd) {
 .e-redicon {
   color: red;
 }
+
+.paddingForPopupTerritory {
+  padding: 4px 13px 4px 10px;
+}
