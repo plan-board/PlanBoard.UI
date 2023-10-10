@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-
 import CommonTopSales from "../components/CommonTopSales";
 import ZoneDropDown from "../components/ZoneDropDown";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
 import AllFigureText from "../components/AllFigureText";
 import LogSummary from "../components/LogSummary";
+import Bar from "./ZoneBarChart";
 
 const Zone = () => {
   const { AuthData } = useSelector((state) => state.auth);
@@ -44,6 +44,7 @@ const Zone = () => {
       </div>
 
       <CommonTopSales actionType="Zone" selectedZone={selectedZone} />
+      <Bar />
       <div class="card-box lightblue">
         <div className="w3-bar tab-container">
           <div

@@ -35,7 +35,7 @@ import Settings from "./domains/settings/Settings";
 function App() {
   const { AuthData } = useSelector((state) => state.auth);
   // console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(localStorage.getItem("access_token"));
   const dispatch = useDispatch();
   const loggedIn = localStorage.getItem("Isloggedin");
@@ -69,11 +69,19 @@ function App() {
   const PrivateRoute = ({ element, ...rest }) => {
     return loggedIn == "true" ? element : <Navigate to="/login" />;
   };
+
+  const SidebarVisible = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
   return (
     <>
       <BrowserRouter>
-        <div>
-          <Navbar isAuth={loggedIn == "true" ? true : false} />
+        <Navbar
+          isAuth={loggedIn == "true" ? true : false}
+          SidebarVisible={SidebarVisible}
+          sidebarOpen={sidebarOpen}
+        />
+        {sidebarOpen && (
           <Sidebar
             rolId={
               AuthData?.Data?.length > 0
@@ -81,85 +89,83 @@ function App() {
                 : true
             }
           />
-          <Routes>
-            <Route
-              path="/"
-              element={<PrivateRoute element={<Dashboard />} />}
-            />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<Forgotpassword />} />
-            <Route
-              path="/account"
-              element={<PrivateRoute element={<Account />} />}
-            />
-            <Route
-              path="/profile"
-              element={<PrivateRoute element={<Profile />} />}
-            />
-            <Route
-              path="/notifications"
-              element={<PrivateRoute element={<Notifications />} />}
-            />
-            <Route path="/logs" element={<PrivateRoute element={<Logs />} />} />
+        )}
 
-            <Route
-              path="/verifyphone"
-              element={<PrivateRoute element={<Verifyphone />} />}
-            />
-            <Route
-              path="/verifyemail"
-              element={<PrivateRoute element={<Verifyemail />} />}
-            />
-            <Route
-              path="/verifyprofile"
-              element={<PrivateRoute element={<Verifyprofile />} />}
-            />
-            <Route
-              path="/dashboard"
-              element={<PrivateRoute element={<Dashboard />} />}
-            />
-            <Route
-              path="/national"
-              element={<PrivateRoute element={<National />} />}
-            />
-            <Route path="/zone" element={<PrivateRoute element={<Zone />} />} />
-            <Route
-              path="/depot/:zoneId?/:depotId?"
-              element={<PrivateRoute element={<Depot />} />}
-            />
-            <Route
-              path="/territory/:zoneId?/:depotId?/:territoryId?"
-              element={<PrivateRoute element={<Territory />} />}
-            />
-            <Route
-              path="/dealer"
-              element={<PrivateRoute element={<Dealer />} />}
-            />
-            <Route
-              path="/schedule"
-              element={<PrivateRoute element={<Schedule />} />}
-            />
-            <Route
-              path="/settings"
-              element={<PrivateRoute element={<Settings />} />}
-            />
-            <Route
-              path="/about"
-              element={
-                isAuth ? <About isAuth={isAuth} /> : <Navigate to="/login" />
-              }
-            />
-            <Route
-              path="/customer-potential"
-              element={<PrivateRoute element={<CustomerPotential />} />}
-            />
-            <Route
-              path="/change-password"
-              element={<PrivateRoute element={<ChangePassword />} />}
-            />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<PrivateRoute element={<Dashboard />} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<Forgotpassword />} />
+          <Route
+            path="/account"
+            element={<PrivateRoute element={<Account />} />}
+          />
+          <Route
+            path="/profile"
+            element={<PrivateRoute element={<Profile />} />}
+          />
+          <Route
+            path="/notifications"
+            element={<PrivateRoute element={<Notifications />} />}
+          />
+          <Route path="/logs" element={<PrivateRoute element={<Logs />} />} />
+
+          <Route
+            path="/verifyphone"
+            element={<PrivateRoute element={<Verifyphone />} />}
+          />
+          <Route
+            path="/verifyemail"
+            element={<PrivateRoute element={<Verifyemail />} />}
+          />
+          <Route
+            path="/verifyprofile"
+            element={<PrivateRoute element={<Verifyprofile />} />}
+          />
+          <Route
+            path="/dashboard"
+            element={<PrivateRoute element={<Dashboard />} />}
+          />
+          <Route
+            path="/national"
+            element={<PrivateRoute element={<National />} />}
+          />
+          <Route path="/zone" element={<PrivateRoute element={<Zone />} />} />
+          <Route
+            path="/depot/:zoneId?/:depotId?"
+            element={<PrivateRoute element={<Depot />} />}
+          />
+          <Route
+            path="/territory/:zoneId?/:depotId?/:territoryId?"
+            element={<PrivateRoute element={<Territory />} />}
+          />
+          <Route
+            path="/dealer"
+            element={<PrivateRoute element={<Dealer />} />}
+          />
+          <Route
+            path="/schedule"
+            element={<PrivateRoute element={<Schedule />} />}
+          />
+          <Route
+            path="/settings"
+            element={<PrivateRoute element={<Settings />} />}
+          />
+          <Route
+            path="/about"
+            element={
+              isAuth ? <About isAuth={isAuth} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/customer-potential"
+            element={<PrivateRoute element={<CustomerPotential />} />}
+          />
+          <Route
+            path="/change-password"
+            element={<PrivateRoute element={<ChangePassword />} />}
+          />
+        </Routes>
       </BrowserRouter>
     </>
   );

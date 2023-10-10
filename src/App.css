@@ -1660,8 +1660,8 @@ p {
 }
 
 .w3-sidebar {
-  width: 85px;
-  background: var(--sidebar-nav);
+  width: 150px;
+  background: rgba(0, 0, 0, 0.87);
 }
 
 .w3-sidebar p.title {
@@ -1756,13 +1756,14 @@ th {
 }
 
 .main {
-  margin-left: 88px;
+  /* margin-left: 88px; */
   padding: 75px 20px 50px;
   color: #181818;
   background: var(--main-background);
+  overflow: auto;
 }
 .top-navbar {
-  background: var(--top-nav);
+  background: #007ad1;
   color: #fff;
 }
 
@@ -2494,4 +2495,20 @@ table.table-striped1 tbody tr:nth-child(odd) {
 
 .paddingForPopupTerritory {
   padding: 4px 13px 4px 10px;
+}
+.css-1wvake5 {
+  min-width: 200px !important;
+  width: 200px !important;
+}
+
+.sidebarOpen {
+  background-color: rgba(0, 0, 0, 0);
+
+  color: #000;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
 }

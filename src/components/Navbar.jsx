@@ -3,8 +3,9 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import Profile from "../images/profile-img.png";
 import Exit from "../images/exit.png";
+import hamburger from "../images/hamburger.png";
 
-const Navbar = ({ isAuth }) => {
+const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
   const { AuthData } = useSelector((state) => state?.auth);
   const logout = () => {
     signOut(auth).then(() => {
@@ -18,6 +19,13 @@ const Navbar = ({ isAuth }) => {
     <div className="w3-bar w3-top top-navbar h5" style={{ zIndex: 10 }}>
       {isAuth ? (
         <div className="">
+          <div
+            className="sidebarOpen"
+            onClick={() => SidebarVisible()}
+            style={{ marginLeft: sidebarOpen ? "140px" : "0px" }}
+          >
+            <img src={hamburger} className="hamburger" alt="Menu" />
+          </div>
           <button
             className=" w3-right w3-button w3-bar-item w3-hover-none"
             onClick={logout}
@@ -30,9 +38,7 @@ const Navbar = ({ isAuth }) => {
           </button>
         </div>
       ) : (
-        <>
-
-        </>
+        <></>
       )}
     </div>
   );
