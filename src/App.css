@@ -2512,3 +2512,9 @@ table.table-striped1 tbody tr:nth-child(odd) {
   font-size: 16px;
   cursor: pointer;
 }
+.haeder_cssForLogin {
+  width: 50%;
+  position: fixed;
+  right: 0;
+  top: 0;
+}

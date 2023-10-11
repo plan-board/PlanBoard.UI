@@ -16,6 +16,7 @@ import LogSummary from "../components/LogSummary";
 
 const National = () => {
   const { AuthData } = useSelector((state) => state.auth);
+  const { sidebarStatus } = useSelector((state) => state);
   console.log("====auth====", AuthData);
   // Set Select Zone
   const [selectedZone, setSelectedZone] = useState(0);
@@ -44,7 +45,10 @@ const National = () => {
   };
 
   return (
-    <div className="main">
+    <div
+      className="main"
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />

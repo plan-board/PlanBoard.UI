@@ -11,6 +11,7 @@ import LogSummary from "../components/LogSummary";
 
 const Depot = () => {
   const [toggleState, setToggleState] = useState(1);
+  const { sidebarStatus } = useSelector((state) => state);
   const toggleTab = (index) => {
     setToggleState(index);
   };
@@ -46,7 +47,10 @@ const Depot = () => {
   }, []);
 
   return (
-    <div className="main">
+    <div
+      className="main"
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />

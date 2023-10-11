@@ -20,10 +20,7 @@ const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
   let Wgt_DelearUiGridInstance = useRef();
   const { zoneId, depotId, territoryId } = useParams();
-  console.log(
-    "🚀 ~ file: Territory.jsx:25 ~ Territory ~ territoryId:",
-    territoryId
-  );
+  const { sidebarStatus } = useSelector((state) => state);
 
   const [selectedZone, setSelectedZone] = useState(
     zoneId ?? (AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0)
@@ -65,7 +62,10 @@ const Territory = () => {
   };
 
   return (
-    <div className="main">
+    <div
+      className="main"
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />

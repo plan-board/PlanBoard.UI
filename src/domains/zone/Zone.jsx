@@ -9,6 +9,7 @@ import Bar from "./ZoneBarChart";
 
 const Zone = () => {
   const { AuthData } = useSelector((state) => state.auth);
+  const { sidebarStatus } = useSelector((state) => state);
   console.log("--AuthData---", AuthData);
 
   const [selectedZone, setSelectedZone] = useState(
@@ -26,7 +27,10 @@ const Zone = () => {
   };
 
   return (
-    <div className="main">
+    <div
+      className="main"
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />

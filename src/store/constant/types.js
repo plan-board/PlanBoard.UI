@@ -16,4 +16,4 @@ export const API_DEPOT_SALES_PLAN_SUCCESS = "API_DEPOT_SALES_PLAN_SUCCESS";
 export const API_SUMMARY_SUCCESS = "API_SUMMARY_SUCCESS";
 export const API_MONTH_WISE_SALES_SUCCESS = "API_MONTH_WISE_SALES_SUCCESS";
 
-
+export const SidebarStatus = "SidebarStatus";

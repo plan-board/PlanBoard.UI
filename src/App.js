@@ -34,8 +34,7 @@ import Settings from "./domains/settings/Settings";
 
 function App() {
   const { AuthData } = useSelector((state) => state.auth);
-  // console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { sidebarStatus } = useSelector((state) => state);
   const [isAuth, setIsAuth] = useState(localStorage.getItem("access_token"));
   const dispatch = useDispatch();
   const loggedIn = localStorage.getItem("Isloggedin");
@@ -70,18 +69,11 @@ function App() {
     return loggedIn == "true" ? element : <Navigate to="/login" />;
   };
 
-  const SidebarVisible = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
   return (
     <>
       <BrowserRouter>
-        <Navbar
-          isAuth={loggedIn == "true" ? true : false}
-          SidebarVisible={SidebarVisible}
-          sidebarOpen={sidebarOpen}
-        />
-        {sidebarOpen && (
+        <Navbar isAuth={loggedIn == "true" ? true : false} />
+        {sidebarStatus.flag && (
           <Sidebar
             rolId={
               AuthData?.Data?.length > 0

@@ -7,13 +7,14 @@ import { hasPermission } from "../auth/middleware";
 
 const Sidebar = ({ isAuth, rolId }) => {
   const [toggleState, setToggleState] = useState(1);
+
   const toggleTab = (index) => {
     setToggleState(index);
   };
 
   return (
     <div
-      className="w3-sidebar w3-bar-block w3-hide-small sidebar-nav"
+      className="w3-sidebar w3-bar-block  sidebar-nav"
       style={{ zIndex: 20 }}
     >
       <button className="w3-bar-item w3-button w3-padding-xlarge  w3-center">
@@ -88,29 +89,29 @@ const Sidebar = ({ isAuth, rolId }) => {
       )}
       {hasPermission(rolId, "customer-potential") && (
         <div className="sub-menu">
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="/customer-potential"
-        >
-          <i className="fa fa-user"></i>
-          <p className="w3-small h6">Customer Potential</p>
-        </NavLink>
-      </div>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link" + (!isActive ? " unselected" : " active")
+            }
+            to="/customer-potential"
+          >
+            <i className="fa fa-user"></i>
+            <p className="w3-small h6">Customer Potential</p>
+          </NavLink>
+        </div>
       )}
       {hasPermission(rolId, "change-password") && (
-      <div className="sub-menu">
-        <NavLink
-          className={({ isActive }) =>
-            "nav-link" + (!isActive ? " unselected" : " active")
-          }
-          to="/change-password"
-        >
-          <i className="fa fa-lock"></i>
-          <p className="w3-small h6">Change Password</p>
-        </NavLink>
-      </div>
+        <div className="sub-menu">
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link" + (!isActive ? " unselected" : " active")
+            }
+            to="/change-password"
+          >
+            <i className="fa fa-lock"></i>
+            <p className="w3-small h6">Change Password</p>
+          </NavLink>
+        </div>
       )}
     </div>
   );

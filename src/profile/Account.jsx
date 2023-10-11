@@ -1,9 +1,14 @@
+import { useSelector } from "react-redux";
 const Account = () => {
-    return (
-        <div className="main  w3-border"> 
-           Account 
-        </div>
-    ) 
-}
+  const { sidebarStatus } = useSelector((state) => state);
+  return (
+    <div
+      className=" main "
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
+      Account
+    </div>
+  );
+};
 
-export default Account 
+export default Account;

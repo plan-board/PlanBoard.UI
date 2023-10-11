@@ -11,7 +11,7 @@ const CustomerPotential = () => {
   const dispatch = useDispatch();
   let customterGridInstance = useRef();
   const { AuthData } = useSelector((state) => state?.auth);
-
+  const { sidebarStatus } = useSelector((state) => state);
   const [isLoading, setLoading] = useState(false);
   const [territoryList, setTerritoryList] = useState([]);
   const [territortId, setTerritoryId] = useState(null);
@@ -208,7 +208,10 @@ const CustomerPotential = () => {
   }, [filterCode, filterName, employeeList]);
 
   return (
-    <div className="main">
+    <div
+      className="main"
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
       <section>
         <div className="w3-row">
           {isLoading && <Loader />}

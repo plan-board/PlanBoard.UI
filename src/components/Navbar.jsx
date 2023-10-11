@@ -1,12 +1,15 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import Profile from "../images/profile-img.png";
 import Exit from "../images/exit.png";
 import hamburger from "../images/hamburger.png";
+import { changeSidebarStatus } from "../store/actions/sidebarAction";
 
 const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
   const { AuthData } = useSelector((state) => state?.auth);
+  const { sidebarStatus } = useSelector((state) => state);
+  const dispatch = useDispatch();
   const logout = () => {
     signOut(auth).then(() => {
       localStorage.clear();
@@ -21,8 +24,8 @@ const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
         <div className="">
           <div
             className="sidebarOpen"
-            onClick={() => SidebarVisible()}
-            style={{ marginLeft: sidebarOpen ? "140px" : "0px" }}
+            onClick={() => dispatch(changeSidebarStatus())}
+            style={{ marginLeft: sidebarStatus.flag ? "140px" : "0px" }}
           >
             <img src={hamburger} className="hamburger" alt="Menu" />
           </div>
@@ -32,7 +35,7 @@ const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
           >
             <img src={Exit} className="exit_icon" alt="Exit" />
           </button>
-          <button className=" w3-right w3-button w3-bar-item">
+          <button className=" w3-right w3-button w3-bar-item w3-hide-small">
             <img src={Profile} className="w3-circle avatar" alt="Profile" />
             {AuthData?.Data[0].EmployeeName} ({AuthData?.Data[0].EmployeeTpye})
           </button>

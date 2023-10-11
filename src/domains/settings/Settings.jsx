@@ -6,15 +6,19 @@ import ZoneMaster from "./Components/ZoneMaster";
 import DepotMaster from "./Components/DepotMaster";
 import TerritoryMaster from "./Components/TerritoryMaster";
 import EmployeeMaster from "./Components/EmployeeMaster";
-
+import { useSelector } from "react-redux";
 const Settings = () => {
   const [toggleState, setToggleState] = useState(1);
+  const { sidebarStatus } = useSelector((state) => state);
 
   const toggleTab = (index) => {
     setToggleState(index);
   };
   return (
-    <div className="main">
+    <div
+      className="main"
+      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+    >
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />
