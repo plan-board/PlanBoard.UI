@@ -11,7 +11,7 @@ import LogSummary from "../components/LogSummary";
 
 const Depot = () => {
   const [toggleState, setToggleState] = useState(1);
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   const toggleTab = (index) => {
     setToggleState(index);
   };
@@ -47,10 +47,7 @@ const Depot = () => {
   }, []);
 
   return (
-    <div
-      className="main"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
-    >
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />
@@ -127,7 +124,9 @@ const Depot = () => {
             <div>
               <h3 style={{ fontFamily: "Nunito sans" }}>Lock Summary</h3>
             </div>
-            <LogSummary actionType="Depot" selectedId={selectedDepot} />
+            {toggleState === 2 && (
+              <LogSummary actionType="Depot" selectedId={selectedDepot} />
+            )}
           </div>
         </div>
       </div>

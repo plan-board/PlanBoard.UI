@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 import LoadingPlaceholder from "../../../components/LoadingPlaceholder";
@@ -7,10 +7,33 @@ import { SHOW_TOAST } from "../../../store/constant/types";
 import DataTable from "react-data-table-component";
 import ExportExcel from "../../ExportExcel";
 import ZoneDropDown from "../../components/ZoneDropDown";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Edit,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  AggregateColumnDirective,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import Loader from "../../../common/Loader";
 
 const FocusSectorMaster = () => {
   const dispatch = useDispatch();
-
+  let focusSectorMasterInstance = useRef();
   const [isLoading, setLoading] = useState(false);
   const [monthId, setMonth] = useState(0);
   const [fyId, setFYear] = useState(0);
@@ -214,17 +237,6 @@ const FocusSectorMaster = () => {
     </span>
   );
 
-  const subHeaderComponent = (
-    <input
-      className="w3-input w3-border filterInput w-100"
-      type="text"
-      placeholder="Filter By Sector  Name"
-      aria-label="Search Input"
-      value={filterText}
-      onChange={(e) => setFilterText(e.target.value)}
-    />
-  );
-
   const handleExportClick = () => {
     const arrObj = sectorMaster.map((element, index) => ({
       "S.No": index + 1,
@@ -240,6 +252,23 @@ const FocusSectorMaster = () => {
   const handleSelectionChangeDrop = (newValue) => {
     setSelectedZoneDrop(newValue);
   };
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      focusSectorMasterInstance.current &&
+      args.item.id === "focusSectorMasterGrid_id_excelexport"
+    ) {
+      const arrObj = sectorMaster.map((element, index) => ({
+        "S.No": index + 1,
+        FY: element.FYName,
+        Month: element.Month,
+        Zone: element.ZoneName,
+        "Market Sector Name": element.MarketSectorName,
+      }));
+
+      ExportExcel("Monthly-Focus-Product", arrObj);
+    }
+  };
 
   return (
     <>
@@ -247,19 +276,27 @@ const FocusSectorMaster = () => {
       <hr />
       <form>
         <table className="table-bordered table-striped">
-          <thead>
+          <thead style={{ color: "#000", background: "#e0e0e0" }}>
             <tr>
               <th>
-                <label htmlFor="selectionBox">FY</label>
+                <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                  FY
+                </label>
               </th>
               <th>
-                <label htmlFor="selectionBox">Month</label>
+                <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                  Month
+                </label>
               </th>
               <th>
-                <label htmlFor="selectionBox">Zone</label>
+                <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                  Zone
+                </label>
               </th>
               <th>
-                <label htmlFor="selectionBox">Market Sector</label>
+                <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                  Market Sector
+                </label>
               </th>
               <th colSpan={2}></th>
             </tr>
@@ -332,34 +369,91 @@ const FocusSectorMaster = () => {
           </tbody>
         </table>
       </form>
-      <div className="row w-100 my-4">
-        <div className="one-third">{subHeaderComponent}</div>
-      </div>
-      <div className="tbl-container">
-        {sectorMaster?.length ? (
-          <div>
-            <button className="w3-btn w3-gray" onClick={handleExportClick}>
-              {" "}
-              Export
-            </button>
-          </div>
-        ) : null}
 
-        <DataTable
-          columns={columns}
-          data={filteredItems}
-          pagination
-          className="datatable"
-          fixedHeader={true}
-          fixedHeaderScrollHeight="400px"
-          subHeader
-          subHeaderComponent={
-            <CustomSubHeaderComponent align="left">
-              {additionalComponent}
-            </CustomSubHeaderComponent>
-          }
-        />
-      </div>
+      <Row style={{ marginTop: "15px" }}>
+        <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+          <GridComponent
+            locale="en-Us"
+            id="focusSectorMasterGrid_id"
+            key="focusSectorMasterGrid_id"
+            allowTextWrap={true}
+            allowResizing={false}
+            dataSource={filteredItems}
+            toolbar={toolbar}
+            toolbarClick={toolbarClick}
+            enableStickyHeader={true}
+            height={"400px"}
+            ref={focusSectorMasterInstance}
+            allowPaging={true}
+            allowSelection={true}
+            gridLines="Both"
+            rowHeight={30}
+            pageSettings={{ pageSize: 15, pageCount: 15 }}
+            allowFiltering={true}
+            filterSettings={{ type: "Excel" }}
+            allowExcelExport={true}
+            allowSorting={true}
+          >
+            <ColumnsDirective>
+              <ColumnDirective
+                field="tableid"
+                headerText={"S.No"}
+                width="130"
+                visible={true}
+                textAlign="center"
+                allowEditing={false}
+                allowFiltering={false}
+              />
+              <ColumnDirective
+                field="FYName"
+                headerText={"FY"}
+                width="130"
+                visible={true}
+                textAlign="left"
+                allowEditing={false}
+                allowFiltering={false}
+              />
+              <ColumnDirective
+                field="Month"
+                headerText={"Month"}
+                width="90"
+                visible={true}
+                textAlign="left"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="ZoneName"
+                headerText={"Zone"}
+                width="130"
+                format={"N2"}
+                visible={true}
+                textAlign="center"
+                allowEditing={false}
+              />
+              <ColumnDirective
+                field="MarketSectorName"
+                headerText={"Market Sector"}
+                width="130"
+                visible={true}
+                textAlign="center"
+                allowEditing={false}
+              />
+            </ColumnsDirective>
+
+            <Inject
+              services={[
+                CommandColumn,
+                Page,
+                Filter,
+                Aggregate,
+                Toolbar,
+                ExcelExport,
+                Sort,
+              ]}
+            />
+          </GridComponent>
+        </Col>
+      </Row>
 
       {/* <table className=" w3-table table-bordered  h6 w3-small w3-white  text-left">
         <tr className=" w3-light-gray  h6">

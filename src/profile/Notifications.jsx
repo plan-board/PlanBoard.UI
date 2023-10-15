@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
 const Notifications = () => {
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   return (
     <div
       className=" main w3-border"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+      style={{ marginLeft: flag ? "150px" : "0px" }}
     >
       Notifications
     </div>

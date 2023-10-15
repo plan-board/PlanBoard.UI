@@ -8,7 +8,7 @@ import { rolePermission, zoneData } from "../../auth/middleware";
 
 const Dealer = () => {
   const [visibility, setVisibility] = useState(false);
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   const popupCloseHandler = (e) => {
     setVisibility(e);
   };
@@ -16,7 +16,7 @@ const Dealer = () => {
   return (
     <div
       className="main  w3-border"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+      style={{ marginLeft: flag ? "150px" : "0px" }}
     >
       <div className="w3-row w3-padding-16"></div>
 

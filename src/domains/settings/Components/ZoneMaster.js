@@ -1,8 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import DataTable from "react-data-table-component";
 import axiosInstance from "./../../../auth/api";
 import { SHOW_TOAST } from "../../../store/constant/types";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  CommandColumn,
+  Page,
+  Filter,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
 
 // import CustomPopup from "../../CustomPopup";
 import ResponsePopup from "../../../common/ResponsePopup";
@@ -10,6 +23,7 @@ import Loader from "../../../common/Loader";
 
 const ZoneMaster = ({ toggleState }) => {
   const dispatch = useDispatch();
+  let zoneMasterInstance = useRef();
   const [isLoading, setLoading] = useState(false);
   const [zoneListData, setZoneListData] = useState([]);
   const [zoneManagerList, setZoneManagerList] = useState([]);
@@ -92,45 +106,13 @@ const ZoneMaster = ({ toggleState }) => {
     );
   };
 
-  const columns = [
-    {
-      name: "S.No",
-      selector: (row) => row.zone_id,
-      sortable: true,
-    },
-    {
-      name: "Zone Code",
-      selector: (row) => row.zone_code,
-      sortable: true,
-    },
-    {
-      name: "Zone Name",
-      selector: (row) => row.zone_name,
-      sortable: true,
-    },
-    {
-      name: "Zone Manager Code",
-      selector: (row) => row.zonemgr_code,
-      sortable: true,
-    },
-    {
-      name: "Zone Manager Name",
-      selector: (row) => row.zonemgr_name,
-      sortable: true,
-    },
-    {
-      name: "Action",
-      cell: renderIconColumn,
-      width: "150px",
-    },
-  ];
-
   const getSingleRowData = async (args) => {
     const payload = {
       Token: localStorage.getItem("access_token"),
       // Token: "19F38171-3B54-400D-ABA8-0882CE93319",
-      entity_id: args.zone_id,
+      entity_id: args.rowData.zone_id,
     };
+
     setLoading(true);
     try {
       const response = await axiosInstance.post("api/Master/ZoneData", payload);
@@ -262,6 +244,12 @@ const ZoneMaster = ({ toggleState }) => {
   const handleCloseResponse = () => {
     setResponseDetails({ show: false, message: "", type: "" });
   };
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
 
   return (
     <>
@@ -269,16 +257,22 @@ const ZoneMaster = ({ toggleState }) => {
         {isLoading && <Loader />}
         <form>
           <table className="table-bordered table-striped equal-width-table">
-            <thead>
+            <thead style={{ color: "#000", background: "#e0e0e0" }}>
               <tr>
                 <th>
-                  <label htmlFor="selectionBox">Zone Code</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Zone Code
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Zone Name</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Zone Name
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Zone Manager</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Zone Manager
+                  </label>
                 </th>
               </tr>
             </thead>
@@ -335,22 +329,97 @@ const ZoneMaster = ({ toggleState }) => {
             </tbody>
           </table>
         </form>
-        <div className="tbl-container">
-          <DataTable
-            columns={columns}
-            data={zoneListData}
-            pagination
-            className="datatable"
-            fixedHeader={true}
-            fixedHeaderScrollHeight="400px"
-            subHeader
-            //   subHeaderComponent={
-            //     <CustomSubHeaderComponent align="left">
-            //       {additionalComponent}
-            //     </CustomSubHeaderComponent>
-            //   }
-          />
-        </div>
+        <Row style={{ marginTop: "15px" }}>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="zoneMasterGrid_id"
+              key="zoneMasterGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={zoneListData}
+              enableStickyHeader={true}
+              height={"350px"}
+              ref={zoneMasterInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={30}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              allowExcelExport={true}
+              allowSorting={true}
+              commandClick={getSingleRowData}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="zone_id"
+                  headerText={"S.No"}
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                  allowFiltering={false}
+                />
+                <ColumnDirective
+                  field="zone_code"
+                  headerText={"Zone Code"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  allowFiltering={false}
+                />
+                <ColumnDirective
+                  field="zone_name"
+                  headerText={"Zone Name"}
+                  width="90"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="zonemgr_code"
+                  headerText={"Zone Manager Code"}
+                  width="130"
+                  format={"N2"}
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="zonemgr_name"
+                  headerText={"Zone Manager Name"}
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  headerTemplate="Action"
+                  width="100"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                  commands={commmandTemplate}
+                  allowSorting={false}
+                />
+              </ColumnsDirective>
+
+              <Inject
+                services={[
+                  CommandColumn,
+                  Page,
+                  Filter,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
         <ResponsePopup
           show={responseDetails.show}
           text={responseDetails.message}

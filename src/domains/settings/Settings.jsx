@@ -9,22 +9,19 @@ import EmployeeMaster from "./Components/EmployeeMaster";
 import { useSelector } from "react-redux";
 const Settings = () => {
   const [toggleState, setToggleState] = useState(1);
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
 
   const toggleTab = (index) => {
     setToggleState(index);
   };
   return (
-    <div
-      className="main"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
-    >
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />
         </span>
       </div>
-      <div class="card-box lightgreen">
+      <div class="card-box lightblue">
         <div className="w3-bar tab-container">
           <div
             className={
@@ -110,7 +107,7 @@ const Settings = () => {
               className={toggleState === 1 ? "  " : " w3-hide  "}
               onClick={() => toggleTab(1)}
             >
-              <FocusSectorMaster />
+              {toggleState === 1 && <FocusSectorMaster />}
             </div>
             <div
               className={toggleState === 2 ? "  " : " w3-hide  "}

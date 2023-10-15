@@ -1,190 +1,206 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import ExportExcel from "../ExportExcel";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Edit,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  AggregateColumnDirective,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import Loader from "../../common/Loader";
 import { getCurrentMonth } from "../../utils/utils";
 
 const itemsPerPage = 10;
 
 const LogSummary = ({ actionType = "HOD", selectedId }) => {
-    console.log("LogSummary=LogSummary");
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  let logHistoryGridInstance = useRef();
+  const [logHistory, setLogHistory] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
-    const [logHistory, setLogHistory] = useState([]);
+  const entityId = actionType == "HOD" ? 0 : selectedId;
+  const fetchLogHistory = async () => {
+    try {
+      const payload = {
+        Token: localStorage.getItem("access_token"),
+        Type: actionType,
+        FYId: 5,
+        Month: getCurrentMonth(),
+        EntityId: entityId,
+      };
+      const response = await axiosInstance.post(
+        "api/Master/GetIsLockByEntityData",
+        payload
+      );
 
-    const [filterText, setFilterText] = useState("");
-    const [sortField, setSortField] = useState(''); // To store the current sorting field (empty for no sorting)
-    const [sortDirection, setSortDirection] = useState(''); // To store the current sorting direction ('asc' or 'desc')
-
-    const [currentPage, setCurrentPage] = useState(0);
-
-    const entityId = actionType == "HOD" ? 0 : selectedId;
-    const fetchLogHistory = async () => {
-        try {
-            const payload = {
-                Token: localStorage.getItem("access_token"),
-                Type: actionType,
-                FYId: 5,
-                Month: getCurrentMonth(),
-                EntityId: entityId,
-            };
-            const response = await axiosInstance.post(
-                "api/Master/GetIsLockByEntityData",
-                payload
-            );
-
-            if (response?.status === 200) {
-                setLogHistory(response?.data?.Data);
-            }
-        } catch (error) {
-            // Handle errors
-            dispatch({ type: SHOW_TOAST, payload: error.message });
-        }
-    };
-
-    useEffect(() => {
-        if(actionType == "HOD" || selectedId !=0 ){
-            fetchLogHistory();
-        }
-    }, [selectedId]);
-
-    const handleSort = (field) => {
-        if (sortField === field) {
-            // If the same column is clicked again, toggle the sort direction
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        } else {
-            // If a different column is clicked, set the new sort field and direction
-            setSortField(field);
-            setSortDirection('asc'); // Default to ascending order
-        }
-    };
-    // Sort the data based on the current sorting field and direction
-    let sortedData = [...logHistory];
-    if (sortField === 'Zone') {
-        sortedData.sort((a, b) => {
-            if (sortDirection === 'asc') {
-                return a.zone_name?.localeCompare(b.zone_name);
-            } else {
-                return b.zone_name?.localeCompare(a.zone_name);
-            }
-        });
-    } else if (sortField === 'Depot') {
-        sortedData.sort((a, b) => {
-            if (sortDirection === 'asc') {
-                return a.depot_name?.localeCompare(b.depot_name);
-            } else {
-                return b.depot_name?.localeCompare(a.depot_name);
-            }
-        });
+      if (response?.status === 200) {
+        setLogHistory(response?.data?.Data);
+      }
+      setLoading(false);
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
     }
+  };
 
-    const filterData = (data) => {
-        const filterTextLowerCase = filterText.toLowerCase();
-        return data.filter((item) => (
-            (item?.zone_name && item?.zone_name?.toLowerCase().includes(filterTextLowerCase)) ||
-            (item?.depot_name && item?.depot_name?.toLowerCase().includes(filterTextLowerCase))
-        ));
-    };
+  useEffect(() => {
+    if (actionType == "HOD" || selectedId != 0 || selectedId == 0) {
+      setLoading(true);
+      fetchLogHistory();
+    }
+  }, [selectedId]);
 
-    // Paginate the sorted data
-    const pageCount = Math.ceil(sortedData.length / itemsPerPage);
-    const offset = currentPage * itemsPerPage;
-    const dataToShow = sortedData.slice(offset, offset + itemsPerPage);
-
-    // Filter the paginated and sorted data
-    const filteredItems = filterData(dataToShow);
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
-
-    const handleExportClick = () => {
-        const arrObj = logHistory?.map((element, index) => ({
-            "S.No": index + 1,
-            "Zone": element.zone_name,
-            "Depo": element.depot_name,
-            "Territory": element.territory_name,
-            "Area Manager Code": element.employee_name,
-            "Area Manager Name": element.employee_code,
-            "Lock": element.islock
-        }));
-        console.log("-arrObj", arrObj)
-        ExportExcel('Log Summary', arrObj)
-    };
+  const lockunlockTemplate = (args) => {
     return (
-        <>
-            <div className="w-100">
-                <div className="tbl-container">
-                    {logHistory?.length ? (<div><button className="w3-btn w3-gray" onClick={handleExportClick}> Export</button></div>) : null}
-
-                    <div className="row w-100 mt-3">
-                        <div className="one-half" >
-                            <input className="w3-margin-bottom w3-input w3-border "
-                                type="text"
-                                placeholder="Filter By Zone, depot name "
-                                aria-label="Search Input"
-                                value={filterText}
-                                onChange={(e) => setFilterText(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <table className="table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th colSpan={1} rowSpan={2} style={{ width: "4%" }}> S. NO </th>
-                                <th style={{ width: "16%" }} rowSpan={2} onClick={() => handleSort('Zone')}>Zone  {sortField === 'Zone' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                                <th style={{ width: "10%" }} rowSpan={2} onClick={() => handleSort('Depot')}>Depot  {sortField === 'Depot' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
-                                <th >Territoty</th>
-                                <th >Area Manager Code</th>
-                                <th >Area Manager Name</th>
-                                <th >Lock/Unlock</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredItems?.sort((a, b) => a.Month.toString()?.localeCompare(b.Month.toString())).map((item, index) => (
-                                <tr className="h6 w3-small" key={item?.dealerid}>
-                                    <td className="">
-                                        {++index}
-                                    </td>
-                                    <td className="" colSpan={1} style={{ width: "15%" }}>
-                                        {item?.zone_name}
-                                    </td>
-                                    <td className="" colSpan={1} style={{ width: "15%" }}>
-                                        {item?.depot_name}
-                                    </td>
-                                    <td className="">
-                                        {item?.territory_name}
-                                    </td>
-                                    <td className="" colSpan={1}>
-                                        {item?.employee_name}
-                                    </td>
-                                    <td className="">
-                                        {item?.employee_code}
-                                    </td>
-                                    <td className="">
-                                        {(item?.islock) ? <><i className="fa fa-lock  w3-text-red"></i></> : <><i className="fa fa-lock  w3-text-green"></i></>}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {/* Pagination */}
-                    <div className="pagination">
-                        {Array.from({ length: pageCount }, (_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handlePageChange(index)}
-                                className={`page-button ${currentPage === index ? "active" : ""}`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </>
+      <>
+        {args?.islock ? (
+          <>
+            <i className="fa fa-lock  w3-text-red"></i>
+          </>
+        ) : (
+          <>
+            <i className="fa fa-lock  w3-text-green"></i>
+          </>
+        )}
+      </>
     );
+  };
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      logHistoryGridInstance.current &&
+      args.item.id === "lockSummarysInstance_id_excelexport"
+    ) {
+      const arrObj = logHistory.map((element, index) => ({
+        "S.No": index + 1,
+        Zone: element.zone_name,
+        Depo: element.depot_name,
+        Territory: element.territory_name,
+        "Area Manager Code": element.employee_name,
+        "Area Manager Name": element.employee_code,
+        Lock: element.islock,
+      }));
+
+      ExportExcel("Log Summary", arrObj);
+    }
+  };
+  return (
+    <>
+      <div id="mom-north" className="row">
+        {isLoading && <Loader />}
+        <div className="full">
+          <Row>
+            <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+              <GridComponent
+                locale="en-Us"
+                id="lockSummarysInstance_id"
+                key="lockSummarysInstance_id"
+                allowTextWrap={true}
+                allowResizing={false}
+                dataSource={logHistory}
+                toolbar={toolbar}
+                toolbarClick={toolbarClick}
+                enableStickyHeader={true}
+                height={"500px"}
+                ref={logHistoryGridInstance}
+                allowPaging={true}
+                allowSelection={true}
+                gridLines="Both"
+                rowHeight={40}
+                pageSettings={{ pageSize: 15, pageCount: 15 }}
+                allowFiltering={true}
+                filterSettings={{ type: "Excel" }}
+                allowExcelExport={true}
+                allowSorting={true}
+              >
+                <ColumnsDirective>
+                  <ColumnDirective
+                    field="zone_name"
+                    headerText={"Zone"}
+                    width="130"
+                    visible={true}
+                    textAlign="left"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    field="depot_name"
+                    headerText={"Depot"}
+                    width="130"
+                    visible={true}
+                    textAlign="left"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    field="territory_name"
+                    headerText={"Territory"}
+                    width="100"
+                    format={"N2"}
+                    visible={true}
+                    textAlign="left"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    field="employee_name"
+                    headerText={"Area Manager Name"}
+                    width="150"
+                    visible={true}
+                    textAlign="left"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    field="employee_code"
+                    headerText={"Area Manager Code"}
+                    width="150"
+                    visible={true}
+                    textAlign="left"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    headerText={"Lock/Unlock"}
+                    width="100"
+                    textAlign="center"
+                    allowFiltering={false}
+                    template={lockunlockTemplate}
+                  />
+                </ColumnsDirective>
+
+                <Inject
+                  services={[
+                    CommandColumn,
+                    Page,
+                    Filter,
+                    Aggregate,
+                    Toolbar,
+                    ExcelExport,
+                    Sort,
+                  ]}
+                />
+              </GridComponent>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default LogSummary;
@@ -197,4 +213,3 @@ export default LogSummary;
 //     )
 // }
 // export default LogSummary;
-

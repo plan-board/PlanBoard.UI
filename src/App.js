@@ -34,7 +34,7 @@ import Settings from "./domains/settings/Settings";
 
 function App() {
   const { AuthData } = useSelector((state) => state.auth);
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   const [isAuth, setIsAuth] = useState(localStorage.getItem("access_token"));
   const dispatch = useDispatch();
   const loggedIn = localStorage.getItem("Isloggedin");
@@ -73,7 +73,7 @@ function App() {
     <>
       <BrowserRouter>
         <Navbar isAuth={loggedIn == "true" ? true : false} />
-        {sidebarStatus.flag && (
+        {flag && (
           <Sidebar
             rolId={
               AuthData?.Data?.length > 0

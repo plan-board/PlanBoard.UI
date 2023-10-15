@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 const ChangePassword = () => {
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   console.log("🚀 ~ file: App.js:44 ~ App ~ AuthData:", AuthData);
   const initialFormData = {
     newPassword: "",
@@ -62,10 +62,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <div
-      className="main"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
-    >
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
       <div className="w3-row">
         <span className="main-title">Shalimar Paints Limited </span>
       </div>

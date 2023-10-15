@@ -20,7 +20,7 @@ const Territory = () => {
   const { AuthData } = useSelector((state) => state.auth);
   let Wgt_DelearUiGridInstance = useRef();
   const { zoneId, depotId, territoryId } = useParams();
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
 
   const [selectedZone, setSelectedZone] = useState(
     zoneId ?? (AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0)
@@ -62,10 +62,7 @@ const Territory = () => {
   };
 
   return (
-    <div
-      className="main"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
-    >
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />
@@ -181,10 +178,12 @@ const Territory = () => {
             <h3>Dealer Wise Monthly Plan / Achievement</h3>
             {selectedTerritory ? (
               <>
-                <Wgt_Delear_Ui
-                  data={selectedTerritory}
-                  handleDealerPopup={handleDealerPopup}
-                />
+                {toggleState === 1 && (
+                  <Wgt_Delear_Ui
+                    data={selectedTerritory}
+                    handleDealerPopup={handleDealerPopup}
+                  />
+                )}
                 {/* <DealarPopup
                   visibility={visibilityForPopup}
                   handleOnClose={handleCloseDealerPopup}
@@ -197,7 +196,9 @@ const Territory = () => {
           <div className={toggleState === 2 ? "w-100" : "w3-hide"}>
             <h3>Dealer Wise Weekly Plan / Achievement</h3>
             {selectedTerritory ? (
-              <Wgt_Delear_Weekly_Ui data={selectedTerritory} />
+              toggleState === 2 && (
+                <Wgt_Delear_Weekly_Ui data={selectedTerritory} />
+              )
             ) : (
               <>Select Territory</>
             )}

@@ -1,11 +1,11 @@
 import React from "react";
 import { useEffect, useState } from "react";
-
+import { SHOW_TOAST } from "../../store/constant/types";
 import CommonTopSales from "../components/CommonTopSales";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ZoneDropDown from "../components/ZoneDropDown";
 import DepoSelectionBox from "../components/DepoSelectionBox";
-
+import axiosInstance from "./../../auth/api";
 import NationalZoneMonthSale from "../components/NationalZoneMonthSale";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
 import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport";
@@ -13,13 +13,17 @@ import TerritorySelectionBox from "../components/TerritorySelectionBox";
 import DealerMonthSale from "../components/DealerMonthSale";
 import AllFigureText from "../components/AllFigureText";
 import LogSummary from "../components/LogSummary";
+import NationalBarChart from "./NationalBarChart";
 
 const National = () => {
+  const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  const { sidebarStatus } = useSelector((state) => state);
-  console.log("====auth====", AuthData);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
+  const [isLoading, setLoading] = useState(true);
+
   // Set Select Zone
   const [selectedZone, setSelectedZone] = useState(0);
+  const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(
     AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0
   );
@@ -43,12 +47,33 @@ const National = () => {
   const onSelectedDepoChange = (newValue) => {
     setSelectedDepot(newValue);
   };
+  useEffect(() => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      ZoneId: selectedZoneDrop,
+      DepotId: 0,
+    };
+    const fetchDepotSalesPlan = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.post("DepotMonthPlan", payload);
+
+        if (response?.status === 200) {
+          setMonthWiseSalesData(
+            response.data.Data != null ? response.data.Data : []
+          );
+        }
+        setLoading(false);
+      } catch (error) {
+        dispatch({ type: SHOW_TOAST, payload: error.message });
+      }
+    };
+
+    fetchDepotSalesPlan();
+  }, [selectedZoneDrop]);
 
   return (
-    <div
-      className="main"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
-    >
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />
@@ -61,6 +86,12 @@ const National = () => {
           <NationalZoneMonthSale selectedZone={selectedZone} />
         </div>
       </div>
+      <div className="card-box lightblue">
+        <div className="tbl-container">
+          <NationalBarChart />
+        </div>
+      </div>
+
       <div className="card-box lightred">
         <div className="row w-100 mb-4 mt-2">
           {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
@@ -142,7 +173,10 @@ const National = () => {
             onClick={() => toggleTab(4)}
           >
             <span className="h6">
-              <i className="fa fa-list"> Lock Summary</i>
+              {" "}
+              <span style={{ fontFamily: "Nunito sans" }}>
+                Lock Summary
+              </span>{" "}
             </span>
           </div>
         </div>
@@ -157,6 +191,8 @@ const National = () => {
               <DepoMonthWiseSalesReport
                 selectedZone={selectedZoneDrop}
                 selectedDepot={0}
+                monthWiseSalesData={monthWiseSalesData}
+                isLoading={isLoading}
               />
             </>
           )}
@@ -182,7 +218,7 @@ const National = () => {
           )}
           {toggleState === 4 && (
             <>
-              <div>
+              <div style={{ fontFamily: "Nunito sans" }}>
                 <h3>Lock Summary</h3>
               </div>
               <LogSummary actionType="HOD" selectedId={0} />

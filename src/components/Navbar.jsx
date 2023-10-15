@@ -8,7 +8,7 @@ import { changeSidebarStatus } from "../store/actions/sidebarAction";
 
 const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
   const { AuthData } = useSelector((state) => state?.auth);
-  const { sidebarStatus } = useSelector((state) => state);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   const dispatch = useDispatch();
   const logout = () => {
     signOut(auth).then(() => {
@@ -25,7 +25,7 @@ const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
           <div
             className="sidebarOpen"
             onClick={() => dispatch(changeSidebarStatus())}
-            style={{ marginLeft: sidebarStatus.flag ? "140px" : "0px" }}
+            style={{ marginLeft: flag ? "140px" : "0px" }}
           >
             <img src={hamburger} className="hamburger" alt="Menu" />
           </div>

@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CommonTopSales from "../components/CommonTopSales";
 import ZoneDropDown from "../components/ZoneDropDown";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
 import AllFigureText from "../components/AllFigureText";
 import LogSummary from "../components/LogSummary";
-import Bar from "./ZoneBarChart";
+import ZoneBar from "./ZoneBarChart";
+import axiosInstance from "./../../auth/api";
+import { SHOW_TOAST } from "../../store/constant/types";
+import { useDispatch } from "react-redux";
 
 const Zone = () => {
+  const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  const { sidebarStatus } = useSelector((state) => state);
-  console.log("--AuthData---", AuthData);
-
+  const flag = useSelector((state) => state.sidebarStatus.flag);
+  const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
   const [selectedZone, setSelectedZone] = useState(
     AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0
   );
@@ -26,17 +30,40 @@ const Zone = () => {
     setToggleState(index);
   };
 
+  useEffect(() => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      ZoneId: selectedZone,
+      DepotId: 0,
+    };
+    const fetchDepotSalesPlan = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.post("DepotMonthPlan", payload);
+        // console.log("=====DepotMonthPlan====", response);
+        if (response?.status === 200) {
+          setMonthWiseSalesData(
+            response.data.Data != null ? response.data.Data : []
+          );
+        }
+        setLoading(false);
+      } catch (error) {
+        // Handle errors
+        dispatch({ type: SHOW_TOAST, payload: error.message });
+      }
+    };
+
+    fetchDepotSalesPlan();
+  }, [selectedZone]);
+
   return (
-    <div
-      className="main"
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
-    >
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
       <div className="w3-row">
         <span className="main-title">
           Shalimar Paints Limited <AllFigureText />
         </span>
       </div>
-      <div className="card-box px-0 lightgreen">
+      <div className="card-box px-0 lightblue">
         <div className="row justify-content-between w-100 align-items-center m-0">
           <div className="one-fourth">
             <ZoneDropDown
@@ -48,7 +75,15 @@ const Zone = () => {
       </div>
 
       <CommonTopSales actionType="Zone" selectedZone={selectedZone} />
-      <Bar />
+      <div className="card-box lightblue">
+        <div className="tbl-container">
+          <ZoneBar
+            selectedZone={selectedZone}
+            monthWiseSalesData={monthWiseSalesData}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
       <div class="card-box lightblue">
         <div className="w3-bar tab-container">
           <div
@@ -75,13 +110,19 @@ const Zone = () => {
             <h3>Depot Wise Monthly Plan / Achievement</h3>
           </div>
           <div className={toggleState === 1 ? "  " : " w3-hide  "}>
-            <DepoMonthWiseSalesReport
-              selectedZone={selectedZone}
-              selectedDepot={selectedDepot}
-            />
+            {toggleState === 1 && (
+              <DepoMonthWiseSalesReport
+                selectedZone={selectedZone}
+                selectedDepot={selectedDepot}
+                monthWiseSalesData={monthWiseSalesData}
+                isLoading={isLoading}
+              />
+            )}
           </div>
           <div className={toggleState === 2 ? "  " : " w3-hide  "}>
-            <LogSummary actionType="Zone" selectedId={selectedZone} />
+            {toggleState === 2 && (
+              <LogSummary actionType="Zone" selectedId={selectedZone} />
+            )}
           </div>
         </div>
       </div>

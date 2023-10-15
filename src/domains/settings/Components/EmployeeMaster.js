@@ -6,7 +6,18 @@ import { SHOW_TOAST } from "../../../store/constant/types";
 import ResponsePopup from "../../../common/ResponsePopup";
 import Loader from "../../../common/Loader";
 import { Row, Col, Container } from "reactstrap";
-
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  CommandColumn,
+  Page,
+  Filter,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
 const EmployeeMaster = ({ toggleState }) => {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
@@ -166,7 +177,7 @@ const EmployeeMaster = ({ toggleState }) => {
     resetForm();
     const payload = {
       Token: localStorage.getItem("access_token"),
-      EmployeeId: args.employee_id,
+      EmployeeId: args.rowData.employee_id,
     };
     setLoading(true);
     try {
@@ -440,6 +451,12 @@ const EmployeeMaster = ({ toggleState }) => {
       });
     }
   };
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
 
   return (
     <>
@@ -584,17 +601,114 @@ const EmployeeMaster = ({ toggleState }) => {
             </Col>
           </Row>
         </div>
-        <div className="tbl-container" style={{ marginTop: "10px" }}>
-          <DataTable
-            columns={columns}
-            data={employeeList}
-            pagination
-            className="datatable"
-            fixedHeader={true}
-            fixedHeaderScrollHeight="400px"
-            subHeader
-          />
-        </div>
+        <Row style={{ marginTop: "15px" }}>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="employeeMasterGrid_id"
+              key="employeeMasterGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={employeeList}
+              enableStickyHeader={true}
+              height={"350px"}
+              // ref={zoneMasterInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={30}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              allowExcelExport={true}
+              allowSorting={true}
+              commandClick={getSingleRowData}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="employee_code"
+                  headerText={"Employee Code"}
+                  visible={true}
+                  width="180"
+                  textAlign="center"
+                  allowEditing={false}
+                  allowFiltering={true}
+                />
+                <ColumnDirective
+                  field="employee_name"
+                  headerText={"Employee Name"}
+                  visible={true}
+                  textAlign="left"
+                  width="180"
+                  allowEditing={false}
+                  allowFiltering={true}
+                />
+                <ColumnDirective
+                  field="employee_email"
+                  headerText={"Email"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="employee_mobile"
+                  headerText={"Mobile"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="role_Name"
+                  headerText={"Role"}
+                  width="130"
+                  format={"N2"}
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="designation_name"
+                  headerText={"Designation"}
+                  width="150"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="reportingmgr_name"
+                  headerText={"Reporting Manager Name"}
+                  width="150"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+
+                <ColumnDirective
+                  headerTemplate="Action"
+                  width="100"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                  commands={commmandTemplate}
+                  allowSorting={false}
+                />
+              </ColumnsDirective>
+
+              <Inject
+                services={[
+                  CommandColumn,
+                  Page,
+                  Filter,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
         <ResponsePopup
           show={responseDetails.show}
           text={responseDetails.message}

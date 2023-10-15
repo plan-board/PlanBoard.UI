@@ -49,7 +49,6 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
           "TerritoryMonthPlan",
           payload
         );
-        console.log("=====TerritoryMonthPlan====", response);
 
         if (response?.status === 200) {
           setTerritoryMonthPlan(

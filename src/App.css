@@ -1662,8 +1662,8 @@ p {
 .w3-sidebar {
   width: 150px;
   background: rgba(0, 0, 0, 0.87);
+  /* border: 1px solid black; */
 }
-
 .w3-sidebar p.title {
   color: slategray;
   font-size: 10px;
@@ -1677,10 +1677,12 @@ p {
 .w3-bar-block .w3-bar-item {
   padding: 0;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  margin: 10px auto;
+  width: 73px;
+  height: 65px;
+  margin: 15px auto;
   overflow: hidden;
+  border: 1px solid black;
+  /* mix-blend-mode: darken; */
 }
 .w3-bar-block .w3-bar-item img {
   width: 100%;
@@ -1694,7 +1696,7 @@ p {
   justify-content: center;
   text-align: center;
   padding: 15px 0;
-  color: #fff;
+  color: #fefefe;
   width: 100%;
   max-width: calc(100% - 15px);
   margin: auto;
@@ -1908,7 +1910,8 @@ th {
   margin: 10px 0 20px;
   border-radius: 7px;
   justify-content: space-around;
-  box-shadow: 0 0 15px rgb(0 0 0 / 10%);
+  box-shadow: 0 0 18px rgb(0 0 0 / 26%);
+  border: 1px solid;
 }
 .tbl-container {
   overflow: auto;
@@ -2083,18 +2086,18 @@ table.table-striped tbody tr:nth-child(odd) {
 .tab {
   position: relative;
   display: inline-block;
-  background: #fff;
+  background: #e0e0e0;
   border-radius: 5px 5px 0 0;
   transition: 0.3s;
   margin: 0 4px 0 0;
 }
 .tab:hover {
-  background: var(--red) !important;
+  background: #007ad1 !important;
   color: #fff !important;
   transition: 0.3s;
 }
 .tab-active {
-  background: var(--red);
+  background: #007ad1;
   color: #fff;
 }
 .tab-container {
@@ -2160,13 +2163,13 @@ table.table-striped tbody tr:nth-child(odd) {
   background: #f6fff3;
 }
 .lightyellow {
-  background: #fffdf3;
+  background: #f6fdff;
 }
 .lightblue {
   background: #f6fdff;
 }
 .lightred {
-  background: #fffbfb;
+  background: #f6fdff;
 }
 .bg-green {
   background: #f6fffa;
@@ -2284,7 +2287,7 @@ input[type="number"] {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
+  background-color: #e0e0e0;
 }
 
 table.table-striped1 tbody tr td,

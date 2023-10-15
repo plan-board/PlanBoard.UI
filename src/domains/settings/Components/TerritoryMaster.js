@@ -7,7 +7,19 @@ import { SHOW_TOAST } from "../../../store/constant/types";
 // import CustomPopup from "../../CustomPopup";
 import ResponsePopup from "../../../common/ResponsePopup";
 import Loader from "../../../common/Loader";
-
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  CommandColumn,
+  Page,
+  Filter,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
 const TerritoryMaster = ({ toggleState }) => {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
@@ -193,7 +205,7 @@ const TerritoryMaster = ({ toggleState }) => {
   const getSingleRowData = async (args) => {
     const payload = {
       Token: localStorage.getItem("access_token"),
-      entity_id: args.area_id,
+      entity_id: args.rowData.area_id,
     };
     setLoading(true);
     try {
@@ -301,6 +313,12 @@ const TerritoryMaster = ({ toggleState }) => {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
 
   return (
     <>
@@ -308,19 +326,27 @@ const TerritoryMaster = ({ toggleState }) => {
         {isLoading && <Loader />}
         <form>
           <table className="table-bordered table-striped equal-width-table">
-            <thead>
+            <thead style={{ color: "#000", background: "#e0e0e0" }}>
               <tr>
                 <th>
-                  <label htmlFor="selectionBox">Territory Code</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Territory Code
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Territory Name</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Territory Name
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Territory Manager</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Territory Manager
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Depot Name</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Depot Name
+                  </label>
                 </th>
               </tr>
             </thead>
@@ -389,17 +415,112 @@ const TerritoryMaster = ({ toggleState }) => {
             </tbody>
           </table>
         </form>
-        <div className="tbl-container">
-          <DataTable
-            columns={columns}
-            data={territoryListData}
-            pagination
-            className="datatable"
-            fixedHeader={true}
-            fixedHeaderScrollHeight="400px"
-            subHeader
-          />
-        </div>
+        <Row style={{ marginTop: "15px" }}>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="territoryMasterGrid_id"
+              key="territoryMasterGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={territoryListData}
+              enableStickyHeader={true}
+              height={"350px"}
+              // ref={zoneMasterInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={30}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              allowExcelExport={true}
+              allowSorting={true}
+              commandClick={getSingleRowData}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="area_id"
+                  headerText={"S.No"}
+                  visible={false}
+                  textAlign="center"
+                  allowEditing={false}
+                  allowFiltering={false}
+                />
+                <ColumnDirective
+                  field="area_code"
+                  headerText={"Territory Code"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  allowFiltering={false}
+                />
+                <ColumnDirective
+                  field="area_name"
+                  headerText={"Territory Name"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="areamgr_code"
+                  headerText={"Territory Mgr Code"}
+                  width="130"
+                  format={"N2"}
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="areamgr_name"
+                  headerText={"Territory Mgr Name"}
+                  width="150"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="depot_code"
+                  headerText={"Depot Code"}
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="depot_name"
+                  headerText={"Depot Name"}
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  headerTemplate="Action"
+                  width="100"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                  commands={commmandTemplate}
+                  allowSorting={false}
+                />
+              </ColumnsDirective>
+
+              <Inject
+                services={[
+                  CommandColumn,
+                  Page,
+                  Filter,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
         <ResponsePopup
           show={responseDetails.show}
           text={responseDetails.message}

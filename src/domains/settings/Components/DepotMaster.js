@@ -5,6 +5,19 @@ import { SHOW_TOAST } from "../../../store/constant/types";
 import ResponsePopup from "../../../common/ResponsePopup";
 import Loader from "../../../common/Loader";
 import { useDispatch } from "react-redux";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  CommandColumn,
+  Page,
+  Filter,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
 const DepotMaster = ({ toggleState }) => {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
@@ -261,7 +274,7 @@ const DepotMaster = ({ toggleState }) => {
   const getSingleRowData = async (args) => {
     const payload = {
       Token: localStorage.getItem("access_token"),
-      entity_id: args.Depot_id,
+      entity_id: args.rowData.Depot_id,
     };
     setLoading(true);
     try {
@@ -301,6 +314,12 @@ const DepotMaster = ({ toggleState }) => {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
 
   return (
     <>
@@ -308,19 +327,27 @@ const DepotMaster = ({ toggleState }) => {
         {isLoading && <Loader />}
         <form>
           <table className="table-bordered table-striped equal-width-table">
-            <thead>
+            <thead style={{ color: "#000", background: "#e0e0e0" }}>
               <tr>
                 <th>
-                  <label htmlFor="selectionBox">Depot Code</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Depot Code
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Depot Name</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Depot Name
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Depot Manager</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Depot Manager
+                  </label>
                 </th>
                 <th>
-                  <label htmlFor="selectionBox">Zone Name</label>
+                  <label htmlFor="selectionBox" style={{ marginBottom: "0px" }}>
+                    Zone Name
+                  </label>
                 </th>
               </tr>
             </thead>
@@ -389,17 +416,112 @@ const DepotMaster = ({ toggleState }) => {
             </tbody>
           </table>
         </form>
-        <div className="tbl-container">
-          <DataTable
-            columns={columns}
-            data={depotListData}
-            pagination
-            className="datatable"
-            fixedHeader={true}
-            fixedHeaderScrollHeight="400px"
-            subHeader
-          />
-        </div>
+        <Row style={{ marginTop: "15px" }}>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="depotMasterGrid_id"
+              key="depotMasterGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={depotListData}
+              enableStickyHeader={true}
+              height={"350px"}
+              // ref={zoneMasterInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={30}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              allowExcelExport={true}
+              allowSorting={true}
+              commandClick={getSingleRowData}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="Depot_id"
+                  headerText={"S.No"}
+                  visible={false}
+                  textAlign="center"
+                  allowEditing={false}
+                  allowFiltering={false}
+                />
+                <ColumnDirective
+                  field="Depot_code"
+                  headerText={"Depot Code"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  allowFiltering={false}
+                />
+                <ColumnDirective
+                  field="Depot_name"
+                  headerText={"Depot Name"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="Depotmgr_code"
+                  headerText={"Depot Mgr Code"}
+                  width="130"
+                  format={"N2"}
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="Depotmgr_name"
+                  headerText={"Depot Mgr Name"}
+                  width="150"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="zone_code"
+                  headerText={"Zone Code"}
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="zone_name"
+                  headerText={"Zone Name"}
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  headerTemplate="Action"
+                  width="100"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                  commands={commmandTemplate}
+                  allowSorting={false}
+                />
+              </ColumnsDirective>
+
+              <Inject
+                services={[
+                  CommandColumn,
+                  Page,
+                  Filter,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
         <ResponsePopup
           show={responseDetails.show}
           text={responseDetails.message}

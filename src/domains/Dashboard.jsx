@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
 const Dashboard = () => {
-  const { sidebarStatus } = useSelector((state) => state);
+  const sidebarStatus = useSelector((state) => state.sidebarStatus.flag);
   return (
     <div
       className=" main "
-      style={{ marginLeft: sidebarStatus.flag ? "150px" : "0px" }}
+      style={{ marginLeft: sidebarStatus ? "150px" : "0px" }}
     >
       Welcome To Planboard
     </div>
