@@ -6,10 +6,9 @@ import Exit from "../images/exit.png";
 import hamburger from "../images/hamburger.png";
 import { changeSidebarStatus } from "../store/actions/sidebarAction";
 
-const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
+const Navbar = ({ isAuth, hideSidebar, flag }) => {
   const { AuthData } = useSelector((state) => state?.auth);
-  const flag = useSelector((state) => state.sidebarStatus.flag);
-  const dispatch = useDispatch();
+
   const logout = () => {
     signOut(auth).then(() => {
       localStorage.clear();
@@ -24,8 +23,8 @@ const Navbar = ({ isAuth, SidebarVisible, sidebarOpen }) => {
         <div className="">
           <div
             className="sidebarOpen"
-            onClick={() => dispatch(changeSidebarStatus())}
-            style={{ marginLeft: flag ? "140px" : "0px" }}
+            onClick={hideSidebar}
+            style={{ marginLeft: flag ? "100px" : "0px" }}
           >
             <img src={hamburger} className="hamburger" alt="Menu" />
           </div>

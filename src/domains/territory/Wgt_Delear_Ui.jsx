@@ -196,6 +196,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
             let collectSum =
               val.creepage_value + val.OD + val[`${mStartName}_Month_Value_v1`];
             val.collectionVal = collectSum.toFixed(2);
+            val.visit = 0;
           });
           setDealerlist(res);
         }
@@ -217,6 +218,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     return (
       <>
         {args.CY_Value} <hr className="hr0" /> {args.YTD_Value}
+        {GetPercent(args.CY_Value, args.YTD_Value)}
       </>
     );
   };
@@ -227,6 +229,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         {args[`${val}_Month_Value_v1`]}
         <hr className="hr0" />
         {args[`${val}_Month_Sale`]}
+        {GetPercent(args[`${val}_Month_Sale`], args[`${val}_Month_Value_v1`])}
       </>
     );
   };
@@ -237,6 +240,20 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         {args[`${mStartName}_Month_Value`]}
         <hr className="hr0" />
         {args[`${mStartName}_Month_Value_v1`]}
+      </>
+    );
+  };
+
+  const ActsalesTemplate = (args) => {
+    return (
+      <>
+        {args[`${mStartName}_Month_Value_v1`]}
+        <hr className="hr0" />
+        {args[`${mStartName}_Month_Sale`]}{" "}
+        {GetPercent(
+          args[`${mStartName}_Month_Sale`],
+          args[`${mStartName}_Month_Value_v1`]
+        )}
       </>
     );
   };
@@ -527,7 +544,14 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const salesHeadTemplate = () => {
     return (
       <>
-        <th title="V0 vs V1">{`Sales `}</th>
+        <th title="V0 vs V1">{`Sale Plan`}</th>
+      </>
+    );
+  };
+  const ActSalesHeadTemplate = () => {
+    return (
+      <>
+        <th title="V0 vs V1">{`Actual Sale`}</th>
       </>
     );
   };
@@ -599,7 +623,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
       {
         // field: "LY_Value",
         headerText: "CY / YTD",
-        width: "100",
+        width: "130",
         visible: true,
         allowFiltering: false,
         textAlign: "center",
@@ -660,7 +684,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
           // format: "C2",
           field: "LY_Value",
           headerTemplate: salesHeadTemplate,
-          width: 100,
+          width: 130,
           textAlign: "center",
           allowEditing: false,
           allowFiltering: false,
@@ -668,9 +692,27 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         },
         {
           // format: "C2",
+          field: "LY_Value",
+          headerTemplate: ActSalesHeadTemplate,
+          width: 130,
+          textAlign: "center",
+          allowEditing: false,
+          allowFiltering: false,
+          template: ActsalesTemplate,
+        },
+        {
+          // format: "C2",
           field: "tDue",
           headerText: "Collection",
           width: 120,
+          allowEditing: false,
+          allowFiltering: false,
+        },
+        {
+          // format: "C2",
+          field: "visit",
+          headerText: "Visit",
+          width: 100,
           allowEditing: false,
           allowFiltering: false,
         },
@@ -969,9 +1011,14 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                 </td>
               </tr>
               <tr className="">
-                <td style={{ width: "90%" }}>
+                <td style={{ width: "60%" }}>
                   Rule 1 : Active Dealer <br />
                   Rule 2 : Category based % impact <br />
+                </td>
+                <td>
+                  <label className="formlabel" style={{ paddingTop: "5px" }}>
+                    Sale Plan
+                  </label>
                 </td>
                 <td style={{ width: "10%" }}>
                   <input
@@ -979,6 +1026,19 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                     value={modalData ? modalData[monthKey] : ""}
                     className="inp40 text-center"
                     readOnly={true}
+                  />
+                </td>
+                <td>
+                  <label className="formlabel" style={{ paddingTop: "5px" }}>
+                    Visit
+                  </label>
+                </td>
+                <td style={{ width: "10%" }}>
+                  <input
+                    type="number"
+                    value={modalData ? modalData["visit"] : ""}
+                    className="inp40 text-center"
+                    onChange={(e) => console.log(e.target.value)}
                   />
                 </td>
               </tr>

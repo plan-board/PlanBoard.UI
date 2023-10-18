@@ -6,18 +6,31 @@ import { SHOW_TOAST } from "../../store/constant/types";
 import ResponsePopup from "../../common/ResponsePopup";
 import Loader from "../../common/Loader";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+import ZoneSelectionBox from "../components/ZoneSelectionBox";
+import DepoSelectionBox from "../components/DepoSelectionBox";
+import TerritorySelectionBox from "../components/TerritorySelectionBox";
 
 const CustomerPotential = () => {
   const dispatch = useDispatch();
   let customterGridInstance = useRef();
+  const { zoneId, depotId, territoryId } = useParams();
   const { AuthData } = useSelector((state) => state?.auth);
   const flag = useSelector((state) => state.sidebarStatus.flag);
   const [isLoading, setLoading] = useState(false);
-  const [territoryList, setTerritoryList] = useState([]);
-  const [territortId, setTerritoryId] = useState(null);
+  const [selectedZone, setSelectedZone] = useState(
+    zoneId ?? (AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0)
+  );
+  const [selectedTerritory, setSelectedTerritory] = useState(territoryId ?? 0);
   const [employeeList, setEmployeeList] = useState([]);
-  const [filterCode, setFilterCode] = useState("");
-  const [filterName, setFilterName] = useState("");
+  const [selectedDepot, setSelectedDepot] = useState(
+    depotId
+      ? depotId
+      : AuthData?.Depot[0]?.DepotID
+      ? AuthData?.Depot[0]?.DepotID
+      : 0
+  );
+
   const [responseDetails, setResponseDetails] = useState({
     type: "",
     show: false,
@@ -25,36 +38,15 @@ const CustomerPotential = () => {
   });
 
   useEffect(() => {
-    fetchTerritoryList();
-  }, []);
-
-  useEffect(() => {
-    if (territortId) {
+    if (selectedTerritory) {
       fetchCustomerList();
     }
-  }, [territortId]);
-  const handleFilterChange = (e) => {
-    setFilterCode(e.target.value);
-  };
-  // const handleFilterNameChange = (e) => {
-  //   setFilterName(e.target.value);
-  // };
-  const filteredData = employeeList.filter((item) => {
-    const codeMatch =
-      filterCode === "" ||
-      item.CustomerCode.toLowerCase().includes(filterCode.toLowerCase());
-
-    const nameMatch =
-      filterCode === "" ||
-      item.CustomerName.toLowerCase().includes(filterCode.toLowerCase());
-
-    return codeMatch || nameMatch;
-  });
+  }, [selectedTerritory]);
 
   const fetchCustomerList = async () => {
     const payload = {
       Token: localStorage.getItem("access_token"),
-      territory_id: parseInt(territortId),
+      territory_id: parseInt(selectedTerritory),
     };
     setLoading(true);
     try {
@@ -77,43 +69,6 @@ const CustomerPotential = () => {
   };
   const handleCloseResponse = () => {
     setResponseDetails({ show: false, message: "", type: "" });
-  };
-
-  const fetchTerritoryList = async () => {
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      ZoneId: 0,
-      DepotId: 0,
-    };
-    try {
-      const response = await axiosInstance.post("TerritoryMonthPlan", payload);
-
-      if (response?.status === 200) {
-        const filteredTerr = (response?.data?.Data || []).filter((obj1) =>
-          (AuthData?.Territory || []).some(
-            (obj2) => obj1.territoryid === obj2.TerritoryID
-          )
-        );
-        setTerritoryList(filteredTerr);
-      }
-      setLoading(false);
-    } catch (error) {
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  };
-
-  const TerritoryDropdown = () => {
-    return territoryList.map((item, index) => (
-      <option key={index} value={item?.territoryid}>
-        {item.territory_name}
-      </option>
-    ));
-  };
-
-  const handleChange = (e, args) => {
-    if (e.target.name === "territoryId") {
-      setTerritoryId(e.target.value);
-    }
   };
 
   const handleSave = async () => {
@@ -152,7 +107,7 @@ const CustomerPotential = () => {
               type: "success",
             });
             fetchCustomerList();
-            setTerritoryId(0);
+            setSelectedTerritory(0);
           } else {
             setResponseDetails({
               show: true,
@@ -173,39 +128,15 @@ const CustomerPotential = () => {
       });
     }
   };
-
-  const subHeaderComponentMemo = React.useMemo(() => {
-    return (
-      <div style={{ display: "flex", minWidth: "100%" }}>
-        <input
-          type="text"
-          placeholder="Filter by Customer Name or Code"
-          value={filterCode}
-          onChange={handleFilterChange}
-          style={{
-            fontSize: "14px",
-            paddingLeft: "10px",
-            marginLeft: "0px",
-            width: "30%",
-          }}
-        />
-
-        <button
-          type="button"
-          className="btn btn-primary"
-          style={{
-            fontSize: "14px",
-            paddingLeft: "10px",
-            marginLeft: "32%",
-            // right: 0,
-          }}
-          onClick={() => handleSave()}
-        >
-          <i className="fa fa-plus"></i> Save
-        </button>
-      </div>
-    );
-  }, [filterCode, filterName, employeeList]);
+  const handleSelectionChange = (newValue) => {
+    setSelectedZone(newValue);
+  };
+  const onSelectedDepoChange = (newValue) => {
+    setSelectedDepot(newValue);
+  };
+  const onSelectedTerritoryChange = (newValue) => {
+    setSelectedTerritory(newValue);
+  };
 
   return (
     <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
@@ -216,19 +147,110 @@ const CustomerPotential = () => {
             Shalimar Paints Limited <AllFigureText />
           </span>
         </div>
-        <div class="card-box lightgreen">
+        <div className="card-box lightblue" style={{ display: "flex" }}>
+          {AuthData?.Data[0].EmployeeTpye === "HOD" ||
+          AuthData?.Data[0].EmployeeTpye === "ZM" ? (
+            <div className="row w-100">
+              <div className="one-fourth">
+                <ZoneSelectionBox
+                  selectedZone={selectedZone}
+                  onValueChange={handleSelectionChange}
+                />
+              </div>
+              <div className="one-fourth">
+                <DepoSelectionBox
+                  selectedDepot={selectedDepot}
+                  selectedZone={selectedZone}
+                  onSelectedDepoChange={onSelectedDepoChange}
+                />
+              </div>
+              <div className="one-fourth">
+                <TerritorySelectionBox
+                  selectedZone={selectedZone}
+                  selectedDepot={selectedDepot}
+                  selectedTerritory={selectedTerritory}
+                  onSelectedTerritoryChange={onSelectedTerritoryChange}
+                />
+              </div>
+              <div className="one-fourth">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  style={{
+                    marginLeft: "20px",
+                  }}
+                  onClick={() => handleSave()}
+                >
+                  <i className="fa fa-plus"></i> Save
+                </button>
+              </div>
+            </div>
+          ) : AuthData?.Data[0].EmployeeTpye === "DM" ? (
+            <div className="row w-100">
+              <div className="one-fourth">
+                <DepoSelectionBox
+                  selectedZone={selectedZone}
+                  selectedDepot={selectedDepot}
+                  onSelectedDepoChange={onSelectedDepoChange}
+                />
+              </div>
+              <div className="one-fourth">
+                <TerritorySelectionBox
+                  selectedZone={selectedZone}
+                  selectedDepot={selectedDepot}
+                  onSelectedDepoChange={onSelectedDepoChange}
+                  onSelectedTerritoryChange={onSelectedTerritoryChange}
+                />
+              </div>
+              <div className="one-fourth">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  style={{
+                    marginLeft: "20px",
+                  }}
+                  onClick={() => handleSave()}
+                >
+                  <i className="fa fa-plus"></i> Save
+                </button>
+              </div>
+            </div>
+          ) : AuthData?.Data[0].EmployeeTpye === "AM" ? (
+            <>
+              <div className="one-fourth">
+                <TerritorySelectionBox
+                  selectedZone={selectedZone}
+                  selectedDepot={selectedDepot}
+                  onSelectedDepoChange={onSelectedDepoChange}
+                  onSelectedTerritoryChange={onSelectedTerritoryChange}
+                />
+              </div>
+              <div className="one-fourth">
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  style={{
+                    marginLeft: "20px",
+                  }}
+                  onClick={() => handleSave()}
+                >
+                  <i className="fa fa-plus"></i> Save
+                </button>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
+
+        <div class="card-box lightblue">
           <div class="row w-100">
             {" "}
             <div className="full">
               {" "}
               <CustomerPotentialForm
-                territortId={territortId}
-                TerritoryDropdown={TerritoryDropdown}
-                handleChange={handleChange}
-                handleSave={handleSave}
                 customterGridInstance={customterGridInstance}
-                employeeList={filteredData}
-                subHeaderComponentMemo={subHeaderComponentMemo}
+                employeeList={employeeList}
               />
             </div>
           </div>

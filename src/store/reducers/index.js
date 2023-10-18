@@ -8,6 +8,7 @@ const reducers = combineReducers({
   auth: authReducer,
   national: nationalReducer,
   sidebarStatus: sidebarReducer,
+  zoneReducer: zoneReducer,
 });
 
 export default reducers;

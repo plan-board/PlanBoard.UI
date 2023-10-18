@@ -23,50 +23,14 @@ const customStyles = {
 };
 
 export const CustomerPotentialForm = ({
-  TerritoryDropdown,
-  handleChange,
-  territoryId,
   employeeList,
   customterGridInstance,
   handleSave,
 }) => {
   const toolbar = ["Search"];
-  const numericParams = {
-    params: {
-      decimals: 0,
-      format: "N",
-      validateDecimalOnType: true,
-    },
-  };
+
   return (
     <>
-      <Row>
-        <Col xl={5} lg={5} md={6} sm={12} xs={12}>
-          <label className="formlabel">Territory*</label>
-          <div style={{ display: "flex" }}>
-            <select
-              className="from_dropDownCss"
-              name="territoryId"
-              onChange={handleChange}
-              value={territoryId}
-            >
-              <option value="">Select</option>
-              {TerritoryDropdown()}
-            </select>
-            <button
-              type="button"
-              className="btn btn-success"
-              style={{
-                marginLeft: "20px",
-              }}
-              onClick={() => handleSave()}
-            >
-              <i className="fa fa-plus"></i> Save
-            </button>
-          </div>
-        </Col>
-      </Row>
-
       {employeeList.length > 0 ? (
         <Row>
           <Col

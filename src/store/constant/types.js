@@ -19,3 +19,4 @@ export const API_MONTH_WISE_SALES_SUCCESS = "API_MONTH_WISE_SALES_SUCCESS";
 export const SidebarStatus = "SidebarStatus";
 
 export const API_ZONE_DATA = "API_ZONE_DATA";
+export const API_TERRITORY_MONTH_SALE_DATA = "API_TERRITORY_MONTH_SALE_DATA";

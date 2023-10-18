@@ -53,7 +53,7 @@ const Depot = () => {
           Shalimar Paints Limited <AllFigureText />
         </span>
       </div>
-      <div className="card-box lightgreen">
+      <div className="card-box lightblue">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||
         AuthData?.Data[0].EmployeeTpye === "ZM" ? (
           <div className="row w-100">

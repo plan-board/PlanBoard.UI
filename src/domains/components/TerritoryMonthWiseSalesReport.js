@@ -34,9 +34,10 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const dispatch = useDispatch();
   let TerritoryMonthWiseInstance = useRef();
   const [territoryMonthPlan, setTerritoryMonthPlan] = useState([]);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const payload = {
       Token: localStorage.getItem("access_token"),
       DepotId: selectedDepot,

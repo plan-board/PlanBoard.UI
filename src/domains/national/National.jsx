@@ -86,11 +86,11 @@ const National = () => {
           <NationalZoneMonthSale selectedZone={selectedZone} />
         </div>
       </div>
-      <div className="card-box lightblue">
+      {/* <div className="card-box lightblue">
         <div className="tbl-container">
           <NationalBarChart />
         </div>
-      </div>
+      </div> */}
 
       <div className="card-box lightred">
         <div className="row w-100 mb-4 mt-2">

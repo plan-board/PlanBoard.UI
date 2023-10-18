@@ -1660,7 +1660,7 @@ p {
 }
 
 .w3-sidebar {
-  width: 150px;
+  width: 100px;
   background: rgba(0, 0, 0, 0.87);
   /* border: 1px solid black; */
 }
@@ -2431,8 +2431,8 @@ table.table-striped1 tbody tr:nth-child(odd) {
 }
 
 .e-grid .e-row.below-20 .e-rowcell {
-  background: rgb(208, 103, 103);
-  color: white;
+  background: #f59e98;
+  color: #000;
 }
 
 .buttonForMainUi {

@@ -8,11 +8,11 @@ const DepoSelectionBox = ({
   selectedDepot,
   onSelectedDepoChange,
 }) => {
-  console.log(    "🚀 ~ selectedZone:",    selectedZone  );
-  console.log(    "🚀 ~ selectedDepot:",    selectedDepot  );
+  console.log("🚀 ~ selectedZone:", selectedZone);
+  console.log("🚀 ~ selectedDepot:", selectedDepot);
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  console.log(    "🚀 ~ AuthData:",    AuthData  );
+  console.log("🚀 ~ AuthData:", AuthData);
   const [isLoading, setLoading] = useState(true);
   const [depotArray, setDepotSalesPlanData] = useState([]);
   const [deptonameselect, setDeptonameselect] = useState(null);
@@ -22,7 +22,7 @@ const DepoSelectionBox = ({
 
   const handleChange = (event) => {
     const depotid = parseInt(event.target.value);
-    if(depotid != ""){
+    if (depotid != "") {
       setDeptonameselect(
         event.target.options[event.target.selectedIndex]?.textContent
       );
@@ -30,7 +30,7 @@ const DepoSelectionBox = ({
       setSelctedDepo(depotid);
     }
   };
-  
+
   const fetchDepotSalesPlan = async () => {
     setLoading(true);
     try {
@@ -55,17 +55,16 @@ const DepoSelectionBox = ({
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     if (AuthData?.Data[0].EmployeeTpye === "DM") {
-      console.log("--call")
+      console.log("--call");
       fetchDepotSalesPlan();
-    }else {
-      if (selectedZone != 0 ) {
+    } else {
+      if (selectedZone != 0) {
         fetchDepotSalesPlan();
       }
     }
   }, [selectedZone, selectedDepot]);
-  
 
   return (
     <>
@@ -75,7 +74,7 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-          <option value="">Select Depot</option> 
+          <option value="">Select Depot</option>
           {AuthData?.Depot?.map((item, index) => (
             <option key={index} value={item?.DepotID}>
               {item.DepotName}
@@ -88,7 +87,11 @@ const DepoSelectionBox = ({
           value={selctedDepo}
           onChange={handleChange}
         >
-        <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Depot":"Select Depot"}</option> 
+          <option value={AuthData?.Data[0].EmployeeTpye === "HOD" ? 0 : ""}>
+            {AuthData?.Data[0].EmployeeTpye === "HOD"
+              ? "All Depot"
+              : "Select Depot"}
+          </option>
           {depotArray?.map((item, index) => (
             <option key={index} value={item?.depotid}>
               {item.depot_name}
