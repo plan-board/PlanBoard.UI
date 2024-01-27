@@ -1,10 +1,8 @@
 import "./App.css";
-
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "./auth/api";
-
 import { Navbar, Sidebar } from "./components";
 import { Login, Register, Forgotpassword } from "./auth";
 import {
@@ -27,10 +25,12 @@ import {
   Schedule,
 } from "./domains";
 import CustomerPotential from "./domains/customerPotential";
+import PreJourneyPlan from "./domains/preJourneyPlan";
 import { About } from "./pages";
 import { setAuthData } from "./store/actions/Auth";
 import { SHOW_TOAST } from "./store/constant/types";
 import Settings from "./domains/settings/Settings";
+import TerritoryDashboard from "./domains/territoryDashboard";
 
 function App() {
   const { AuthData } = useSelector((state) => state.auth);
@@ -51,8 +51,6 @@ function App() {
           response?.data?.Data[0].TokenValid
         );
       } else {
-        // Handle the case when authentication fails
-        // You can show an error message or redirect the user
         localStorage.removeItem("access_token");
       }
     } catch (error) {
@@ -63,7 +61,32 @@ function App() {
     if (AuthData == null) {
       checkUserAuth();
     }
+    // if ((window.location.pathname = "/")) {
+    //   console.log("shankar");
+    // }
   }, [AuthData]);
+  useEffect(() => {
+    if (window.location.pathname == "/") {
+      checkLoginType();
+    }
+    // checkLoginType();
+  }, []);
+
+  const checkLoginType = () => {
+    let type = localStorage.getItem("EmployeeType");
+
+    if (type == "HOD") {
+      window.location.pathname = "/national";
+    } else if (type == "ZM") {
+      window.location.pathname = "/zone";
+    } else if (type == "DM") {
+      window.location.pathname = "/depot";
+    } else if (type == "AM") {
+      window.location.pathname = "/territory";
+    } else if (type == null) {
+      window.location.pathname = "login";
+    }
+  };
 
   const PrivateRoute = ({ element, ...rest }) => {
     return loggedIn == "true" ? element : <Navigate to="/login" />;
@@ -80,7 +103,10 @@ function App() {
         />
 
         <Routes>
-          <Route path="/" element={<PrivateRoute element={<Dashboard />} />} />
+          <Route
+            path="/dashboard"
+            element={<PrivateRoute element={<Dashboard />} />}
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<Forgotpassword />} />
@@ -150,8 +176,16 @@ function App() {
             element={<PrivateRoute element={<CustomerPotential />} />}
           />
           <Route
+            path="/pre-journey-plan"
+            element={<PrivateRoute element={<PreJourneyPlan />} />}
+          />
+          <Route
             path="/change-password"
             element={<PrivateRoute element={<ChangePassword />} />}
+          />
+          <Route
+            path="/territory-dashobard"
+            element={<PrivateRoute element={<TerritoryDashboard />} />}
           />
         </Routes>
       </BrowserRouter>

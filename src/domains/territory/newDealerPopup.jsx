@@ -156,7 +156,6 @@ export const DealarPopup = ({ visibility, handleOnClose }) => {
             EstOnBoardDate: "8757",
           },
         ]}
-        enableStickyHeader={true}
         height={"auto"}
         //   ref={}
         allowPaging={false}

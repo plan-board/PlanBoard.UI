@@ -124,22 +124,7 @@ const National = () => {
             </div>
           ) : null}
         </div>
-        {/* <div className="w3-bar tab-container">
-            {tabs.map((tab, index) => (
-              <div
-                key={index}
-                className={
-                  toggleState === 1
-                    ? " w3-bar-item w3-button w3-white  w3-hover-white  "
-                    : " w3-bar-item w3-button w3-gray  w3-hover-white  "
-                }
-                  
-                onClick={() => setToggleState(++index)}
-              >
-                {tab}
-              </div>
-            ))}
-          </div> */}
+
         <div className="w3-bar tab-container">
           <div
             className={
@@ -147,7 +132,7 @@ const National = () => {
             }
             onClick={() => toggleTab(1)}
           >
-            <span className="h6"> Dealer Monthly Plan </span>
+            <span className="h6"> Depot Monthly Plan </span>
           </div>
           <div
             className={
@@ -155,7 +140,7 @@ const National = () => {
             }
             onClick={() => toggleTab(2)}
           >
-            <span className="h6"> Dealer Weakly Plan </span>
+            <span className="h6"> Territory Month Plan </span>
           </div>
           <div
             className={
@@ -163,7 +148,7 @@ const National = () => {
             }
             onClick={() => toggleTab(3)}
           >
-            <span className="h6"> Dealer Activity Plan </span>
+            <span className="h6"> Dealer Month Plan </span>
           </div>
 
           <div
@@ -212,6 +197,7 @@ const National = () => {
               {selectedTerritory ? (
                 <DealerMonthSale selectedTerritory={selectedTerritory} />
               ) : (
+                //
                 <div>Please select a territory</div>
               )}
             </>

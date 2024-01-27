@@ -165,6 +165,7 @@ const ZoneMaster = ({ toggleState }) => {
 
   const handleSetZoneProduct = async () => {
     let payload = {};
+
     if (formDetails.zone_id === 0) {
       payload = {
         Token: localStorage.getItem("access_token"),
@@ -175,12 +176,6 @@ const ZoneMaster = ({ toggleState }) => {
         zone_name: formDetails.zone_name,
         zonemgr_id: parseInt(formDetails.zonemgr_id),
         zonemgr_code: "",
-        ttl_region: 0,
-        ttl_depot: 0,
-        ttl_area: 0,
-        ttl_dealer: 0,
-        zone_group: "",
-        zone_group_color: "",
       };
     } else {
       payload = {
@@ -192,12 +187,6 @@ const ZoneMaster = ({ toggleState }) => {
         zone_name: formDetails.zone_name,
         zonemgr_id: parseInt(formDetails.zonemgr_id),
         zonemgr_code: formDetails.zonemgr_code,
-        ttl_region: 0,
-        ttl_depot: 0,
-        ttl_area: 0,
-        ttl_dealer: 0,
-        zone_group: formDetails.zone_group,
-        zone_group_color: "",
       };
     }
 
@@ -250,6 +239,7 @@ const ZoneMaster = ({ toggleState }) => {
       buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
     },
   ];
+  const toolbar = ["ExcelExport", "Search"];
 
   return (
     <>
@@ -315,7 +305,7 @@ const ZoneMaster = ({ toggleState }) => {
                     className="btn btn-primary"
                     disabled={
                       formDetails.zone_code != "" &&
-                      formDetails.zone_id != "" &&
+                      formDetails.zone_name != "" &&
                       formDetails.zonemgr_id != 0
                         ? false
                         : true
@@ -338,9 +328,9 @@ const ZoneMaster = ({ toggleState }) => {
               allowTextWrap={true}
               allowResizing={false}
               dataSource={zoneListData}
-              enableStickyHeader={true}
               height={"350px"}
               ref={zoneMasterInstance}
+              toolbar={toolbar}
               allowPaging={true}
               allowSelection={true}
               gridLines="Both"

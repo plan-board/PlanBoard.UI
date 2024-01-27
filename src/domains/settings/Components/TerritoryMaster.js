@@ -55,48 +55,6 @@ const TerritoryMaster = ({ toggleState }) => {
     );
   };
 
-  const columns = [
-    {
-      name: "S.No",
-      selector: (row) => row.area_id,
-      sortable: true,
-    },
-    {
-      name: "Territory Code",
-      selector: (row) => row.area_code,
-      sortable: true,
-    },
-    {
-      name: "Territory Name",
-      selector: (row) => row.area_name,
-      sortable: true,
-    },
-    {
-      name: "Territory Manager Code",
-      selector: (row) => row.areamgr_code,
-      sortable: true,
-    },
-    {
-      name: "Territory Manager Name",
-      selector: (row) => row.areamgr_name,
-      sortable: true,
-    },
-    {
-      name: "Depot Code",
-      selector: (row) => row.depot_code,
-      sortable: true,
-    },
-    {
-      name: "Depot Name",
-      selector: (row) => row.depot_name,
-      sortable: true,
-    },
-    {
-      name: "Action",
-      cell: renderIconColumn,
-      width: "100px",
-    },
-  ];
   useEffect(() => {
     fetchTerritoryListData();
     fetchTerritoryManagerData();
@@ -195,7 +153,7 @@ const TerritoryMaster = ({ toggleState }) => {
       </option>
     ));
   };
-
+  const toolbar = ["ExcelExport", "Search"];
   const handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -247,6 +205,7 @@ const TerritoryMaster = ({ toggleState }) => {
   };
   const handleSetTerritoryMaster = async () => {
     let payload = {};
+
     if (formDetails.area_id === 0) {
       payload = {
         Token: localStorage.getItem("access_token"),
@@ -258,7 +217,6 @@ const TerritoryMaster = ({ toggleState }) => {
         areamgr_code: "",
         depot_id: parseInt(formDetails.depot_id),
         depot_code: "",
-        ttl_dealer: 0,
       };
     } else {
       payload = {
@@ -271,13 +229,12 @@ const TerritoryMaster = ({ toggleState }) => {
         areamgr_code: formDetails.areamgr_code,
         depot_id: parseInt(formDetails.depot_id),
         depot_code: formDetails.depot_code,
-        ttl_dealer: 0,
       };
     }
     setLoading(true);
     try {
       const response = await axiosInstance.post(
-        "api/Master/SetDepotData",
+        "api/Master/SetAreaData",
         payload
       );
 
@@ -424,9 +381,9 @@ const TerritoryMaster = ({ toggleState }) => {
               allowTextWrap={true}
               allowResizing={false}
               dataSource={territoryListData}
-              enableStickyHeader={true}
               height={"350px"}
               // ref={zoneMasterInstance}
+              toolbar={toolbar}
               allowPaging={true}
               allowSelection={true}
               gridLines="Both"

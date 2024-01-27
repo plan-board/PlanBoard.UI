@@ -10,12 +10,9 @@ const TerritorySelectionBox = ({
   onSelectedTerritoryChange,
   setSelectedTerritory,
 }) => {
-  console.log("--selectedZone", selectedZone);
-  console.log("--selectedDepot", selectedDepot);
-  console.log("--selectedTerritory", selectedTerritory);
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state?.auth);
-  console.log("AuthData", AuthData);
+
   const [isLoading, setLoading] = useState(true);
   const [territoryArray, setTerritoryArray] = useState([]);
   const [selctedTerritory, setSelctedTerritory] = useState(
@@ -23,37 +20,24 @@ const TerritorySelectionBox = ({
   );
 
   const handleChange = (event) => {
-    if(event.target.value != ""){
+    if (event.target.value != "") {
       const territorId = parseInt(event.target.value);
       onSelectedTerritoryChange(territorId);
       setSelctedTerritory(territorId);
     }
   };
 
-
   const fetchTerritory = async () => {
     setLoading(true);
     try {
-      const payload = {
-        Token: localStorage.getItem("access_token"),
-        ZoneId: selectedZone,
-        DepotId: selectedDepot,
-      };
-      const response = await axiosInstance.post(
-        "TerritoryMonthPlan",
-        payload
+      const response = await axiosInstance.get(
+        `api/GeneralData/GetTerritoryByDepotid/${selectedDepot}`
       );
-      console.log("=====TerritoryMonthPlan====", response);
+
       if (response?.status === 200) {
-        let filteredTerr = [];
-        if (AuthData?.Data[0].EmployeeTpye === "AM") {
-          filteredTerr = (response?.data?.Data || []).filter((obj1) =>
-            (AuthData?.Territory || []).some((obj2) => obj1.territoryid === obj2.TerritoryID)
-          );
-        } else {
-          filteredTerr = response?.data?.Data || [];
-        }
-        setTerritoryArray(filteredTerr);
+        setTerritoryArray(
+          response?.data?.Data != null ? response?.data?.Data.Table : []
+        );
       }
       setLoading(false);
     } catch (error) {
@@ -63,12 +47,12 @@ const TerritorySelectionBox = ({
   };
 
   useEffect(() => {
-    setTerritoryArray([]) 
+    setTerritoryArray([]);
     // if (AuthData?.Data[0].EmployeeTpye === "HOD") {}
-    if((selectedZone != "0" && selectedDepot !=  "0")){
+    if (selectedZone != "0" && selectedDepot != "0") {
       fetchTerritory();
     }
-    if(AuthData?.Data[0].EmployeeTpye === "DM" && selectedDepot !=  ""){
+    if (AuthData?.Data[0].EmployeeTpye === "DM" && selectedDepot != "") {
       fetchTerritory();
     }
   }, [selectedZone, selectedDepot]);
@@ -94,10 +78,12 @@ const TerritorySelectionBox = ({
           value={selctedTerritory}
           onChange={handleChange}
         >
-          <option value={AuthData?.Data[0].EmployeeTpye === "HOD"?0:""}>Select Territory</option>
+          <option value={AuthData?.Data[0].EmployeeTpye === "HOD" ? 0 : ""}>
+            Select Territory
+          </option>
           {territoryArray?.map((item, index) => (
-            <option key={index} value={item?.territoryid}>
-              {item.territory_name}
+            <option key={index} value={item?.area_id}>
+              {item.area_name}
             </option>
           ))}
         </select>

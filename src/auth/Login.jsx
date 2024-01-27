@@ -9,12 +9,13 @@ import logoPlanboard from "../images/logo1-white.png";
 import axiosInstance from "./api";
 import { setAuthData } from "../store/actions/Auth";
 import { SHOW_TOAST } from "../store/constant/types";
+import LoadingBar from "react-top-loading-bar";
 
 const Login = ({ setIsAuth }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState(false);
 
   const initialFormData = {
@@ -51,13 +52,13 @@ const Login = ({ setIsAuth }) => {
     const payload = {
       SessionData: [formData],
     };
-
+    setProgress(60);
     try {
       const res = await axiosInstance.post(
         "api/UserMaster/SessionCheck",
         payload
       );
-      console.log("=====Update pass====", res);
+
       if (res?.status === 200) {
         const responseData = res?.data;
 
@@ -72,7 +73,11 @@ const Login = ({ setIsAuth }) => {
             responseData.Data[0]?.TokenValid
           );
           localStorage.setItem("Isloggedin", responseData.Status);
-
+          localStorage.setItem(
+            "EmployeeType",
+            responseData.Data[0]?.EmployeeTpye
+          );
+          setProgress(100);
           switch (responseData.Data[0]?.EmployeeTpye) {
             case "HOD":
               navigate("/national");
@@ -109,6 +114,11 @@ const Login = ({ setIsAuth }) => {
   return (
     <>
       <style>{".w3-sidebar{display:none}"}</style>
+      <LoadingBar
+        color="#007ad1"
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
       <div className="login-Container">
         <div className="loginBg">
           <div className="logo-container">

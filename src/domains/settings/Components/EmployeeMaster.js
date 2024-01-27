@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import DataTable from "react-data-table-component";
 import axiosInstance from "../../../auth/api";
@@ -18,7 +18,9 @@ import {
   ExcelExport,
   Sort,
 } from "@syncfusion/ej2-react-grids";
+import ExportExcel from "../../ExportExcel";
 const EmployeeMaster = ({ toggleState }) => {
+  let EmployeeGridMasterInstance = useRef();
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
   const [employeeList, setEmployeeList] = useState([]);
@@ -392,7 +394,7 @@ const EmployeeMaster = ({ toggleState }) => {
           employee_code: formDetails.employee_code,
           employee_name: formDetails.employee_name,
           employee_email: formDetails.employee_email,
-          employee_mobile: formDetails.employee_email,
+          employee_mobile: formDetails.employee_mobile,
           role_id: parseInt(formDetails.role_id),
           designation_id: parseInt(formDetails.designation_id),
           reportingmgr_id: parseInt(formDetails.reportingmgr_id),
@@ -457,14 +459,32 @@ const EmployeeMaster = ({ toggleState }) => {
       buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
     },
   ];
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      EmployeeGridMasterInstance.current &&
+      args.item.id === "employeeMasterGrid_id_excelexport"
+    ) {
+      const arrObj = employeeList.map((element, index) => ({
+        "S.No": index + 1,
+        "Employee Code": element.employee_code,
+        "Employee Name": element.employee_name,
+        Email: element.employee_email,
+        Mobile: element.employee_mobile,
+        Designation: element.designation_name,
+        "Reporting Manager Name": element.reportingmgr_name,
+      }));
 
+      ExportExcel("Employee-MasterList", arrObj);
+    }
+  };
   return (
     <>
       <section>
         {isLoading && <Loader />}
         <div className="employeeForm-component">
           <Row>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Employee Code*</label>
               <input
                 type="text"
@@ -476,7 +496,7 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.employee_code}</span>
               )}
             </Col>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Employee Name*</label>
               <input
                 type="text"
@@ -488,7 +508,7 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.employee_name}</span>
               )}
             </Col>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Email*</label>
               <input
                 type="text"
@@ -500,9 +520,7 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.employee_email}</span>
               )}
             </Col>
-          </Row>
-          <Row style={{ marginTop: "10px" }}>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Mobile*</label>
               <input
                 type="text"
@@ -515,8 +533,9 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.employee_mobile}</span>
               )}
             </Col>
-
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+          </Row>
+          <Row style={{ marginTop: "10px" }}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Role*</label>
               <select
                 className="from_dropDownCss"
@@ -531,7 +550,7 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.role_id}</span>
               )}
             </Col>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Designation</label>
               <select
                 className="from_dropDownCss"
@@ -543,9 +562,7 @@ const EmployeeMaster = ({ toggleState }) => {
                 {DesignationDropdown()}
               </select>
             </Col>
-          </Row>
-          <Row style={{ marginTop: "10px" }}>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Reporting Manager</label>
               <select
                 className="from_dropDownCss"
@@ -557,7 +574,7 @@ const EmployeeMaster = ({ toggleState }) => {
                 {ReportingMgrDropdown()}
               </select>
             </Col>
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Type</label>
               <select
                 className="from_dropDownCss"
@@ -575,8 +592,9 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.type}</span>
               )}
             </Col>
-
-            <Col xl={4} lg={4} md={6} sm={12} xs={12}>
+          </Row>
+          <Row style={{ marginTop: "10px" }}>
+            <Col xl={3} lg={3} md={6} sm={12} xs={12}>
               <label className="formlabel">Password*</label>
               <input
                 type="text"
@@ -588,9 +606,14 @@ const EmployeeMaster = ({ toggleState }) => {
                 <span style={{ color: "red" }}>{errors.employee_Password}</span>
               )}
             </Col>
-          </Row>
-          <Row style={{ marginTop: "10px" }}>
-            <Col xl={1} lg={1} md={2} sm={2} xs={2}>
+            <Col
+              xl={1}
+              lg={1}
+              md={2}
+              sm={2}
+              xs={2}
+              style={{ marginTop: "1.5rem" }}
+            >
               <button
                 type="button"
                 className="btn btn-primary"
@@ -610,9 +633,10 @@ const EmployeeMaster = ({ toggleState }) => {
               allowTextWrap={true}
               allowResizing={false}
               dataSource={employeeList}
-              enableStickyHeader={true}
               height={"350px"}
-              // ref={zoneMasterInstance}
+              ref={EmployeeGridMasterInstance}
+              toolbar={toolbar}
+              toolbarClick={toolbarClick}
               allowPaging={true}
               allowSelection={true}
               gridLines="Both"

@@ -6,6 +6,7 @@ import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
 import { fetchTerritoryMonthSale } from "../../store/actions/zone";
+import { Link } from "react-router-dom";
 
 const date = new Date();
 const cMName = date.toLocaleString("default", { month: "short" });
@@ -60,10 +61,13 @@ const TerritoryMonthSale = ({ selectedTerritory }) => {
       headers.push(
         <Fragment>
           <td className={`  ${monName === mStartName ? "active" : ""}`}>
-            {fNWCommas(item[`${monName}_Month_Value_v1`])}{" "}
-            <hr className="hr0" /> {fNWCommas(item[`${monName}_Month_Sale`])}{" "}
+            {/* {fNWCommas(item[`${monName}_Month_Value_v1`].toFixed(2))}{" "} */}
+            {item[`${monName}_Month_Value_v1`].toFixed(2)}
+            <hr className="hr0" />{" "}
+            {/* {fNWCommas(item[`${monName}_Month_Sale_act`])}{" "} */}
+            {item[`${monName}_Month_Sale_act`].toFixed(2)}
             {GetPercent(
-              item[`${monName}_Month_Sale`],
+              item[`${monName}_Month_Sale_act`],
               item[`${monName}_Month_Value_v1`]
             )}
           </td>
@@ -115,7 +119,11 @@ const TerritoryMonthSale = ({ selectedTerritory }) => {
               ) : (
                 territoryMonthPlan.map((item, index) => (
                   <tr key={index + "tms"}>
-                    <td className="h3">{item?.territory_name}</td>
+                    <td className="h3">
+                      <Link to={"/territory-dashobard"}>
+                        {item?.territory_name}
+                      </Link>
+                    </td>
                     {generateTableRows(item)}
                   </tr>
                 ))

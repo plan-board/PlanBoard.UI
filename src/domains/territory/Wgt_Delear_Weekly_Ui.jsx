@@ -131,7 +131,6 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
               dataSource={weekdata}
               toolbar={toolbar}
               toolbarClick={toolbarClick}
-              // enableStickyHeader={true}
               height={"400px"}
               ref={Wgt_Delear_Weekly_Instance}
               allowPaging={true}

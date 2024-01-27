@@ -76,9 +76,9 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
   const CyPlanYtdTemplate = (args) => {
     return (
       <>
-        {fNWCommas(args?.CY_Value)} <hr className="hr0" />
+        {fNWCommas(args?.CY_ValuePlanV1)} <hr className="hr0" />
         {fNWCommas(args?.YTD_Value)}
-        {GetPercent(args?.YTD_Value, args?.CY_Value)}
+        {GetPercent(args?.YTD_Value, args?.CY_ValuePlanV1)}
       </>
     );
   };
@@ -87,8 +87,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Apr_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Apr_Month_Sale`])}
-        {GetPercent(args[`Apr_Month_Sale`], args[`Apr_Month_Value_v1`])}
+        {fNWCommas(args[`Apr_Month_Sale_act`])}
+        {GetPercent(args[`Apr_Month_Sale_act`], args[`Apr_Month_Value_v1`])}
       </>
     );
   };
@@ -97,8 +97,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`May_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`May_Month_Sale`])}
-        {GetPercent(args[`May_Month_Sale`], args[`May_Month_Value_v1`])}
+        {fNWCommas(args[`May_Month_Sale_act`])}
+        {GetPercent(args[`May_Month_Sale_act`], args[`May_Month_Value_v1`])}
       </>
     );
   };
@@ -107,8 +107,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Jun_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Jun_Month_Sale`])}
-        {GetPercent(args[`Jun_Month_Sale`], args[`Jun_Month_Value_v1`])}
+        {fNWCommas(args[`Jun_Month_Sale_act`])}
+        {GetPercent(args[`Jun_Month_Sale_act`], args[`Jun_Month_Value_v1`])}
       </>
     );
   };
@@ -117,8 +117,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Jul_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Jul_Month_Sale`])}
-        {GetPercent(args[`Jul_Month_Sale`], args[`Jul_Month_Value_v1`])}
+        {fNWCommas(args[`Jul_Month_Sale_act`])}
+        {GetPercent(args[`Jul_Month_Sale_act`], args[`Jul_Month_Value_v1`])}
       </>
     );
   };
@@ -127,8 +127,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Aug_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Aug_Month_Sale`])}
-        {GetPercent(args[`Aug_Month_Sale`], args[`Aug_Month_Value_v1`])}
+        {fNWCommas(args[`Aug_Month_Sale_act`])}
+        {GetPercent(args[`Aug_Month_Sale_act`], args[`Aug_Month_Value_v1`])}
       </>
     );
   };
@@ -137,8 +137,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Sep_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Sep_Month_Sale`])}
-        {GetPercent(args[`Sep_Month_Sale`], args[`Sep_Month_Value_v1`])}
+        {fNWCommas(args[`Sep_Month_Sale_act`])}
+        {GetPercent(args[`Sep_Month_Sale_act`], args[`Sep_Month_Value_v1`])}
       </>
     );
   };
@@ -147,8 +147,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Oct_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Oct_Month_Sale`])}
-        {GetPercent(args[`Oct_Month_Sale`], args[`Oct_Month_Value_v1`])}
+        {fNWCommas(args[`Oct_Month_Sale_act`])}
+        {GetPercent(args[`Oct_Month_Sale_act`], args[`Oct_Month_Value_v1`])}
       </>
     );
   };
@@ -157,8 +157,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Nov_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Nov_Month_Sale`])}
-        {GetPercent(args[`Nov_Month_Sale`], args[`Nov_Month_Value_v1`])}
+        {fNWCommas(args[`Nov_Month_Sale_act`])}
+        {GetPercent(args[`Nov_Month_Sale_act`], args[`Nov_Month_Value_v1`])}
       </>
     );
   };
@@ -167,8 +167,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Dec_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Dec_Month_Sale`])}
-        {GetPercent(args[`Dec_Month_Sale`], args[`Dec_Month_Value_v1`])}
+        {fNWCommas(args[`Dec_Month_Sale_act`])}
+        {GetPercent(args[`Dec_Month_Sale_act`], args[`Dec_Month_Value_v1`])}
       </>
     );
   };
@@ -177,8 +177,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Jan_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Jan_Month_Sale`])}
-        {GetPercent(args[`Jan_Month_Sale`], args[`Jan_Month_Value_v1`])}
+        {fNWCommas(args[`Jan_Month_Sale_act`])}
+        {GetPercent(args[`Jan_Month_Sale_act`], args[`Jan_Month_Value_v1`])}
       </>
     );
   };
@@ -187,8 +187,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Feb_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Feb_Month_Sale`])}
-        {GetPercent(args[`Feb_Month_Sale`], args[`Feb_Month_Value_v1`])}
+        {fNWCommas(args[`Feb_Month_Sale_act`])}
+        {GetPercent(args[`Feb_Month_Sale_act`], args[`Feb_Month_Value_v1`])}
       </>
     );
   };
@@ -197,8 +197,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       <>
         {fNWCommas(args[`Mar_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Mar_Month_Sale`])}
-        {GetPercent(args[`Mar_Month_Sale`], args[`Mar_Month_Value_v1`])}
+        {fNWCommas(args[`Mar_Month_Sale_act`])}
+        {GetPercent(args[`Mar_Month_Sale_act`], args[`Mar_Month_Value_v1`])}
       </>
     );
   };
@@ -244,7 +244,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
     if (NationalZoneGridInstance.current) {
       let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
       let totalCYValue1 = shownData.reduce(
-        (acc, item) => acc + (parseInt(item.CY_Value.toFixed(0)) || 0),
+        (acc, item) => acc + (parseInt(item.CY_ValuePlanV1.toFixed(0)) || 0),
         0
       );
       let totalYTDValue1 = shownData.reduce(
@@ -274,7 +274,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       let totalAprValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Apr_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Apr_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -300,7 +301,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       let totalMayValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.May_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.May_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -326,7 +328,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalJunValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Jun_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Jun_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -352,7 +355,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalJulValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Jul_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Jul_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -377,7 +381,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalAugValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Aug_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Aug_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -402,7 +407,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalSepValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Sep_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Sep_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -428,7 +434,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalOctValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Oct_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Oct_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -453,7 +460,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalNovValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Nov_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Nov_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -478,7 +486,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalDecValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Dec_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Dec_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -503,7 +512,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalJanValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Jan_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Jan_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -528,7 +538,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalFebValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Feb_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Feb_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -553,7 +564,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         0
       );
       const totalMarValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Mar_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Mar_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -725,32 +737,32 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         "S.No": index + 1,
         Zone: element.zone_name,
         "LY 22-23": parseInt(element.LY_Value).toFixed(0),
-        "Plan 2023": parseInt(element.CY_Value).toFixed(0),
+        "Plan 2023": parseInt(element.CY_ValuePlanV1).toFixed(0),
         YTD: parseInt(element.YTD_Value).toFixed(0),
         Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
-        "Apr Sale": parseInt(element.Apr_Month_Sale).toFixed(0),
+        "Apr Sale": parseInt(element.Apr_Month_Sale_act).toFixed(0),
         May: parseInt(element.May_Month_Value_v1).toFixed(0),
-        "May Sale": parseInt(element.May_Month_Sale).toFixed(0),
+        "May Sale": parseInt(element.May_Month_Sale_act).toFixed(0),
         Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
-        "Jun Sale": parseInt(element.Jun_Month_Sale).toFixed(0),
+        "Jun Sale": parseInt(element.Jun_Month_Sale_act).toFixed(0),
         Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
-        "Jul Sale": parseInt(element.Jul_Month_Sale).toFixed(0),
+        "Jul Sale": parseInt(element.Jul_Month_Sale_act).toFixed(0),
         Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
-        "Aug Sale": parseInt(element.Aug_Month_Sale).toFixed(0),
+        "Aug Sale": parseInt(element.Aug_Month_Sale_act).toFixed(0),
         Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
-        "Sep Sale": parseInt(element.Sep_Month_Sale).toFixed(0),
+        "Sep Sale": parseInt(element.Sep_Month_Sale_act).toFixed(0),
         Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
-        "Oct Sale": parseInt(element.Oct_Month_Sale).toFixed(0),
+        "Oct Sale": parseInt(element.Oct_Month_Sale_act).toFixed(0),
         Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
-        "Nov Sale": parseInt(element.Nov_Month_Sale).toFixed(0),
+        "Nov Sale": parseInt(element.Nov_Month_Sale_act).toFixed(0),
         Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
-        "Dec Sale": parseInt(element.Dec_Month_Sale).toFixed(0),
+        "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
         Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
-        "Jan Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
+        "Jan Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
         Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
-        "Feb Sale": parseInt(element.Feb_Month_Sale).toFixed(0),
+        "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
         Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
-        "Mar Sale": parseInt(element.Mar_Month_Sale).toFixed(0),
+        "Mar Sale": parseInt(element.Mar_Month_Sale_act).toFixed(0),
       }));
 
       ExportExcel("Zone-Wise-Monthly-Plan-Achievement", arrObj);
@@ -775,8 +787,8 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
               ref={NationalZoneGridInstance}
               gridLines="Both"
               rowHeight={45}
-              allowFiltering={true}
-              filterSettings={{ type: "Excel" }}
+              // allowFiltering={true}
+              // filterSettings={{ type: "Excel" }}
               allowExcelExport={true}
               allowPaging={true}
               allowSorting={true}

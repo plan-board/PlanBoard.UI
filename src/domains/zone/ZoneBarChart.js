@@ -55,7 +55,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
       0
     );
     let totalAprValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Apr_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Apr_Month_Sale_act.toFixed(0)) || 0),
       0
     );
     let totalMayValue1 = monthWiseSalesData?.reduce(
@@ -63,7 +63,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
       0
     );
     let totalMayValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.May_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.May_Month_Sale_act.toFixed(0)) || 0),
       0
     );
     let totalJunValue1 = monthWiseSalesData?.reduce(
@@ -71,7 +71,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
       0
     );
     let totalJunValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Jun_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Jun_Month_Sale_act.toFixed(0)) || 0),
       0
     );
     let totalJulValue1 = monthWiseSalesData?.reduce(
@@ -79,7 +79,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
       0
     );
     let totalJulValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Jul_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Jul_Month_Sale_act.toFixed(0)) || 0),
       0
     );
     let totalAugValue1 = monthWiseSalesData?.reduce(
@@ -87,7 +87,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
       0
     );
     let totalAugValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Aug_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Aug_Month_Sale_act.toFixed(0)) || 0),
       0
     );
     let totalSepValue1 = monthWiseSalesData?.reduce(
@@ -96,7 +96,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalSepValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Sep_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Sep_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 
@@ -106,7 +106,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalOctValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Oct_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Oct_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 
@@ -116,7 +116,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalNovValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Nov_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Nov_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 
@@ -126,7 +126,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalDecValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Dec_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Dec_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 
@@ -136,7 +136,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalJanValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Jan_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Jan_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 
@@ -146,7 +146,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalFebValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Feb_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Feb_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 
@@ -156,7 +156,7 @@ const ZoneBar = ({ selectedZone, monthWiseSalesData, isLoading }) => {
     );
 
     let totalMarValue_v2 = monthWiseSalesData?.reduce(
-      (acc, item) => acc + (parseInt(item?.Mar_Month_Sale.toFixed(0)) || 0),
+      (acc, item) => acc + (parseInt(item?.Mar_Month_Sale_act.toFixed(0)) || 0),
       0
     );
 

@@ -8,11 +8,9 @@ const DepoSelectionBox = ({
   selectedDepot,
   onSelectedDepoChange,
 }) => {
-  console.log("🚀 ~ selectedZone:", selectedZone);
-  console.log("🚀 ~ selectedDepot:", selectedDepot);
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  console.log("🚀 ~ AuthData:", AuthData);
+
   const [isLoading, setLoading] = useState(true);
   const [depotArray, setDepotSalesPlanData] = useState([]);
   const [deptonameselect, setDeptonameselect] = useState(null);
@@ -21,8 +19,8 @@ const DepoSelectionBox = ({
   );
 
   const handleChange = (event) => {
-    const depotid = parseInt(event.target.value);
-    if (depotid != "") {
+    if (event.target.value != "") {
+      const depotid = parseInt(event.target.value);
       setDeptonameselect(
         event.target.options[event.target.selectedIndex]?.textContent
       );
@@ -34,18 +32,16 @@ const DepoSelectionBox = ({
   const fetchDepotSalesPlan = async () => {
     setLoading(true);
     try {
-      const payload = {
-        Token: localStorage.getItem("access_token"),
-        ZoneId: selectedZone,
-        DepotId: AuthData?.Data[0].EmployeeTpye === "DM" ? selectedDepot : 0, //selectedDepot
-      };
-      const response = await axiosInstance.post("DepotMonthPlan", payload);
-
+      const response = await axiosInstance.get(
+        `api/GeneralData/GetDepotByZoneid/${selectedZone}`
+      );
       if (response?.status === 200) {
         setDepotSalesPlanData(
-          response.data.Data != null ? response.data.Data : []
+          response.data.Data != null ? response.data.Data.Table : []
         );
-        setSelctedDepo(selectedDepot ?? response?.data?.Data[0]?.depotid);
+        setSelctedDepo(
+          selectedDepot ?? response?.data?.Data[0]?.Table[0]?.depotid
+        );
       }
       setLoading(false);
     } catch (error) {
@@ -57,14 +53,13 @@ const DepoSelectionBox = ({
 
   useEffect(() => {
     if (AuthData?.Data[0].EmployeeTpye === "DM") {
-      console.log("--call");
       fetchDepotSalesPlan();
     } else {
       if (selectedZone != 0) {
         fetchDepotSalesPlan();
       }
     }
-  }, [selectedZone, selectedDepot]);
+  }, [selectedZone]);
 
   return (
     <>
@@ -93,7 +88,7 @@ const DepoSelectionBox = ({
               : "Select Depot"}
           </option>
           {depotArray?.map((item, index) => (
-            <option key={index} value={item?.depotid}>
+            <option key={index} value={item?.depot_id}>
               {item.depot_name}
             </option>
           ))}

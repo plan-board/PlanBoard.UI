@@ -66,16 +66,17 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
   const [submitForm, setSubmitForm] = useState(false);
+  // const [marketSectorSelected,setMarketSectorChanged]=useState()
 
   const [selectedRow, setSelectedRow] = useState([]);
-  const [sumValue, setSumValue] = useState(0);
+  const [popupVisitValue, setPopupVisitValue] = useState(0);
   const [modalData, setModalData] = useState(null);
   const [monthName, setMonthName] = useState("");
 
   const [isLocked, setIsLocked] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
-  const [sortField, setSortField] = useState(""); // To store the current sorting field (empty for no sorting)
+  const [multiConSwitch, setmultiConSwitch] = useState(false); // To store the current sorting field (empty for no sorting)
   const [openDealerPopup, setopenDealerPopup] = useState(false); // To store the current sorting direction ('asc' or 'desc')
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -96,6 +97,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     potential: 0,
     SalesValPlan: 0,
     EstOnBoardDate: "",
+    visit: 0,
   });
   const [errors, setErrorDetails] = useState({
     dealer_name: "",
@@ -103,6 +105,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     SalesValPlan: "",
     EstOnBoardDate: "",
     potential: "",
+    visit: "",
   });
 
   const [confirmResponseDetails, setConfirmResponseDetails] = useState({
@@ -119,6 +122,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   }, [data]);
 
   const getNewDealerData = async () => {
+    setDealerPoupGridData([]);
     const cMonth = new Date().getMonth() + 1;
     const payload = {
       Token: localStorage.getItem("access_token"),
@@ -141,9 +145,11 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
               potential: parseInt(val.potential),
               SalesValPlan: parseInt(val.salesvalueplan),
               EstOnBoardDate: val.salesvalueplan,
+              visit: val.visit,
             });
           });
-          setDealerPoupGridData([...changeFormat]);
+          setDealerPoupGridData(changeFormat);
+          // dealerPopupInstance.current.refresh();
         }
       }
 
@@ -196,7 +202,6 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
             let collectSum =
               val.creepage_value + val.OD + val[`${mStartName}_Month_Value_v1`];
             val.collectionVal = collectSum.toFixed(2);
-            val.visit = 0;
           });
           setDealerlist(res);
         }
@@ -217,8 +222,8 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const templateCyTd = (args) => {
     return (
       <>
-        {args.CY_Value} <hr className="hr0" /> {args.YTD_Value}
-        {GetPercent(args.CY_Value, args.YTD_Value)}
+        {args.CY_ValuePlanV1} <hr className="hr0" /> {args.YTD_Value}
+        {GetPercent(args.CY_ValuePlanV1, args.YTD_Value)}
       </>
     );
   };
@@ -228,8 +233,11 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
       <>
         {args[`${val}_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`${val}_Month_Sale`]}
-        {GetPercent(args[`${val}_Month_Sale`], args[`${val}_Month_Value_v1`])}
+        {args[`${val}_Month_Sale_act`]}
+        {GetPercent(
+          args[`${val}_Month_Sale_act`],
+          args[`${val}_Month_Value_v1`]
+        )}
       </>
     );
   };
@@ -237,7 +245,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const salesTemplate = (args) => {
     return (
       <>
-        {args[`${mStartName}_Month_Value`]}
+        {args[`${mStartName}_Month_Value_v0`]}
         <hr className="hr0" />
         {args[`${mStartName}_Month_Value_v1`]}
       </>
@@ -249,9 +257,9 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
       <>
         {args[`${mStartName}_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`${mStartName}_Month_Sale`]}{" "}
+        {args[`${mStartName}_Month_Sale_act`]}{" "}
         {GetPercent(
-          args[`${mStartName}_Month_Sale`],
+          args[`${mStartName}_Month_Sale_act`],
           args[`${mStartName}_Month_Value_v1`]
         )}
       </>
@@ -282,9 +290,10 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     let rowData = item.rowData;
     setLoading(true);
     setVisibility(true);
-    setSumValue(0);
+    // setSumValue(0);
     setModalData(rowData);
     fetchMonthDataById(rowData);
+    setPopupVisitValue(rowData.VisitPlan_V1);
   };
   const fetchMonthDataById = async (dataObj) => {
     const cMonth = new Date().getMonth() + 1;
@@ -309,20 +318,15 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
       );
 
       if (response?.status === 200) {
-        const result = response?.data?.Data;
-        if (result.length > 0) {
-          result.map((val, index) => {
-            val.serialNo = index + 1;
-          });
+        if (response?.data?.Data) {
+          const result = response?.data?.Data;
+          if (result.length > 0) {
+            result.map((val, index) => {
+              val.serialNo = index + 1;
+            });
+          }
+          setSelectedRow(result?.length ? result : []);
         }
-        setSelectedRow(result);
-        const sumValue = result.reduce((acc, item) => {
-          const value = parseFloat(item.Value) || 0;
-          return acc + value;
-        }, 0);
-        const formattedSumValue = sumValue.toFixed(2);
-
-        setSumValue(formattedSumValue);
       }
 
       setLoading(false);
@@ -332,14 +336,15 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   };
   const popupCloseHandler = (e) => {
     Wgt_DelearUiGridInstance.current.refresh();
-
+    setmultiConSwitch(false);
     setVisibility(false);
     setSelectedRow([]);
     setModalData(null);
-    setSumValue(0);
+    setPopupVisitValue(0);
   };
 
   const handleCellSaved = (args) => {
+    console.log(args);
     let change_records = [...selectedRow];
     if (args.columnName == "Volume") {
       change_records.map((val) => {
@@ -359,10 +364,32 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     setSelectedRow([...change_records]);
   };
 
+  const validateFormMarketSector = (event) => {
+    event.preventDefault();
+    let changedRecords =
+      Wgt_DelearUiGridInstancePopup.current.getBatchChanges().changedRecords;
+    // if (changedRecords.length == 0) {
+    //   setResponseDetails({
+    //     type: "error",
+    //     show: true,
+    //     message: "No Changes Found to Proceed",
+    //   });
+    // } else if (changedRecords.length == 1) {
+    //   setmultiConSwitch(true);
+    //   setConfirmResponseDetails({
+    //     type: "error",
+    //     show: true,
+    //     message: "Are you sure you want to submit",
+    //   });
+    // } else {
+    handleSubmit();
+    // }
+  };
+
   const handleSubmit = async (event) => {
+    handleCloseResponse();
     setLoading(true);
     setSubmitForm(true);
-    event.preventDefault();
 
     try {
       const payArr = selectedRow.map((item) => ({
@@ -377,6 +404,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
       const payload = {
         Token: localStorage.getItem("access_token"),
         FocusedProductDealerWiseParam: payArr,
+        visit: parseInt(popupVisitValue),
       };
 
       const response = await axiosInstance.post(
@@ -394,6 +422,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
           setDealerlist([]); //clear data
           fetchDealerMaster();
           popupCloseHandler(false);
+          setPopupVisitValue(0);
         } else {
           setResponseDetails({
             type: "error",
@@ -411,6 +440,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
     }
   };
   const handleCloseResponse = () => {
+    setmultiConSwitch(false);
     setConfirmResponseDetails({ show: false });
     setResponseDetails({ show: false, message: "", type: "" });
   };
@@ -497,38 +527,39 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         "LY Actual Share (%)": element.lYActualShare,
         "Ytd Actual + Plan Share(%)": element.YTDActualPlanShare,
         LY: element.LY_Value,
-        "CY Plan": element.CY_Value,
+        "CY Plan": element.CY_ValuePlanV1,
         YTD: element.YTD_Value,
         "6 month": element.LastSixMonth_Avg_Sales,
         OS: element.OS,
         OD: element.OD,
         "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
         Apr: element.Apr_Month_Value_v1,
-        "Apr Sale": element.Apr_Month_Sale,
+        "Apr Sale": element.Apr_Month_Sale_act,
         May: element.May_Month_Value_v1,
-        "May Sale": element.May_Month_Sale,
+        "May Sale": element.May_Month_Sale_act,
         Jun: element.Jun_Month_Value_v1,
-        "Jun Sale": element.Jun_Month_Sale,
+        "Jun Sale": element.Jun_Month_Sale_act,
         Jul: element.Jul_Month_Value_v1,
-        "Jul Sale": element.Jul_Month_Sale,
+        "Jul Sale": element.Jul_Month_Sale_act,
         Aug: element.Aug_Month_Value_v1,
-        "Aug Sale": element.Aug_Month_Sale,
+        "Aug Sale": element.Aug_Month_Sale_act,
         Sep: element.Sep_Month_Value_v1,
-        "Sep Sale": element.Sep_Month_Sale,
+        "Sep Sale": element.Sep_Month_Sale_act,
         Oct: element.Oct_Month_Value_v1,
-        "Oct Sale": element.Oct_Month_Sale,
+        "Oct Sale": element.Oct_Month_Sale_act,
         Nov: element.Nov_Month_Value_v1,
-        "Nov Sale": element.Nov_Month_Sale,
+        "Nov Sale": element.Nov_Month_Sale_act,
         Dec: element.Dec_Month_Value_v1,
-        "Dec Sale": element.Dec_Month_Sale,
+        "Dec Sale": element.Dec_Month_Sale_act,
         Jan: element.Jan_Month_Value_v1,
-        "Jan Sale": element.Feb_Month_Sale,
+        "Jan Sale": element.Jan_Month_Sale_act,
         Feb: element.Feb_Month_Value_v1,
-        "Feb Sale": element.Feb_Month_Sale,
+        "Feb Sale": element.Feb_Month_Sale_act,
         Mar: element.Mar_Month_Value_v1,
-        "Mar Sale": element.Mar_Month_Sale,
+        "Mar Sale": element.Mar_Month_Sale_act,
+        visit: element.VisitPlan_V1,
       }));
-      ExportExcel("ssDealer-Wise-Monthly-Plan-Achievement", arrObj);
+      ExportExcel("Dealer-Wise-Monthly-Plan-Achievement", arrObj);
     }
   };
   const tDueTemplate = () => {
@@ -544,15 +575,21 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const salesHeadTemplate = () => {
     return (
       <>
-        <th title="V0 vs V1">{`Sale Plan`}</th>
+        <th
+          title="V0 vs V1"
+          style={{ paddingLeft: "0px" }}
+        >{`System/Actual Plan`}</th>
       </>
     );
   };
   const ActSalesHeadTemplate = () => {
     return (
-      <>
-        <th title="V0 vs V1">{`Actual Sale`}</th>
-      </>
+      // <>
+      <th
+        title="V0 vs V1"
+        style={{ paddingLeft: "0px" }}
+      >{`Plan/Actual Sale`}</th>
+      // </>
     );
   };
 
@@ -637,7 +674,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         allowFiltering: false,
       },
       {
-        field: `${mStartName}_Month_LY_Value`,
+        field: `${mStartName}_Month_ly_Value`,
         headerText: "LY Same Month",
         width: "130",
         visible: true,
@@ -710,7 +747,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         },
         {
           // format: "C2",
-          field: "visit",
+          field: "VisitPlan_V1",
           headerText: "Visit",
           width: 100,
           allowEditing: false,
@@ -857,6 +894,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
         Potential: parseInt(val.potential),
         SalesValuePlan: parseInt(val.SalesValPlan),
         OnBoaringDate: formatDate(val.EstOnBoardDate),
+        Visit: val.visit ? parseInt(val.visit) : 0,
       });
     });
     const payload = {
@@ -917,7 +955,8 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                 className=" icon-button"
                 onClick={() =>
                   setConfirmResponseDetails({
-                    ...confirmResponseDetails,
+                    message: "Do you want to Lock",
+                    type: "error",
                     show: true,
                   })
                 }
@@ -1003,7 +1042,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
           </span>
           <hr />
 
-          <form className="w3-container" onSubmit={handleSubmit}>
+          <form className="w3-container" onSubmit={validateFormMarketSector}>
             <table className="w3-table table-bordered w3-small ">
               <tr className="w3-gray">
                 <td colspan="30">
@@ -1036,9 +1075,9 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                 <td style={{ width: "10%" }}>
                   <input
                     type="number"
-                    value={modalData ? modalData["visit"] : ""}
+                    value={popupVisitValue}
                     className="inp40 text-center"
-                    onChange={(e) => console.log(e.target.value)}
+                    onChange={(e) => setPopupVisitValue(e.target.value)}
                   />
                 </td>
               </tr>
@@ -1061,7 +1100,6 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
               allowTextWrap={true}
               allowResizing={false}
               dataSource={selectedRow}
-              enableStickyHeader={true}
               height={"400px"}
               ref={Wgt_DelearUiGridInstancePopup}
               allowPaging={false}
@@ -1128,19 +1166,19 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                   allowEditing={false}
                 />
                 <ColumnDirective
-                  field="Volume"
-                  headerText="Volume (Ltrs.)"
-                  width="150"
-                  textAlign="center"
-                  editType="numericedit"
-                  allowEditing={true}
-                />
-                <ColumnDirective
                   field="Value"
                   headerText="Value (Rs.)"
                   width="150"
                   editType="numericedit"
                   textAlign="center"
+                  allowEditing={true}
+                />
+                <ColumnDirective
+                  field="Volume"
+                  headerText="Volume (Ltrs.)"
+                  width="150"
+                  textAlign="center"
+                  editType="numericedit"
                   allowEditing={true}
                 />
               </ColumnsDirective>
@@ -1193,11 +1231,15 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
           show={confirmResponseDetails.show}
           type={confirmResponseDetails.type}
           text={confirmResponseDetails.message}
-          onConfirm={lockData}
+          onConfirm={multiConSwitch ? handleSubmit : lockData}
           onClose={() => handleCloseResponse()}
         />
         {openDealerPopup ? (
-          <Popup isOpen={openDealerPopup} onClose={handleDealerPopupClose}>
+          <Popup
+            isOpen={openDealerPopup}
+            onClose={handleDealerPopupClose}
+            isWidth={false}
+          >
             <div className="paddingForPopupTerritory">
               <div className="titlePopupHeader">New Dealer Planning</div>
               <div
@@ -1274,6 +1316,20 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                       </span>
                     )}
                   </Col>
+                  <Col xl={4} lg={4} md={3} sm={3} xs={3}>
+                    <label className="formlabel">Visit</label>
+                    <input
+                      type="number"
+                      name="visit"
+                      value={formDetails.visit}
+                      onChange={handleChange}
+                    />
+                    {errors.visit && (
+                      <span style={{ color: "red" }}>{errors.visit}</span>
+                    )}
+                  </Col>
+                </Row>
+                <Row>
                   <Col xl={2} lg={2} md={2} sm={2}>
                     <div style={{ marginTop: "20px" }}>
                       <button
@@ -1301,13 +1357,13 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                     allowDeleting: true,
                     // showConfirmDialog: false,
                   }}
-                  enableStickyHeader={true}
-                  height={"300px"}
+                  height={"200px"}
                   toolbar={["Delete"]}
                   ref={dealerPopupInstance}
-                  allowPaging={false}
+                  allowPaging={true}
                   gridLines="Both"
                   rowHeight={25}
+                  pageSettings={{ pageSize: 7, pageCount: 10 }}
                 >
                   <ColumnsDirective>
                     <ColumnDirective
@@ -1358,6 +1414,14 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                       type="date"
                       format="dd-MMM-yyyy"
                     />
+                    <ColumnDirective
+                      field="visit"
+                      headerText="Visit"
+                      width="100"
+                      textAlign="center"
+                      editType="numericedit"
+                      allowEditing={true}
+                    />
                   </ColumnsDirective>
                   <AggregatesDirective>
                     <AggregateDirective>
@@ -1377,24 +1441,31 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                   </AggregatesDirective>
 
                   <Inject
-                    services={[Edit, Sort, Aggregate, CommandColumn, Freeze]}
+                    services={[
+                      Edit,
+                      Sort,
+                      Aggregate,
+                      CommandColumn,
+                      Freeze,
+                      Page,
+                    ]}
                   />
                 </GridComponent>
               </div>
-              {isLocked ? null : (
-                <div className="titlePopupHeader" style={{ marginTop: "10px" }}>
-                  <button
-                    className="buttonForMainUi"
-                    style={{ backgroundColor: "#5a240e" }}
-                    onClick={handlePopupDataSubmit}
-                  >
-                    <span style={{ fontFamily: "Nunito sans" }}>
-                      {" "}
-                      Save Details
-                    </span>
-                  </button>
-                </div>
-              )}
+              {/* {isLocked ? null : ( */}
+              <div className="titlePopupHeader" style={{ marginTop: "10px" }}>
+                <button
+                  className="buttonForMainUi"
+                  style={{ backgroundColor: "#5a240e" }}
+                  onClick={handlePopupDataSubmit}
+                >
+                  <span style={{ fontFamily: "Nunito sans" }}>
+                    {" "}
+                    Save Details
+                  </span>
+                </button>
+              </div>
+              {/* )} */}
             </div>
           </Popup>
         ) : null}

@@ -52,48 +52,6 @@ const DepotMaster = ({ toggleState }) => {
       </span>
     );
   };
-  const columns = [
-    {
-      name: "S.No",
-      selector: (row) => row.Depot_id,
-      sortable: true,
-    },
-    {
-      name: "Depot Code",
-      selector: (row) => row.Depot_code,
-      sortable: true,
-    },
-    {
-      name: "Depot Name",
-      selector: (row) => row.Depot_name,
-      sortable: true,
-    },
-    {
-      name: "Depot Manager Code",
-      selector: (row) => row.Depotmgr_code,
-      sortable: true,
-    },
-    {
-      name: "Depot Manager Name",
-      selector: (row) => row.Depotmgr_name,
-      sortable: true,
-    },
-    {
-      name: "Zone Code",
-      selector: (row) => row.zone_code,
-      sortable: true,
-    },
-    {
-      name: "Zone Name",
-      selector: (row) => row.zone_name,
-      sortable: true,
-    },
-    {
-      name: "Action",
-      cell: renderIconColumn,
-      width: "100px",
-    },
-  ];
 
   useEffect(() => {
     fetchDepotListData();
@@ -178,14 +136,14 @@ const DepotMaster = ({ toggleState }) => {
 
   const depotMangerDropdown = () => {
     return depotManagerList.map((item, index) => (
-      <option key={item?.employee_id} value={item?.employee_id}>
+      <option key={index} value={item?.employee_id}>
         {item?.depotManagerName}
       </option>
     ));
   };
   const zoneDropdown = () => {
     return zoneList.map((item, index) => (
-      <option key={item?.zone_id} value={item?.zone_id}>
+      <option key={index} value={item?.zone_id}>
         {item?.zone_name}
       </option>
     ));
@@ -193,11 +151,22 @@ const DepotMaster = ({ toggleState }) => {
   const handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    setFormDetails({ ...formDetails, [name]: value });
+    if (name === "zone_id") {
+      console.log(value);
+      let newDetails = formDetails;
+      newDetails["zone_id"] = value;
+      let filterValue = zoneList.find((item) => item.zone_id == value);
+      newDetails["zone_code"] = filterValue ? filterValue.zone_code : "";
+
+      setFormDetails({ ...newDetails });
+    } else {
+      setFormDetails({ ...formDetails, [name]: value });
+    }
   };
 
   const handleSetDepotMaster = async () => {
     let payload = {};
+
     if (formDetails.Depot_id === 0) {
       payload = {
         Token: localStorage.getItem("access_token"),
@@ -208,11 +177,8 @@ const DepotMaster = ({ toggleState }) => {
         depot_name: formDetails.Depot_name,
         depotmgr_id: parseInt(formDetails.Depotmgr_id),
         depotmgr_code: "",
-        region_id: 0,
-        region_code: "",
         zone_id: parseInt(formDetails.zone_id),
-        ttl_area: 0,
-        ttl_dealer: 0,
+        zone_code: formDetails.zone_code,
       };
     } else {
       payload = {
@@ -224,13 +190,11 @@ const DepotMaster = ({ toggleState }) => {
         depot_name: formDetails.Depot_name,
         depotmgr_id: parseInt(formDetails.Depotmgr_id),
         depotmgr_code: formDetails.Depotmgr_code,
-        region_id: 0,
-        region_code: "",
         zone_id: parseInt(formDetails.zone_id),
-        ttl_area: 0,
-        ttl_dealer: 0,
+        zone_code: formDetails.zone_code,
       };
     }
+
     setLoading(true);
     try {
       const response = await axiosInstance.post(
@@ -320,6 +284,7 @@ const DepotMaster = ({ toggleState }) => {
       buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
     },
   ];
+  const toolbar = ["ExcelExport", "Search"];
 
   return (
     <>
@@ -425,9 +390,9 @@ const DepotMaster = ({ toggleState }) => {
               allowTextWrap={true}
               allowResizing={false}
               dataSource={depotListData}
-              enableStickyHeader={true}
               height={"350px"}
               // ref={zoneMasterInstance}
+              toolbar={toolbar}
               allowPaging={true}
               allowSelection={true}
               gridLines="Both"

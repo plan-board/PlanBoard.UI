@@ -77,157 +77,6 @@ const CommonTopSales = ({
     }
   }, [selectedZone, selectedDepot, selectedTerritory]);
 
-  const getZoneMonthPlan = async () => {
-    try {
-      const payload = {
-        Token: localStorage.getItem("access_token"),
-        ZoneId: 0,
-        DepotId: 0,
-        TerritoryId: selectedTerritory,
-      };
-
-      const response = await axiosInstance.post("TerritoryMonthPlan", payload);
-
-      if (response?.status === 200) {
-        setselectedDepotMonthPlan(
-          response.data.Data != null ? response.data.Data[0] : []
-        );
-      }
-    } catch (error) {
-      // Handle errors
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  };
-
-  const fetchTerritoryMonthPlan = async () => {
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      DepotId: selectedDepot,
-      TerritoryId: 0, //selectedZone
-    };
-    try {
-      const response = await axiosInstance.post("TerritoryMonthPlan", payload);
-
-      if (response?.status === 200) {
-        if (response.data.Data.length > 0) {
-          const totalCurMonV1 = response.data.Data.reduce(
-            (acc, item) =>
-              acc +
-              (parseInt(item[`${mStartName}_Month_Value_v1`].toFixed(0)) || 0),
-            0
-          );
-          const curMonSale = response.data.Data.reduce(
-            (acc, item) =>
-              acc +
-              (parseInt(item[`${mStartName}_Month_Sale`].toFixed(0)) || 0),
-            0
-          );
-          setTerritoryMonthPlan({
-            totalCurMonV1: totalCurMonV1,
-            curMonSale: curMonSale,
-          });
-        }
-        // );
-      }
-    } catch (error) {
-      // Handle errors
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  };
-  const convertZoneFormat = async () => {
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      ZoneId: selectedZone,
-      DepotId: 0,
-    };
-
-    try {
-      const response = await axiosInstance.post("DepotMonthPlan", payload);
-      // console.log("=====DepotMonthPlan====", response);
-      if (response?.status === 200) {
-        if (response.data.Data.length > 0) {
-          const totalCurMonV1 = response.data.Data.reduce(
-            (acc, item) =>
-              acc +
-              (parseInt(item[`${mStartName}_Month_Value_v1`].toFixed(0)) || 0),
-            0
-          );
-          const curMonSale = response.data.Data.reduce(
-            (acc, item) =>
-              acc +
-              (parseInt(item[`${mStartName}_Month_Sale`].toFixed(0)) || 0),
-            0
-          );
-          setTerritoryMonthPlan({
-            totalCurMonV1: totalCurMonV1,
-            curMonSale: curMonSale,
-          });
-        }
-      }
-    } catch (error) {
-      // Handle errors
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  };
-  const convertNationalFormat = async () => {
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      ZoneId: selectedZone,
-    };
-
-    try {
-      const response = await axiosInstance.post("ZoneMonthPlan", payload);
-      // console.log("=====DepotMonthPlan====", response);
-      if (response?.status === 200) {
-        if (response.data.Data.length > 0) {
-          const totalCurMonV1 = response.data.Data.reduce(
-            (acc, item) =>
-              acc +
-              (parseInt(item[`${mStartName}_Month_Value_v1`].toFixed(0)) || 0),
-            0
-          );
-          const curMonSale = response.data.Data.reduce(
-            (acc, item) =>
-              acc +
-              (parseInt(item[`${mStartName}_Month_Sale`].toFixed(0)) || 0),
-            0
-          );
-          setTerritoryMonthPlan({
-            totalCurMonV1: totalCurMonV1,
-            curMonSale: curMonSale,
-          });
-        }
-      }
-    } catch (error) {
-      // Handle errors
-      dispatch({ type: SHOW_TOAST, payload: error.message });
-    }
-  };
-
-  useEffect(() => {
-    if (actionType === "hod") {
-      convertNationalFormat();
-    } else if (
-      actionType === "Zone" &&
-      selectedZone !== undefined &&
-      selectedZone != 0
-    ) {
-      convertZoneFormat();
-    } else if (
-      actionType === "Depot" &&
-      selectedDepot !== undefined &&
-      selectedDepot != 0
-    ) {
-      fetchTerritoryMonthPlan();
-    } else if (
-      actionType === "Territory" &&
-      selectedTerritory !== undefined &&
-      selectedTerritory != 0
-    ) {
-      getZoneMonthPlan();
-    }
-  }, [actionType, selectedTerritory, selectedDepot, selectedZone]);
-
   return (
     <>
       <div className="card-box lightyellow">
@@ -284,13 +133,13 @@ const CommonTopSales = ({
             [v.0 :
             <u className=" w3-text-red">
               {summaryData.length
-                ? fNWCommas(summaryData[0]?.summ_cy_plan_value)
+                ? fNWCommas(summaryData[0]?.summ_cy_plan_value.toFixed(0))
                 : ""}
             </u>
             ] [v.1 :
             <u className=" w3-text-red">
               {summaryData.length
-                ? fNWCommas(summaryData[0]?.summ_cy_plan_value_v1)
+                ? fNWCommas(summaryData[0]?.summ_cy_plan_value_v1.toFixed(0))
                 : ""}
             </u>
             ]
@@ -327,61 +176,36 @@ const CommonTopSales = ({
             %)
           </i>
         </div>
-        {actionType === "hod" ? (
-          <div className="one-fifth text-center">
-            <span className="w3-text-gray h6"> MTD </span>
-            <hr className="hr1" />
-            Plan:
-            {fNWCommas(territoryMonthPlan.totalCurMonV1)}
-            ,Actual:
-            {fNWCommas(territoryMonthPlan.curMonSale)}
-            {GetPercent(
-              territoryMonthPlan.curMonSale,
-              territoryMonthPlan.totalCurMonV1
-            )}
-          </div>
-        ) : actionType === "Zone" ? (
-          <div className="one-fifth text-center">
-            <span className="w3-text-gray h6"> MTD </span>
-            <hr className="hr1" />
-            Plan:
-            {fNWCommas(territoryMonthPlan.totalCurMonV1)}
-            ,Actual:
-            {fNWCommas(territoryMonthPlan.curMonSale)}
-            {GetPercent(
-              territoryMonthPlan.curMonSale,
-              territoryMonthPlan.totalCurMonV1
-            )}
-          </div>
-        ) : actionType === "Depot" ? (
-          <div className="one-fifth text-center">
-            <span className="w3-text-gray h6"> MTD </span>
-            <hr className="hr1" />
-            Plan:
-            {fNWCommas(territoryMonthPlan.totalCurMonV1)}
-            ,Actual:
-            {fNWCommas(territoryMonthPlan.curMonSale)}
-            {GetPercent(
-              territoryMonthPlan.curMonSale,
-              territoryMonthPlan.totalCurMonV1
-            )}
-          </div>
-        ) : actionType === "Territory" ? (
-          <div className="one-fifth text-center">
-            <span className="w3-text-gray h6"> MTD </span>
-            <hr className="hr1" />
-            Plan:
-            {fNWCommas(selectedDepotMonthPlan[`${mStartName}_Month_Value_v1`])}
-            ,Actual:
-            {fNWCommas(selectedDepotMonthPlan[`${mStartName}_Month_Sale`])}
-            {GetPercent(
-              selectedDepotMonthPlan[`${mStartName}_Month_Sale`],
-              selectedDepotMonthPlan[`${mStartName}_Month_Value_v1`]
-            )}
-          </div>
-        ) : (
-          "Error"
-        )}
+
+        <div className="one-fifth text-center">
+          <span className="w3-text-gray h6"> MTD </span>
+          <hr className="hr1" />
+          Plan:
+          {fNWCommas(summaryData[0]?.CurrentMonthPlan.toFixed(0))}
+          ,Actual:
+          {fNWCommas(summaryData[0]?.CurrentMonthSale.toFixed(0))}
+          {GetPercent(
+            summaryData[0]?.CurrentMonthSale,
+            summaryData[0]?.CurrentMonthPlan
+          )}
+        </div>
+        <div className="one-fifth text-center">
+          <span className="w3-text-gray h6"> OS vs OD </span>
+          <hr className="hr1" />
+          OS:
+          {fNWCommas(summaryData[0]?.CurrentMonthOS)}
+          {" || OD:"}
+          {fNWCommas(summaryData[0]?.CurrentMonthOD)}
+          {GetPercent(
+            summaryData[0]?.CurrentMonthOD,
+            summaryData[0]?.CurrentMonthOS
+          )}
+        </div>
+        <div className="one-fifth text-center">
+          <span className="w3-text-gray h6"> Visit Plan </span>
+          <hr className="hr1" />
+          {fNWCommas(summaryData[0]?.Visitplan_V1)}
+        </div>
       </div>
     </>
   );

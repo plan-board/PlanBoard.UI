@@ -39,25 +39,24 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
 
   const entityId = actionType == "HOD" ? 0 : selectedId;
   const fetchLogHistory = async () => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      Type: actionType,
+      FYId: 5,
+      Month: getCurrentMonth(),
+      EntityId: entityId,
+    };
+
     try {
-      const payload = {
-        Token: localStorage.getItem("access_token"),
-        Type: actionType,
-        FYId: 5,
-        Month: getCurrentMonth(),
-        EntityId: entityId,
-      };
       const response = await axiosInstance.post(
         "api/Master/GetIsLockByEntityData",
         payload
       );
-
       if (response?.status === 200) {
         setLogHistory(response?.data?.Data);
       }
       setLoading(false);
     } catch (error) {
-      // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
@@ -84,6 +83,67 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
       </>
     );
   };
+
+  const customMonthValue_V0 = () => {
+    if (logHistoryGridInstance.current) {
+      let shownData = logHistoryGridInstance.current.getCurrentViewRecords();
+      let totalLYValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.MonthValue_V0.toFixed(0)) || 0),
+        0
+      );
+
+      return <>{fNWCommas(totalLYValue1)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customMonthValue_V1 = () => {
+    if (logHistoryGridInstance.current) {
+      let shownData = logHistoryGridInstance.current.getCurrentViewRecords();
+      let totalLYValue2 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.MonthValue_V1.toFixed(0)) || 0),
+        0
+      );
+
+      return <>{fNWCommas(totalLYValue2)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customVisitPlan_V0 = () => {
+    if (logHistoryGridInstance.current) {
+      let shownData = logHistoryGridInstance.current.getCurrentViewRecords();
+      let totalLYValue3 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.VisitPlan_V0.toFixed(0)) || 0),
+        0
+      );
+
+      return <>{fNWCommas(totalLYValue3)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customVisitPlan_V1 = () => {
+    if (logHistoryGridInstance.current) {
+      let shownData = logHistoryGridInstance.current.getCurrentViewRecords();
+      let totalLYValue4 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.VisitPlan_V1.toFixed(0)) || 0),
+        0
+      );
+
+      return <>{fNWCommas(totalLYValue4)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalFooter = () => {
+    return <span style={{ fontSize: "20px" }}>Total</span>;
+  };
+
   const toolbar = ["ExcelExport", "Search"];
   const toolbarClick = (args) => {
     if (
@@ -119,7 +179,6 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
                 dataSource={logHistory}
                 toolbar={toolbar}
                 toolbarClick={toolbarClick}
-                enableStickyHeader={true}
                 height={"500px"}
                 ref={logHistoryGridInstance}
                 allowPaging={true}
@@ -152,7 +211,7 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
                   <ColumnDirective
                     field="territory_name"
                     headerText={"Territory"}
-                    width="100"
+                    width="150"
                     format={"N2"}
                     visible={true}
                     textAlign="left"
@@ -175,6 +234,40 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
                     allowEditing={false}
                   />
                   <ColumnDirective
+                    field="MonthValue_V0"
+                    headerText={"Plan V0"}
+                    width="130"
+                    visible={true}
+                    textAlign="center"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    field="MonthValue_V1"
+                    headerText={"Plan V1"}
+                    width="130"
+                    visible={true}
+                    textAlign="center"
+                    allowEditing={false}
+                  />
+                  <ColumnDirective
+                    field="VisitPlan_V0"
+                    headerText={"Visit Plan V0"}
+                    width="150"
+                    visible={true}
+                    textAlign="center"
+                    allowEditing={false}
+                    allowFiltering={false}
+                  />
+                  <ColumnDirective
+                    field="VisitPlan_V1"
+                    headerText={"Visit Plan V1"}
+                    width="150"
+                    visible={true}
+                    textAlign="center"
+                    allowEditing={false}
+                    allowFiltering={false}
+                  />
+                  <ColumnDirective
                     headerText={"Lock/Unlock"}
                     width="100"
                     textAlign="center"
@@ -182,7 +275,37 @@ const LogSummary = ({ actionType = "HOD", selectedId }) => {
                     template={lockunlockTemplate}
                   />
                 </ColumnsDirective>
-
+                <AggregatesDirective>
+                  <AggregateDirective>
+                    <AggregateColumnsDirective>
+                      <AggregateColumnDirective
+                        field="employee_code"
+                        type="Custom"
+                        footerTemplate={customTotalFooter}
+                      />
+                      <AggregateColumnDirective
+                        field="MonthValue_V0"
+                        type="Custom"
+                        footerTemplate={customMonthValue_V0}
+                      />
+                      <AggregateColumnDirective
+                        field="MonthValue_V1"
+                        type="Custom"
+                        footerTemplate={customMonthValue_V1}
+                      />
+                      <AggregateColumnDirective
+                        field="VisitPlan_V0"
+                        type="Custom"
+                        footerTemplate={customVisitPlan_V0}
+                      />
+                      <AggregateColumnDirective
+                        field="VisitPlan_V1"
+                        type="Custom"
+                        footerTemplate={customVisitPlan_V1}
+                      />
+                    </AggregateColumnsDirective>
+                  </AggregateDirective>
+                </AggregatesDirective>
                 <Inject
                   services={[
                     CommandColumn,

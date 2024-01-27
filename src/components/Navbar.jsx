@@ -13,7 +13,7 @@ const Navbar = ({ isAuth, hideSidebar, flag }) => {
     signOut(auth).then(() => {
       localStorage.clear();
       const isLogout = true;
-      window.location.pathname = "/";
+      window.location.pathname = "/login";
     });
   };
 
@@ -32,7 +32,7 @@ const Navbar = ({ isAuth, hideSidebar, flag }) => {
             className=" w3-right w3-button w3-bar-item w3-hover-none"
             onClick={logout}
           >
-            <img src={Exit} className="exit_icon" alt="Exit" />
+            <img src={Exit} className="exit_icon" alt="Exit" color="black" />
           </button>
           <button className=" w3-right w3-button w3-bar-item w3-hide-small">
             <img src={Profile} className="w3-circle avatar" alt="Profile" />

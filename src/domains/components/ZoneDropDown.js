@@ -7,11 +7,10 @@ import { SHOW_TOAST } from "../../store/constant/types";
 const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
   const dispatch = useDispatch();
 
-  const { AuthData } = useSelector((state) => state.auth)
+  const { AuthData } = useSelector((state) => state.auth);
   const [filteredZones, setFilteredZones] = useState([]);
 
   const handleChange = (event) => {
-    console.log("-ss")
     if (event.target.value != "") {
       onValueChange(parseInt(event.target.value));
     }
@@ -21,18 +20,19 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
     try {
       const payload = {
         Token: localStorage.getItem("access_token"),
-        entity_id: 0
+        entity_id: 0,
       };
 
       const response = await axiosInstance.post("api/Master/ZoneData", payload);
       console.log("=====api/Master/ZoneData====", response);
 
       if (response?.status === 200) {
-        const filteredZoneArr = response.data.Data?.filter(item1 =>
-          AuthData?.Zone.some(item2 => item2.ZoneID === item1.zone_id)
+        const filteredZoneArr = response.data.Data?.filter((item1) =>
+          AuthData?.Zone.some((item2) => item2.ZoneID === item1.zone_id)
         );
 
-        setFilteredZones(filteredZoneArr?.length ? filteredZoneArr : [])
+        setFilteredZones(filteredZoneArr?.length ? filteredZoneArr : []);
+        // console.log("testing", filteredZoneArr);
       }
     } catch (error) {
       // Handle errors
@@ -52,9 +52,8 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
           value={selectedZone}
           onChange={handleChange}
         >
-          {/* <option value="">Select Zone</option> */}
           {AuthData?.Zone?.map((item, index) => (
-            <option key={index} value={item?.ZoneID} >
+            <option key={index} value={item?.ZoneID}>
               {item.ZoneName}
             </option>
           ))}
@@ -65,7 +64,11 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
           value={selectedZone}
           onChange={handleChange}
         >
-          <option value={0}>{AuthData?.Data[0].EmployeeTpye === "HOD" ? "All Zone" : "Select Zone"}</option>
+          <option value={0}>
+            {AuthData?.Data[0].EmployeeTpye === "HOD"
+              ? "All Zone"
+              : "Select Zone"}
+          </option>
           {/* <option value={0} >{asDropDown ? "Select Zone" : "All Zone"}</option> */}
           {filteredZones.map((item) => (
             <option value={item?.zone_id} key={item?.zone_id}>
@@ -73,8 +76,9 @@ const ZoneDropDown = ({ selectedZone, onValueChange, asDropDown = false }) => {
             </option>
           ))}
         </select>
-      )}</>
-  )
-}
+      )}
+    </>
+  );
+};
 
 export default ZoneDropDown;

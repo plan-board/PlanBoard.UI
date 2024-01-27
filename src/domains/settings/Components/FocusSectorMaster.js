@@ -381,7 +381,6 @@ const FocusSectorMaster = () => {
             dataSource={filteredItems}
             toolbar={toolbar}
             toolbarClick={toolbarClick}
-            enableStickyHeader={true}
             height={"400px"}
             ref={focusSectorMasterInstance}
             allowPaging={true}

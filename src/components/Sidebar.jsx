@@ -31,6 +31,18 @@ const Sidebar = ({ isAuth, rolId }) => {
           <img src={logo} className="" style={{ width: "50px" }} />
           <p className="w3-small h6">Planboard</p>
         </button>
+
+        {hasPermission(rolId, "dashboard") && (
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link" + (!isActive ? " unselected" : " active")
+            }
+            to="/dashboard"
+          >
+            <i className="fa fa-tachometer"></i>
+            <p className="w3-small h6">Dashboard</p>
+          </NavLink>
+        )}
         {hasPermission(rolId, "national") && (
           <NavLink
             className={({ isActive }) =>
@@ -75,7 +87,7 @@ const Sidebar = ({ isAuth, rolId }) => {
             <p className="w3-small h6">Territory</p>
           </NavLink>
         )}
-        {hasPermission(rolId, "dashscheduleboard") && (
+        {/* {hasPermission(rolId, "dashscheduleboard") && (
           <NavLink
             className={({ isActive }) =>
               "nav-link" + (!isActive ? " unselected" : " active")
@@ -85,7 +97,7 @@ const Sidebar = ({ isAuth, rolId }) => {
             <i className="fa fa-table"></i>
             <p className="w3-small h6">Schedule</p>
           </NavLink>
-        )}
+        )} */}
         {hasPermission(rolId, "national") && (
           <NavLink
             className={({ isActive }) =>
@@ -107,6 +119,19 @@ const Sidebar = ({ isAuth, rolId }) => {
             >
               <i className="fa fa-user"></i>
               <p className="w3-small h6">Customer Potential</p>
+            </NavLink>
+          </div>
+        )}
+        {hasPermission(rolId, "pre-journey-plan") && (
+          <div className="sub-menu">
+            <NavLink
+              className={({ isActive }) =>
+                "nav-link" + (!isActive ? " unselected" : " active")
+              }
+              to="/pre-journey-plan"
+            >
+              <i className="fa fa-map"></i>
+              <p className="w3-small h6">Visit Plan</p>
             </NavLink>
           </div>
         )}

@@ -2499,7 +2499,7 @@
   dependencies:
     "@syncfusion/ej2-base" "~22.2.5"
 
-"@syncfusion/ej2-dropdowns@~22.2.12":
+"@syncfusion/ej2-dropdowns@~22.2.12", "@syncfusion/ej2-dropdowns@22.2.12":
   "integrity" "sha512-fsKUM0JgbELKAQs311v4KZ4rrTluGym6sJAk8kdOeft3FBgrp3UHipWlhcsTwvgZWuR30B6+zoGrX4a74lrzYw=="
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-dropdowns/-/ej2-dropdowns-22.2.12.tgz"
   "version" "22.2.12"
@@ -2555,7 +2555,7 @@
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-icons/-/ej2-icons-23.1.36.tgz"
   "version" "23.1.36"
 
-"@syncfusion/ej2-inputs@~22.2.12", "@syncfusion/ej2-inputs@~22.2.9":
+"@syncfusion/ej2-inputs@~22.2.12", "@syncfusion/ej2-inputs@~22.2.9", "@syncfusion/ej2-inputs@22.2.12":
   "integrity" "sha512-TOmoOjP4DaLzrN1iSff7noGSCHPI913ACprEYQLGCBIHZTsYt/2TxxLYB1u/3TdgPxrJmk/G0TQb80QLFAXAHA=="
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-inputs/-/ej2-inputs-22.2.12.tgz"
   "version" "22.2.12"
@@ -2564,6 +2564,13 @@
     "@syncfusion/ej2-buttons" "~22.2.9"
     "@syncfusion/ej2-popups" "~22.2.11"
     "@syncfusion/ej2-splitbuttons" "~22.2.8"
+
+"@syncfusion/ej2-layouts@22.2.9":
+  "integrity" "sha512-dgsrxgtdTyUH6slCRTO4C4kcYf3EPfzWs/Q8ehmMN2VjYzwv4eL52asLGHMJwt0Zk1fxxlFQ5Oo2hIDeXZkEVQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-layouts/-/ej2-layouts-22.2.9.tgz"
+  "version" "22.2.9"
+  dependencies:
+    "@syncfusion/ej2-base" "~22.2.9"
 
 "@syncfusion/ej2-lists@~22.2.11":
   "integrity" "sha512-YPHZAAfNNbFTFg8EqPR2H+YSVPUMMkbWUlClOz6F0Ha67d7+uG2QUgPya9r+klXn2az4Ca7bwABjpxyKSUCkGA=="
@@ -2641,6 +2648,15 @@
     "@syncfusion/ej2-charts" "22.2.12"
     "@syncfusion/ej2-react-base" "~22.2.5"
 
+"@syncfusion/ej2-react-dropdowns@^22.2.12":
+  "integrity" "sha512-64iK4FvKj6Q1gFg+9588P469kUPvZDKFOL4Bczo4AaV0OFdI4Ye77E8V0EsN4NFe5vjrWaN/yQvw0HzBjZmuKQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-dropdowns/-/ej2-react-dropdowns-22.2.12.tgz"
+  "version" "22.2.12"
+  dependencies:
+    "@syncfusion/ej2-base" "~22.2.12"
+    "@syncfusion/ej2-dropdowns" "22.2.12"
+    "@syncfusion/ej2-react-base" "~22.2.5"
+
 "@syncfusion/ej2-react-grids@^22.2.12":
   "integrity" "sha512-xtemvYwHLZmaJgRbuwe1Cw5pVHcfhFQaajcBQXJfN3wMhD2rJbE82b0Tzfy0UNayHeuiDdwthCpxKUg6Kg7WaA=="
   "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-grids/-/ej2-react-grids-22.2.12.tgz"
@@ -2648,6 +2664,24 @@
   dependencies:
     "@syncfusion/ej2-base" "~22.2.12"
     "@syncfusion/ej2-grids" "22.2.12"
+    "@syncfusion/ej2-react-base" "~22.2.5"
+
+"@syncfusion/ej2-react-inputs@^22.2.12":
+  "integrity" "sha512-8dpbuGpg3qz6ScA2DsT4XKYDODAT52bpYY/h1Kow0DnaUrZCtjQeciTTex3nSGpPikhcjUOcUndjjFpl9HI1bA=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-inputs/-/ej2-react-inputs-22.2.12.tgz"
+  "version" "22.2.12"
+  dependencies:
+    "@syncfusion/ej2-base" "~22.2.12"
+    "@syncfusion/ej2-inputs" "22.2.12"
+    "@syncfusion/ej2-react-base" "~22.2.5"
+
+"@syncfusion/ej2-react-layouts@^22.2.9":
+  "integrity" "sha512-/KrbBn0R6lLf2fVHDMVLVFJ3hVLRGwqmf7jGe5Nx3KWauwRKcfhKAQ1EJXM5ncLsO3zSpc8CcfSVGkFl3Vo+CQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-layouts/-/ej2-react-layouts-22.2.9.tgz"
+  "version" "22.2.9"
+  dependencies:
+    "@syncfusion/ej2-base" "~22.2.9"
+    "@syncfusion/ej2-layouts" "22.2.9"
     "@syncfusion/ej2-react-base" "~22.2.5"
 
 "@syncfusion/ej2-react-popups@^23.1.38":
@@ -9066,6 +9100,11 @@
   optionalDependencies:
     "fsevents" "^2.3.2"
 
+"react-top-loading-bar@^2.3.1":
+  "integrity" "sha512-rQk2Nm+TOBrM1C4E3e6KwT65iXyRSgBHjCkr2FNja1S51WaPulRA5nKj/xazuQ3x89wDDdGsrqkqy0RBIfd0xg=="
+  "resolved" "https://registry.npmjs.org/react-top-loading-bar/-/react-top-loading-bar-2.3.1.tgz"
+  "version" "2.3.1"
+
 "react-transition-group@^4.4.2":
   "integrity" "sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g=="
   "resolved" "https://registry.npmjs.org/react-transition-group/-/react-transition-group-4.4.5.tgz"
@@ -9076,7 +9115,7 @@
     "loose-envify" "^1.4.0"
     "prop-types" "^15.6.2"
 
-"react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.0.0", "react@^18.2.0", "react@>= 16", "react@>= 16.8.0", "react@>= 16.8.3", "react@>=16", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0":
+"react@^16 || ^17 || ^18", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.0.0", "react@^18.2.0", "react@>= 16", "react@>= 16.8.0", "react@>= 16.8.3", "react@>=16", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"

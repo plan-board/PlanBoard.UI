@@ -50,7 +50,7 @@ export const CustomerPotentialForm = ({
               dataSource={employeeList}
               toolbar={toolbar}
               // toolbarClick={toolbarClick}
-              enableStickyHeader={true}
+
               height={"500px"}
               ref={customterGridInstance}
               allowPaging={true}

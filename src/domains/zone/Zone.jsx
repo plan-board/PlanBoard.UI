@@ -75,7 +75,7 @@ const Zone = () => {
       </div>
 
       <CommonTopSales actionType="Zone" selectedZone={selectedZone} />
-      {/* <div className="card-box lightblue">
+      <div className="card-box lightblue">
         <div className="tbl-container">
           <ZoneBar
             selectedZone={selectedZone}
@@ -83,7 +83,7 @@ const Zone = () => {
             isLoading={isLoading}
           />
         </div>
-      </div> */}
+      </div>
       <div class="card-box lightblue">
         <div className="w3-bar tab-container">
           <div

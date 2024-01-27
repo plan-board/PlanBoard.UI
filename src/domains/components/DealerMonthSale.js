@@ -73,7 +73,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
   const CyPlanYtdTemplate = (args) => {
     return (
       <>
-        {args?.CY_Value} <hr className="hr0" />
+        {args?.CY_ValuePlanV1} <hr className="hr0" />
         {args?.YTD_Value}
       </>
     );
@@ -83,7 +83,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Apr_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Apr_Month_Sale`]}
+        {args[`Apr_Month_Sale_act`]}
       </>
     );
   };
@@ -92,7 +92,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`May_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`May_Month_Sale`]}
+        {args[`May_Month_Sale_act`]}
       </>
     );
   };
@@ -101,7 +101,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Jun_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Jun_Month_Sale`]}
+        {args[`Jun_Month_Sale_act`]}
       </>
     );
   };
@@ -110,7 +110,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Jul_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Jul_Month_Sale`]}
+        {args[`Jul_Month_Sale_act`]}
       </>
     );
   };
@@ -119,7 +119,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Aug_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Aug_Month_Sale`]}
+        {args[`Aug_Month_Sale_act`]}
       </>
     );
   };
@@ -128,7 +128,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Sep_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Sep_Month_Sale`]}
+        {args[`Sep_Month_Sale_act`]}
       </>
     );
   };
@@ -137,7 +137,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Oct_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Oct_Month_Sale`]}
+        {args[`Oct_Month_Sale_act`]}
       </>
     );
   };
@@ -146,7 +146,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Nov_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Nov_Month_Sale`]}
+        {args[`Nov_Month_Sale_act`]}
       </>
     );
   };
@@ -155,7 +155,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Dec_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Dec_Month_Sale`]}
+        {args[`Dec_Month_Sale_act`]}
       </>
     );
   };
@@ -164,7 +164,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Jan_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Jan_Month_Sale`]}
+        {args[`Jan_Month_Sale_act`]}
       </>
     );
   };
@@ -173,7 +173,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Feb_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Feb_Month_Sale`]}
+        {args[`Feb_Month_Sale_act`]}
       </>
     );
   };
@@ -182,7 +182,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       <>
         {args[`Mar_Month_Value_v1`]}
         <hr className="hr0" />
-        {args[`Mar_Month_Sale`]}
+        {args[`Mar_Month_Sale_act`]}
       </>
     );
   };
@@ -198,7 +198,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
 
-      return <>{totalLlyValue}</>;
+      return <>{totalLlyValue.toFixed(2)}</>;
     } else {
       return "Calculating";
     }
@@ -212,7 +212,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
 
-      return <>{totalLYValue1}</>;
+      return <>{totalLYValue1.toFixed(2)}</>;
     } else {
       return "Calculating";
     }
@@ -222,7 +222,7 @@ const DealerMonthSale = ({ selectedTerritory }) => {
     if (DealerMonthWiseInstance.current) {
       let shownData = DealerMonthWiseInstance.current.getCurrentViewRecords();
       let totalCYValue1 = shownData.reduce(
-        (acc, item) => acc + (item.CY_Value || 0),
+        (acc, item) => acc + (item.CY_ValuePlanV1 || 0),
         0
       );
       let totalYTDValue1 = shownData.reduce(
@@ -232,9 +232,9 @@ const DealerMonthSale = ({ selectedTerritory }) => {
 
       return (
         <>
-          {totalCYValue1}
+          {totalCYValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalYTDValue1}
+          {totalYTDValue1.toFixed(2)}
         </>
       );
     } else {
@@ -250,15 +250,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       let totalAprValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Apr_Month_Sale || 0),
+        (acc, item) => acc + (item?.Apr_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalAprValue1}
+          {totalAprValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalAprValue_v2}
+          {totalAprValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -274,15 +274,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       let totalMayValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.May_Month_Sale || 0),
+        (acc, item) => acc + (item?.May_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalMayValue1}
+          {totalMayValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalMayValue_v2}
+          {totalMayValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -298,15 +298,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalJunValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Jun_Month_Sale || 0),
+        (acc, item) => acc + (item?.Jun_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalJunValue1}
+          {totalJunValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalJunValue_v2}
+          {totalJunValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -322,15 +322,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalJulValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Jul_Month_Sale || 0),
+        (acc, item) => acc + (item?.Jul_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalJulValue1}
+          {totalJulValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalJulValue_v2}
+          {totalJulValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -345,15 +345,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalAugValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Aug_Month_Sale || 0),
+        (acc, item) => acc + (item?.Aug_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalAugValue1}
+          {totalAugValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalAugValue_v2}
+          {totalAugValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -368,15 +368,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalSepValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Sep_Month_Sale || 0),
+        (acc, item) => acc + (item?.Sep_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalSepValue1}
+          {totalSepValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalSepValue_v2}
+          {totalSepValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -392,15 +392,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalOctValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Oct_Month_Sale || 0),
+        (acc, item) => acc + (item?.Oct_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalOctValue1}
+          {totalOctValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalOctValue_v2}
+          {totalOctValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -415,15 +415,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalNovValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Nov_Month_Sale || 0),
+        (acc, item) => acc + (item?.Nov_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalNovValue1}
+          {totalNovValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalNovValue_v2}
+          {totalNovValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -438,15 +438,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalDecValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Dec_Month_Sale || 0),
+        (acc, item) => acc + (item?.Dec_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalDecValue1}
+          {totalDecValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalDecValue_v2}
+          {totalDecValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -461,15 +461,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalJanValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Jan_Month_Sale || 0),
+        (acc, item) => acc + (item?.Jan_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalJanValue1}
+          {totalJanValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalJanValue_v2}
+          {totalJanValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -484,15 +484,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalFebValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Feb_Month_Sale || 0),
+        (acc, item) => acc + (item?.Feb_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalFebValue1}
+          {totalFebValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalFebValue_v2}
+          {totalFebValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -507,15 +507,15 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         0
       );
       const totalMarValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (item?.Mar_Month_Sale || 0),
+        (acc, item) => acc + (item?.Mar_Month_Sale_act || 0),
         0
       );
 
       return (
         <>
-          {totalMarValue1}
+          {totalMarValue1.toFixed(2)}
           <hr className="hr0" />
-          {totalMarValue_v2}
+          {totalMarValue_v2.toFixed(2)}
         </>
       );
     } else {
@@ -534,32 +534,32 @@ const DealerMonthSale = ({ selectedTerritory }) => {
         "Dealer Name": element.dealer_name,
         LLY: element.LLY_Value,
         LY: element.LY_Value,
-        "CY Plan": element.CY_Value,
+        "CY Plan": element.CY_ValuePlanV1,
         YTD: element.YTD_Value,
         Apr: element.Apr_Month_Value_v1,
-        "Apr Sale": element.Apr_Month_Sale,
+        "Apr Sale": element.Apr_Month_Sale_act,
         May: element.May_Month_Value_v1,
-        "May Sale": element.May_Month_Sale,
+        "May Sale": element.May_Month_Sale_act,
         Jun: element.Jun_Month_Value_v1,
-        "Jun Sale": element.Jun_Month_Sale,
+        "Jun Sale": element.Jun_Month_Sale_act,
         Jul: element.Jul_Month_Value_v1,
-        "Jul Sale": element.Jul_Month_Sale,
+        "Jul Sale": element.Jul_Month_Sale_act,
         Aug: element.Aug_Month_Value_v1,
-        "Aug Sale": element.Aug_Month_Sale,
+        "Aug Sale": element.Aug_Month_Sale_act,
         Sep: element.Sep_Month_Value_v1,
-        "Sep Sale": element.Sep_Month_Sale,
+        "Sep Sale": element.Sep_Month_Sale_act,
         Oct: element.Oct_Month_Value_v1,
-        "Oct Sale": element.Oct_Month_Sale,
+        "Oct Sale": element.Oct_Month_Sale_act,
         Nov: element.Nov_Month_Value_v1,
-        "Nov Sale": element.Nov_Month_Sale,
+        "Nov Sale": element.Nov_Month_Sale_act,
         Dec: element.Dec_Month_Value_v1,
-        "Dec Sale": element.Dec_Month_Sale,
+        "Dec Sale": element.Dec_Month_Sale_act,
         Jan: element.Jan_Month_Value_v1,
-        "Jan Sale": element.Feb_Month_Sale,
+        "Jan Sale": element.Jan_Month_Sale_act,
         Feb: element.Feb_Month_Value_v1,
-        "Feb Sale": element.Feb_Month_Sale,
+        "Feb Sale": element.Feb_Month_Sale_act,
         Mar: element.Mar_Month_Value_v1,
-        "Mar Sale": element.Mar_Month_Sale,
+        "Mar Sale": element.Mar_Month_Sale_act,
       }));
 
       ExportExcel("Dealer-Wise-Monthly-Plan-Achievement", arrObj);
@@ -583,7 +583,6 @@ const DealerMonthSale = ({ selectedTerritory }) => {
                   dataSource={dealerMonthPlan}
                   toolbar={toolbar}
                   toolbarClick={toolbarClick}
-                  enableStickyHeader={true}
                   height={"500px"}
                   ref={DealerMonthWiseInstance}
                   allowPaging={true}

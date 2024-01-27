@@ -69,7 +69,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
   const CyPlanYtdTemplate = (args) => {
     return (
       <>
-        {fNWCommas(args?.CY_Value)} <hr className="hr0" />
+        {fNWCommas(args?.CY_ValuePlanV1)} <hr className="hr0" />
         {fNWCommas(args?.YTD_Value)}
       </>
     );
@@ -80,8 +80,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Apr_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Apr_Month_Sale`])}
-        {GetPercent(args[`Apr_Month_Sale`], args[`Apr_Month_Value_v1`])}
+        {fNWCommas(args[`Apr_Month_Sale_act`])}
+        {GetPercent(args[`Apr_Month_Sale_act`], args[`Apr_Month_Value_v1`])}
       </>
     );
   };
@@ -90,8 +90,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`May_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`May_Month_Sale`])}
-        {GetPercent(args[`May_Month_Sale`], args[`May_Month_Value_v1`])}
+        {fNWCommas(args[`May_Month_Sale_act`])}
+        {GetPercent(args[`May_Month_Sale_act`], args[`May_Month_Value_v1`])}
       </>
     );
   };
@@ -100,8 +100,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Jun_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Jun_Month_Sale`])}
-        {GetPercent(args[`Jun_Month_Sale`], args[`Jun_Month_Value_v1`])}
+        {fNWCommas(args[`Jun_Month_Sale_act`])}
+        {GetPercent(args[`Jun_Month_Sale_act`], args[`Jun_Month_Value_v1`])}
       </>
     );
   };
@@ -110,8 +110,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Jul_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Jul_Month_Sale`])}
-        {GetPercent(args[`Jul_Month_Sale`], args[`Jul_Month_Value_v1`])}
+        {fNWCommas(args[`Jul_Month_Sale_act`])}
+        {GetPercent(args[`Jul_Month_Sale_act`], args[`Jul_Month_Value_v1`])}
       </>
     );
   };
@@ -120,8 +120,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Aug_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Aug_Month_Sale`])}
-        {GetPercent(args[`Aug_Month_Sale`], args[`Aug_Month_Value_v1`])}
+        {fNWCommas(args[`Aug_Month_Sale_act`])}
+        {GetPercent(args[`Aug_Month_Sale_act`], args[`Aug_Month_Value_v1`])}
       </>
     );
   };
@@ -130,8 +130,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Sep_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Sep_Month_Sale`])}
-        {GetPercent(args[`Sep_Month_Sale`], args[`Sep_Month_Value_v1`])}
+        {fNWCommas(args[`Sep_Month_Sale_act`])}
+        {GetPercent(args[`Sep_Month_Sale_act`], args[`Sep_Month_Value_v1`])}
       </>
     );
   };
@@ -140,8 +140,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Oct_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Oct_Month_Sale`])}
-        {GetPercent(args[`Oct_Month_Sale`], args[`Oct_Month_Value_v1`])}
+        {fNWCommas(args[`Oct_Month_Sale_act`])}
+        {GetPercent(args[`Oct_Month_Sale_act`], args[`Oct_Month_Value_v1`])}
       </>
     );
   };
@@ -150,8 +150,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Nov_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Nov_Month_Sale`])}
-        {GetPercent(args[`Nov_Month_Sale`], args[`Nov_Month_Value_v1`])}
+        {fNWCommas(args[`Nov_Month_Sale_act`])}
+        {GetPercent(args[`Nov_Month_Sale_act`], args[`Nov_Month_Value_v1`])}
       </>
     );
   };
@@ -160,8 +160,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Dec_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Dec_Month_Sale`])}
-        {GetPercent(args[`Dec_Month_Sale`], args[`Dec_Month_Value_v1`])}
+        {fNWCommas(args[`Dec_Month_Sale_act`])}
+        {GetPercent(args[`Dec_Month_Sale_act`], args[`Dec_Month_Value_v1`])}
       </>
     );
   };
@@ -170,8 +170,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Jan_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Jan_Month_Sale`])}
-        {GetPercent(args[`Jan_Month_Sale`], args[`Jan_Month_Value_v1`])}
+        {fNWCommas(args[`Jan_Month_Sale_act`])}
+        {GetPercent(args[`Jan_Month_Sale_act`], args[`Jan_Month_Value_v1`])}
       </>
     );
   };
@@ -180,8 +180,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Feb_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Feb_Month_Sale`])}
-        {GetPercent(args[`Feb_Month_Sale`], args[`Feb_Month_Value_v1`])}
+        {fNWCommas(args[`Feb_Month_Sale_act`])}
+        {GetPercent(args[`Feb_Month_Sale_act`], args[`Feb_Month_Value_v1`])}
       </>
     );
   };
@@ -190,8 +190,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       <>
         {fNWCommas(args[`Mar_Month_Value_v1`])}
         <hr className="hr0" />
-        {fNWCommas(args[`Mar_Month_Sale`])}
-        {GetPercent(args[`Mar_Month_Sale`], args[`Mar_Month_Value_v1`])}
+        {fNWCommas(args[`Mar_Month_Sale_act`])}
+        {GetPercent(args[`Mar_Month_Sale_act`], args[`Mar_Month_Value_v1`])}
       </>
     );
   };
@@ -234,7 +234,7 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       let shownData =
         TerritoryMonthWiseInstance.current.getCurrentViewRecords();
       let totalCYValue1 = shownData.reduce(
-        (acc, item) => acc + (parseInt(item.CY_Value.toFixed(0)) || 0),
+        (acc, item) => acc + (parseInt(item.CY_ValuePlanV1.toFixed(0)) || 0),
         0
       );
       let totalYTDValue1 = shownData.reduce(
@@ -265,7 +265,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       let totalAprValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Apr_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Apr_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -292,7 +293,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       let totalMayValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.May_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.May_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -319,7 +321,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalJunValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Jun_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Jun_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -346,7 +349,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalJulValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Jul_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Jul_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -372,7 +376,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalAugValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Aug_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Aug_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -398,7 +403,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalSepValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Sep_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Sep_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -425,7 +431,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalOctValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Oct_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Oct_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -451,7 +458,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalNovValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Nov_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Nov_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -477,7 +485,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalDecValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Dec_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Dec_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -503,7 +512,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalJanValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Jan_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Jan_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -529,7 +539,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalFebValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Feb_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Feb_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -555,7 +566,8 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
         0
       );
       const totalMarValue_v2 = shownData?.reduce(
-        (acc, item) => acc + (parseInt(item?.Mar_Month_Sale.toFixed(0)) || 0),
+        (acc, item) =>
+          acc + (parseInt(item?.Mar_Month_Sale_act.toFixed(0)) || 0),
         0
       );
 
@@ -580,35 +592,36 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       const arrObj = territoryMonthPlan.map((element, index) => ({
         "S.No": index + 1,
         Depot: element.depot_name,
+        Territory: element.territory_name,
         Zone: element.zone_name,
         LLY: element.LLY_Value,
         LY: element.LY_Value,
-        "CY Plan": element.CY_Value,
+        "CY Plan": element.CY_ValuePlanV1,
         YTD: element.YTD_Value,
         Apr: element.Apr_Month_Value_v1,
-        "Apr Sale": element.Apr_Month_Sale,
+        "Apr Sale": element.Apr_Month_Sale_act,
         May: element.May_Month_Value_v1,
-        "May Sale": element.May_Month_Sale,
+        "May Sale": element.May_Month_Sale_act,
         Jun: element.Jun_Month_Value_v1,
-        "Jun Sale": element.Jun_Month_Sale,
+        "Jun Sale": element.Jun_Month_Sale_act,
         Jul: element.Jul_Month_Value_v1,
-        "Jul Sale": element.Jul_Month_Sale,
+        "Jul Sale": element.Jul_Month_Sale_act,
         Aug: element.Aug_Month_Value_v1,
-        "Aug Sale": element.Aug_Month_Sale,
+        "Aug Sale": element.Aug_Month_Sale_act,
         Sep: element.Sep_Month_Value_v1,
-        "Sep Sale": element.Sep_Month_Sale,
+        "Sep Sale": element.Sep_Month_Sale_act,
         Oct: element.Oct_Month_Value_v1,
-        "Oct Sale": element.Oct_Month_Sale,
+        "Oct Sale": element.Oct_Month_Sale_act,
         Nov: element.Nov_Month_Value_v1,
-        "Nov Sale": element.Nov_Month_Sale,
+        "Nov Sale": element.Nov_Month_Sale_act,
         Dec: element.Dec_Month_Value_v1,
-        "Dec Sale": element.Dec_Month_Sale,
+        "Dec Sale": element.Dec_Month_Sale_act,
         Jan: element.Jan_Month_Value_v1,
-        "Jan Sale": element.Feb_Month_Sale,
+        "Jan Sale": element.Jan_Month_Sale_act,
         Feb: element.Feb_Month_Value_v1,
-        "Feb Sale": element.Feb_Month_Sale,
+        "Feb Sale": element.Feb_Month_Sale_act,
         Mar: element.Mar_Month_Value_v1,
-        "Mar Sale": element.Mar_Month_Sale,
+        "Mar Sale": element.Mar_Month_Sale_act,
       }));
 
       ExportExcel("Territory-Wise-Monthly-Plan-Achievement", arrObj);
@@ -631,7 +644,6 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                 dataSource={territoryMonthPlan}
                 toolbar={toolbar}
                 toolbarClick={toolbarClick}
-                enableStickyHeader={true}
                 height={"500px"}
                 ref={TerritoryMonthWiseInstance}
                 allowPaging={true}

@@ -2,6 +2,7 @@ export const permissions = [
   {
     roleId: "HOD",
     permission: [
+      "dashboard",
       "national",
       "zone",
       "depot",
@@ -10,6 +11,7 @@ export const permissions = [
       "dashscheduleboard",
       "customer-potential",
       "change-password",
+      "pre-journey-plan",
     ],
   },
   {
@@ -22,6 +24,7 @@ export const permissions = [
       "dashscheduleboard",
       "customer-potential",
       "change-password",
+      "pre-journey-plan",
     ],
   },
   {
@@ -33,6 +36,7 @@ export const permissions = [
       "dashscheduleboard",
       "customer-potential",
       "change-password",
+      "pre-journey-plan",
     ],
   },
   {
@@ -47,6 +51,7 @@ export const permissions = [
       "dashscheduleboard",
       "customer-potential",
       "change-password",
+      "pre-journey-plan",
     ],
   },
 ];
