@@ -1,13 +1,51 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch } from "react-redux";
 
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
+import ExportExcel from "../ExportExcel";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Sort,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  AggregateColumnDirective,
+  Toolbar,
+  ExcelExport,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import Loader from "../../common/Loader";
+const monthArr = [
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+];
 
 const NationalZoneMonthSale = ({ selectedZone }) => {
   const dispatch = useDispatch();
-
+  let NationalZoneGridInstance = useRef();
   const [isLoading, setLoading] = useState(true);
   const [zoneMonthPlan, setZoneMonthPlan] = useState([]);
 
@@ -22,7 +60,6 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
         const response = await axiosInstance.post("ZoneMonthPlan", payload);
 
         if (response?.status === 200) {
-          console.log("=====getZoneMonthPlan====", response.data.Data);
           setZoneMonthPlan(
             response.data.Data != null ? response.data.Data : []
           );
@@ -36,320 +73,828 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
 
     getZoneMonthPlan();
   }, [selectedZone]);
+  const CyPlanYtdTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args?.CY_ValuePlanV1)} <hr className="hr0" />
+        {fNWCommas(args?.YTD_Value)}
+        {GetPercent(args?.YTD_Value, args?.CY_ValuePlanV1)}
+      </>
+    );
+  };
+  const AprTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Apr_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Apr_Month_Sale_act`])}
+        {GetPercent(args[`Apr_Month_Sale_act`], args[`Apr_Month_Value_v1`])}
+      </>
+    );
+  };
+  const MayTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`May_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`May_Month_Sale_act`])}
+        {GetPercent(args[`May_Month_Sale_act`], args[`May_Month_Value_v1`])}
+      </>
+    );
+  };
+  const JunTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Jun_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Jun_Month_Sale_act`])}
+        {GetPercent(args[`Jun_Month_Sale_act`], args[`Jun_Month_Value_v1`])}
+      </>
+    );
+  };
+  const JulTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Jul_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Jul_Month_Sale_act`])}
+        {GetPercent(args[`Jul_Month_Sale_act`], args[`Jul_Month_Value_v1`])}
+      </>
+    );
+  };
+  const AugTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Aug_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Aug_Month_Sale_act`])}
+        {GetPercent(args[`Aug_Month_Sale_act`], args[`Aug_Month_Value_v1`])}
+      </>
+    );
+  };
+  const SepTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Sep_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Sep_Month_Sale_act`])}
+        {GetPercent(args[`Sep_Month_Sale_act`], args[`Sep_Month_Value_v1`])}
+      </>
+    );
+  };
+  const OctTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Oct_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Oct_Month_Sale_act`])}
+        {GetPercent(args[`Oct_Month_Sale_act`], args[`Oct_Month_Value_v1`])}
+      </>
+    );
+  };
+  const NovTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Nov_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Nov_Month_Sale_act`])}
+        {GetPercent(args[`Nov_Month_Sale_act`], args[`Nov_Month_Value_v1`])}
+      </>
+    );
+  };
+  const DecTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Dec_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Dec_Month_Sale_act`])}
+        {GetPercent(args[`Dec_Month_Sale_act`], args[`Dec_Month_Value_v1`])}
+      </>
+    );
+  };
+  const JanTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Jan_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Jan_Month_Sale_act`])}
+        {GetPercent(args[`Jan_Month_Sale_act`], args[`Jan_Month_Value_v1`])}
+      </>
+    );
+  };
+  const FebTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Feb_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Feb_Month_Sale_act`])}
+        {GetPercent(args[`Feb_Month_Sale_act`], args[`Feb_Month_Value_v1`])}
+      </>
+    );
+  };
+  const MarTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Mar_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Mar_Month_Sale_act`])}
+        {GetPercent(args[`Mar_Month_Sale_act`], args[`Mar_Month_Value_v1`])}
+      </>
+    );
+  };
+  const headerTemplateForCy = () => {
+    return (
+      <>
+        <span>Plan 2023 / YTD</span>
+      </>
+    );
+  };
+  const customTotalFooter = () => {
+    return <span style={{ fontSize: "20px" }}>Total</span>;
+  };
+  const customTotalLly = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      let totalLlyValue = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.LLY_Value.toFixed(0)) || 0),
+        0
+      );
 
-  const totalCYValue = zoneMonthPlan.reduce(
-    (acc, item) => acc + (item.CY_Value || 0),
-    0
-  );
-  const totalYTDValue = zoneMonthPlan.reduce(
-    (acc, item) => acc + (item.YTD_Value || 0),
-    0
-  );
-  const totalAprValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
-    0
-  );
-  const totalAprValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Sale || 0),
-    0
-  );
-  const totalMayValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
-    0
-  );
-  const totalMayValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.May_Month_Sale || 0),
-    0
-  );
-  const totalJunValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
-    0
-  );
-  const totalJunValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Sale || 0),
-    0
-  );
-  const totalJulValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
-    0
-  );
-  const totalJulValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Sale || 0),
-    0
-  );
-  const totalAugValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
-    0
-  );
-  const totalAugValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Sale || 0),
-    0
-  );
-  const totalSepValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
-    0
-  );
-  const totalSepValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Sale || 0),
-    0
-  );
-  const totalOctValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
-    0
-  );
-  const totalOctValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Sale || 0),
-    0
-  );
-  const totalNovValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
-    0
-  );
-  const totalNovValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Sale || 0),
-    0
-  );
-  const totalDecValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
-    0
-  );
-  const totalDecValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Sale || 0),
-    0
-  );
-  const totalJanValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
-    0
-  );
-  const totalJanValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Sale || 0),
-    0
-  );
-  const totalFebValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
-    0
-  );
-  const totalFebValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Sale || 0),
-    0
-  );
-  const totalMarValue = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
-    0
-  );
-  const totalMarValue_v1 = zoneMonthPlan?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Sale || 0),
-    0
-  );
+      return <>{fNWCommas(totalLlyValue)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
 
-  const tableRows = zoneMonthPlan.map((item, index) => (
-    <tr key={index}>
-      <td className="">{item?.zone_name}</td>
-      <td className="">{item?.LY_Value}</td>
-      <td className="">
-        {item?.CY_Value} <hr className="hr0" />
-        {item?.YTD_Value}
-        <span className="w3-text-gray ">
-          ({((item?.YTD_Value / item?.CY_Value) * 100)?.toFixed(0)}%)
-        </span>
-      </td>
-      <td className="">
-        {item?.Apr_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Apr_Month_Sale}
-      </td>
-      <td className="">
-        {item?.May_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.May_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Jun_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jun_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Jul_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jul_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Aug_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Aug_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Sep_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Sep_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Oct_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Oct_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Nov_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Nov_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Dec_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Dec_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Jan_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jan_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Feb_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Feb_Month_Sale}
-      </td>
-      <td className="">
-        {item?.Mar_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Mar_Month_Sale}
-      </td>
-    </tr>
-  ));
+  const customTotalLy = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      let totalLYValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
+        0
+      );
 
-  // Add a new row for total CY_Value and YTD_Value
-  const totalRow = (
-    <tr key="total" className="colrdrow">
-      <td className="" colSpan={2}>
-        Total
-      </td>
-      <td className="">
-        {totalCYValue.toFixed(2)} <hr className="hr0" />
-        {totalYTDValue.toFixed(2)}
-        <span className="w3-text-gray ">
-          ({((totalYTDValue / totalCYValue) * 100).toFixed(0)}%)
-        </span>
-      </td>
-      <td className="">
-        {totalAprValue?.toFixed(2)} <hr className="hr0" />
-        {totalAprValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalMayValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalMayValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalJunValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalJunValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalJulValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalJulValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalAugValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalAugValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalSepValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalSepValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalOctValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalOctValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalNovValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalNovValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalDecValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalDecValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalJanValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalJanValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalFebValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalFebValue_v1?.toFixed(2)}
-      </td>
-      <td className="">
-        {totalMarValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalMarValue_v1?.toFixed(2)}
-      </td>
-    </tr>
-  );
+      return <>{fNWCommas(totalLYValue1)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
 
-  const tableWithTotalRow = [...tableRows, totalRow];
+  const customTotalCYPlanYTD = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      let totalCYValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.CY_ValuePlanV1.toFixed(0)) || 0),
+        0
+      );
+      let totalYTDValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.YTD_Value.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalCYValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalYTDValue1)}
+          {GetPercent(totalYTDValue1, totalCYValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalApr = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      let totalAprValue1 = shownData.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Apr_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      let totalAprValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Apr_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalAprValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalAprValue_v2)}
+          {GetPercent(totalAprValue_v2, totalAprValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalMay = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      let totalMayValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.May_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      let totalMayValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.May_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalMayValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalMayValue_v2)}
+          {GetPercent(totalMayValue_v2, totalMayValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalJun = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalJunValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jun_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalJunValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jun_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalJunValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalJunValue_v2)}
+          {GetPercent(totalJunValue_v2, totalJunValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalJul = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalJulValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jul_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalJulValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jul_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalJulValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalJulValue_v2)}
+          {GetPercent(totalJulValue_v2, totalJulValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalAug = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalAugValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Aug_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalAugValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Aug_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalAugValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalAugValue_v2)}
+          {GetPercent(totalAugValue_v2, totalAugValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalSep = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalSepValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Sep_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalSepValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Sep_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalSepValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalSepValue_v2)}
+          {GetPercent(totalSepValue_v2, totalSepValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalOct = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalOctValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Oct_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalOctValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Oct_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalOctValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalOctValue_v2)}
+          {GetPercent(totalOctValue_v2, totalOctValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalNov = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalNovValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Nov_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalNovValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Nov_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalNovValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalNovValue_v2)}
+          {GetPercent(totalNovValue_v2, totalNovValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalDec = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalDecValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Dec_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalDecValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Dec_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalDecValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalDecValue_v2)}
+          {GetPercent(totalDecValue_v2, totalDecValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalJan = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalJanValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jan_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalJanValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jan_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalJanValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalJanValue_v2)}
+          {GetPercent(totalJanValue_v2, totalJanValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalFeb = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalFebValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Feb_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalFebValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Feb_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalFebValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalFebValue_v2)}
+          {GetPercent(totalFebValue_v2, totalFebValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalMar = () => {
+    if (NationalZoneGridInstance.current) {
+      let shownData = NationalZoneGridInstance.current.getCurrentViewRecords();
+      const totalMarValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Mar_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalMarValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Mar_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalMarValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalMarValue_v2)}
+          {GetPercent(totalMarValue_v2, totalMarValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const Rows = useMemo(() => {
+    const rows = [
+      {
+        field: "zone_name",
+        headerText: "Zone",
+        width: "130",
+        visible: true,
+        textAlign: "left",
+        allowEditing: false,
+        freeze: "Left",
+      },
+      {
+        field: "LY_Value",
+        headerText: "LY 22-23",
+        width: "130",
+        visible: true,
+        textAlign: "center",
+        allowEditing: false,
+      },
+      {
+        headerTemplate: headerTemplateForCy,
+        field: "cyPLan/ytd",
+        width: "130",
+        visible: true,
+        allowFiltering: false,
+        textAlign: "center",
+        template: CyPlanYtdTemplate,
+      },
+      {
+        columns: [
+          {
+            field: "Apr",
+            headerText: "Apr",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: AprTemplate,
+          },
+          {
+            field: "May",
+            headerText: "May",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: MayTemplate,
+          },
+          {
+            field: "Jun",
+            headerText: "Jun",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: JunTemplate,
+          },
+          {
+            field: "Jul",
+            headerText: "Jul",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: JulTemplate,
+          },
+          {
+            field: "Aug",
+            headerText: "Aug",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: AugTemplate,
+          },
+          {
+            field: "Sep",
+            headerText: "Sep",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: SepTemplate,
+          },
+          {
+            field: "Oct",
+            headerText: "Oct",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: OctTemplate,
+          },
+          {
+            field: "Nov",
+            headerText: "Nov",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: NovTemplate,
+          },
+          {
+            field: "Dec",
+            headerText: "Dec",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: DecTemplate,
+          },
+          {
+            field: "Jan",
+            headerText: "Jan",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: JanTemplate,
+          },
+          {
+            field: "Feb",
+            headerText: "Feb",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: FebTemplate,
+          },
+          {
+            field: "Mar",
+            headerText: "Mar",
+            width: 120,
+            allowEditing: false,
+            allowFiltering: false,
+            textAlign: "center",
+            template: MarTemplate,
+          },
+        ],
+        headerText: "Month Wise Plan",
+        textAlign: "center",
+      },
+    ];
+
+    return rows;
+  }, [zoneMonthPlan]);
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      NationalZoneGridInstance.current &&
+      args.item.id === "nationZoneMonthSaleGrid_id_excelexport"
+    ) {
+      const arrObj = zoneMonthPlan.map((element, index) => ({
+        "S.No": index + 1,
+        Zone: element.zone_name,
+        "LY 22-23": parseInt(element.LY_Value).toFixed(0),
+        "Plan 2023": parseInt(element.CY_ValuePlanV1).toFixed(0),
+        YTD: parseInt(element.YTD_Value).toFixed(0),
+        Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
+        "Apr Sale": parseInt(element.Apr_Month_Sale_act).toFixed(0),
+        May: parseInt(element.May_Month_Value_v1).toFixed(0),
+        "May Sale": parseInt(element.May_Month_Sale_act).toFixed(0),
+        Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
+        "Jun Sale": parseInt(element.Jun_Month_Sale_act).toFixed(0),
+        Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
+        "Jul Sale": parseInt(element.Jul_Month_Sale_act).toFixed(0),
+        Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
+        "Aug Sale": parseInt(element.Aug_Month_Sale_act).toFixed(0),
+        Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
+        "Sep Sale": parseInt(element.Sep_Month_Sale_act).toFixed(0),
+        Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
+        "Oct Sale": parseInt(element.Oct_Month_Sale_act).toFixed(0),
+        Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
+        "Nov Sale": parseInt(element.Nov_Month_Sale_act).toFixed(0),
+        Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
+        "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
+        Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
+        "Jan Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+        Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
+        "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+        Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
+        "Mar Sale": parseInt(element.Mar_Month_Sale_act).toFixed(0),
+      }));
+
+      ExportExcel("Zone-Wise-Monthly-Plan-Achievement", arrObj);
+    }
+  };
 
   return (
-    <div id="mom-north" className="w3-row w3-margin-top ">
-      <div id="mom-bar-north" className=" ">
-        <table className="w3-table w3-stripped table-bordered">
-          <tr>
-            <td className="w3-red" rowspan="2">
-              {" "}
-              Zone{" "}
-            </td>
-            <td className="w3-red" rowspan="2">
-              {" "}
-              LY 22-23{" "}
-            </td>
-            <td className="w3-red" rowspan="2">
-              {" "}
-              Plan 2023 <hr className="hr0" /> YTD{" "}
-            </td>
+    <>
+      <div className="full">
+        <Row>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="nationZoneMonthSaleGrid_id"
+              key="nationZoneMonthSaleGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={zoneMonthPlan}
+              toolbar={toolbar}
+              toolbarClick={toolbarClick}
+              height={"250px"}
+              ref={NationalZoneGridInstance}
+              gridLines="Both"
+              rowHeight={45}
+              // allowFiltering={true}
+              // filterSettings={{ type: "Excel" }}
+              allowExcelExport={true}
+              allowPaging={true}
+              allowSorting={true}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              columns={Rows}
+              frozenColumns={1}
+            >
+              <AggregatesDirective>
+                <AggregateDirective>
+                  <AggregateColumnsDirective>
+                    <AggregateColumnDirective
+                      field="zone_name"
+                      type="Custom"
+                      footerTemplate={customTotalFooter}
+                    />
 
-            <td className="w3-gray" colspan="12">
-              {" "}
-              Month Wise Plan{" "}
-            </td>
-          </tr>
-          <tr>
-            <td className="w3-gray"> Apr </td>
-            <td className="w3-gray"> May </td>
-            <td className="w3-gray"> Jun </td>
-            <td className="w3-gray"> Jul </td>
-            <td className="w3-gray"> Aug </td>
-            <td className="w3-gray"> Sep </td>
-            <td className="w3-gray"> Oct </td>
-            <td className="w3-gray"> Nov </td>
-            <td className="w3-gray"> Dec </td>
-            <td className="w3-gray"> Jan </td>
-            <td className="w3-gray"> Feb </td>
-            <td className="w3-gray"> Mar </td>
-          </tr>
-          {isLoading ? (
-            <tr>
-              <td colSpan="16">
-                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-              </td>
-            </tr>
-          ) : (
-            <>
-              {zoneMonthPlan?.length === 0 ? (
-                <tr>
-                  <td colSpan="16">No data found</td>
-                </tr>
-              ) : (
-                tableWithTotalRow
-              )}
-            </>
-          )}
-        </table>
+                    <AggregateColumnDirective
+                      field="LY_Value"
+                      type="Custom"
+                      footerTemplate={customTotalLy}
+                    />
+                    <AggregateColumnDirective
+                      field="cyPLan/ytd"
+                      type="Custom"
+                      footerTemplate={customTotalCYPlanYTD}
+                    />
+                    <AggregateColumnDirective
+                      field="Apr"
+                      type="Custom"
+                      footerTemplate={customTotalApr}
+                    />
+                    <AggregateColumnDirective
+                      field="May"
+                      type="Custom"
+                      footerTemplate={customTotalMay}
+                    />
+                    <AggregateColumnDirective
+                      field="Jun"
+                      type="Custom"
+                      footerTemplate={customTotalJun}
+                    />
+                    <AggregateColumnDirective
+                      field="Jul"
+                      type="Custom"
+                      footerTemplate={customTotalJul}
+                    />
+                    <AggregateColumnDirective
+                      field="Aug"
+                      type="Custom"
+                      footerTemplate={customTotalAug}
+                    />
+                    <AggregateColumnDirective
+                      field="Sep"
+                      type="Custom"
+                      footerTemplate={customTotalSep}
+                    />
+                    <AggregateColumnDirective
+                      field="Oct"
+                      type="Custom"
+                      footerTemplate={customTotalOct}
+                    />
+                    <AggregateColumnDirective
+                      field="Nov"
+                      type="Custom"
+                      footerTemplate={customTotalNov}
+                    />
+                    <AggregateColumnDirective
+                      field="Dec"
+                      type="Custom"
+                      footerTemplate={customTotalDec}
+                    />
+                    <AggregateColumnDirective
+                      field="Jan"
+                      type="Custom"
+                      footerTemplate={customTotalJan}
+                    />
+                    <AggregateColumnDirective
+                      field="Feb"
+                      type="Custom"
+                      footerTemplate={customTotalFeb}
+                    />
+                    <AggregateColumnDirective
+                      field="Mar"
+                      type="Custom"
+                      footerTemplate={customTotalMar}
+                    />
+                  </AggregateColumnsDirective>
+                </AggregateDirective>
+              </AggregatesDirective>
+              <Inject
+                services={[
+                  CommandColumn,
+                  Page,
+                  Filter,
+                  Aggregate,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                  Freeze,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
       </div>
-    </div>
+    </>
   );
 };
 

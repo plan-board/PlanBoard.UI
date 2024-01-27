@@ -1,396 +1,861 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
-// import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-import { Link } from "react-router-dom";
-import DataTable from "react-data-table-component";
-// import ZoneDropDown from "./ZoneDropDown";
 
-import ReactTable from "react-table-6";
-import "react-table-6/react-table.css";
-import withFixedColumns from "react-table-hoc-fixed-columns";
-import "react-table-hoc-fixed-columns/lib/styles.css";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-
-const ReactTableFixedColumns = withFixedColumns(ReactTable);
-
+import ExportExcel from "../ExportExcel";
+import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Edit,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  AggregateColumnDirective,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import Loader from "../../common/Loader";
 const DepoMonthWiseSalesReport = ({
   selectedZone,
   selectedDepot,
-  forVersion,
+  monthWiseSalesData,
+  isLoading,
 }) => {
-  // console.log('"-----on click');
-  const dispatch = useDispatch();
-  const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
-  const [isLoading, setLoading] = useState(true);
+  let monthWiseSalesInstance = useRef();
 
-  const [filterText, setFilterText] = useState("");
+  const CyPlanYtdTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args?.CY_ValuePlanV1)} <hr className="hr0" />
+        {fNWCommas(args?.YTD_Value)}
+      </>
+    );
+  };
+  const AprTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Apr_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Apr_Month_Sale_act`])}
+        {GetPercent(args[`Apr_Month_Sale_act`], args[`Apr_Month_Value_v1`])}
+      </>
+    );
+  };
+  const MayTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`May_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`May_Month_Sale_act`])}
+        {GetPercent(args[`May_Month_Sale_act`], args[`May_Month_Value_v1`])}
+      </>
+    );
+  };
+  const JunTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Jun_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Jun_Month_Sale_act`])}
+        {GetPercent(args[`Jun_Month_Sale_act`], args[`Jun_Month_Value_v1`])}
+      </>
+    );
+  };
+  const JulTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Jul_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Jul_Month_Sale_act`])}
+        {GetPercent(args[`Jul_Month_Sale_act`], args[`Jul_Month_Value_v1`])}
+      </>
+    );
+  };
+  const AugTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Aug_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Aug_Month_Sale_act`])}
+        {GetPercent(args[`Aug_Month_Sale_act`], args[`Aug_Month_Value_v1`])}
+      </>
+    );
+  };
+  const SepTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Sep_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Sep_Month_Sale_act`])}
+        {GetPercent(args[`Sep_Month_Sale_act`], args[`Sep_Month_Value_v1`])}
+      </>
+    );
+  };
+  const OctTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Oct_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Oct_Month_Sale_act`])}
+        {GetPercent(args[`Oct_Month_Sale_act`], args[`Oct_Month_Value_v1`])}
+      </>
+    );
+  };
+  const NovTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Nov_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Nov_Month_Sale_act`])}
+        {GetPercent(args[`Nov_Month_Sale_act`], args[`Nov_Month_Value_v1`])}
+      </>
+    );
+  };
+  const DecTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Dec_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Dec_Month_Sale_act`])}
+        {GetPercent(args[`Dec_Month_Sale_act`], args[`Dec_Month_Value_v1`])}
+      </>
+    );
+  };
+  const JanTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Jan_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Jan_Month_Sale_act`])}
+        {GetPercent(args[`Jan_Month_Sale_act`], args[`Jan_Month_Value_v1`])}
+      </>
+    );
+  };
+  const FebTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Feb_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Feb_Month_Sale_act`])}
+        {GetPercent(args[`Feb_Month_Sale_act`], args[`Feb_Month_Value_v1`])}
+      </>
+    );
+  };
+  const MarTemplate = (args) => {
+    return (
+      <>
+        {fNWCommas(args[`Mar_Month_Value_v1`])}
+        <hr className="hr0" />
+        {fNWCommas(args[`Mar_Month_Sale_act`])}
+        {GetPercent(args[`Mar_Month_Sale_act`], args[`Mar_Month_Value_v1`])}
+      </>
+    );
+  };
+  const customTotalFooter = () => {
+    return <span style={{ fontSize: "20px" }}>Total</span>;
+  };
+  const customTotalLly = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      let totalLlyValue = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.LLY_Value.toFixed(0)) || 0),
+        0
+      );
 
-  useEffect(() => {
-    console.log("-calling DepotMonthPlan api from dpo mon wise re");
-    const payload = {
-      Token: localStorage.getItem("access_token"),
-      ZoneId: selectedZone,
-      DepotId: 0, //selectedDepot
-    };
-    const fetchDepotSalesPlan = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.post("DepotMonthPlan", payload);
-        console.log("=====DepotMonthPlan====", response);
-        if (response?.status === 200) {
-          setMonthWiseSalesData(
-            response.data.Data != null ? response.data.Data : []
-          );
-        }
-        setLoading(false);
-      } catch (error) {
-        // Handle errors
-        dispatch({ type: SHOW_TOAST, payload: error.message });
-      }
-    };
+      return <>{fNWCommas(totalLlyValue)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
 
-    fetchDepotSalesPlan();
-  }, [selectedZone]);
+  const customTotalLy = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      let totalLYValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.LY_Value.toFixed(0)) || 0),
+        0
+      );
 
-  // builkd table colunms
+      return <>{fNWCommas(totalLYValue1)}</>;
+    } else {
+      return "Calculating";
+    }
+  };
 
-  const filteredItems = monthWiseSalesData.filter(
-    (item) =>
-      item.depot_name &&
-      item.depot_name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  const customTotalCYPlanYTD = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      let totalCYValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.CY_ValuePlanV1.toFixed(0)) || 0),
+        0
+      );
+      let totalYTDValue1 = shownData.reduce(
+        (acc, item) => acc + (parseInt(item.YTD_Value.toFixed(0)) || 0),
+        0
+      );
 
+      return (
+        <>
+          {fNWCommas(totalCYValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalYTDValue1)}
+          {GetPercent(totalYTDValue1, totalCYValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
 
-  const totalLYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.LY_Value || 0),
-    0
-  );
-  const totalLLYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.LLY_Value || 0),
-    0
-  );
-  const totalCYValue = filteredItems.reduce(
-    (acc, item) => acc + (item.CY_Value || 0),
-    0
-  );
-  const totalYTDValue = filteredItems.reduce(
-    (acc, item) => acc + (item.YTD_Value || 0),
-    0
-  );
-  const totalAprValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Value_v1 || 0),
-    0
-  );
-  const totalAprValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Apr_Month_Sale || 0),
-    0
-  );
-  const totalMayValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.May_Month_Value_v1 || 0),
-    0
-  );
-  const totalMayValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.May_Month_Sale || 0),
-    0
-  );
-  const totalJunValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Value_v1 || 0),
-    0
-  );
-  const totalJunValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jun_Month_Sale || 0),
-    0
-  );
-  const totalJulValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Value_v1 || 0),
-    0
-  );
-  const totalJulValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jul_Month_Sale || 0),
-    0
-  );
-  const totalAugValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Value_v1 || 0),
-    0
-  );
-  const totalAugValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Aug_Month_Sale || 0),
-    0
-  );
-  const totalSepValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Value_v1 || 0),
-    0
-  );
-  const totalSepValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Sep_Month_Sale || 0),
-    0
-  );
-  const totalOctValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Value_v1 || 0),
-    0
-  );
-  const totalOctValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Oct_Month_Sale || 0),
-    0
-  );
-  const totalNovValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Value_v1 || 0),
-    0
-  );
-  const totalNovValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Nov_Month_Sale || 0),
-    0
-  );
-  const totalDecValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Value_v1 || 0),
-    0
-  );
-  const totalDecValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Dec_Month_Sale || 0),
-    0
-  );
-  const totalJanValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Value_v1 || 0),
-    0
-  );
-  const totalJanValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Jan_Month_Sale || 0),
-    0
-  );
-  const totalFebValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Value_v1 || 0),
-    0
-  );
-  const totalFebValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Feb_Month_Sale || 0),
-    0
-  );
-  const totalMarValue = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Value_v1 || 0),
-    0
-  );
-  const totalMarValue_v1 = filteredItems?.reduce(
-    (acc, item) => acc + (item?.Mar_Month_Sale || 0),
-    0
-  );
+  const customTotalApr = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      let totalAprValue1 = shownData.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Apr_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      let totalAprValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Apr_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
 
-  const tableRows = filteredItems.map((item, index) => (
-    <tr key={index}>
-      <td>{item?.zone_name}</td>
-      <td>{item?.depot_name}</td>
-      <td>{item?.LY_Value}</td>
-      <td>{item?.LLY_Value}</td>
-      <td>{item?.CY_Value} <hr className="hr0" />{item?.YTD_Value}</td>
-      <td>
-        {item?.Apr_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Apr_Month_Sale}
-      </td>
-      <td>
-        {item?.May_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.May_Month_Sale}
-      </td>
-      <td>
-        {item?.Jun_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jun_Month_Sale}
-      </td>
-      <td>
-        {item?.Jul_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jul_Month_Sale}
-      </td>
-      <td>
-        {item?.Aug_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Aug_Month_Sale}
-      </td>
-      <td>
-        {item?.Sep_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Sep_Month_Sale}
-      </td>
-      <td>
-        {item?.Oct_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Oct_Month_Sale}
-      </td>
-      <td>
-        {item?.Nov_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Nov_Month_Sale}
-      </td>
-      <td>
-        {item?.Dec_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Dec_Month_Sale}
-      </td>
-      <td>
-        {item?.Jan_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Jan_Month_Sale}
-      </td>
-      <td>
-        {item?.Feb_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Feb_Month_Sale}
-      </td>
-      <td>
-        {item?.Mar_Month_Value_v1}
-        <hr className="hr0" />
-        {item?.Mar_Month_Sale}
-      </td>
-    </tr>
-  ));
+      return (
+        <>
+          {fNWCommas(totalAprValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalAprValue_v2)}
+          {GetPercent(totalAprValue_v2, totalAprValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
 
-  // Add a new row for total CY_Value and YTD_Value
-  const totalRow = (
-    <tr key="total" className="colrdrow">
-      <td colSpan={2}>
-        Total
-      </td>
-      <td>
-        {totalLLYValue.toFixed(2)}
-      </td>
-      <td>
-        {totalLYValue.toFixed(2)}
-      </td>
-      <td>
-        {totalCYValue.toFixed(2)}
-        <hr className="hr0" />
-        {totalYTDValue.toFixed(2)}
-      </td>
-      <td>
-        {totalAprValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalAprValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalMayValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalMayValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalJunValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalJunValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalJulValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalJulValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalAugValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalAugValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalSepValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalSepValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalOctValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalOctValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalNovValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalNovValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalDecValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalDecValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalJanValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalJanValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalFebValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalFebValue_v1?.toFixed(2)}
-      </td>
-      <td>
-        {totalMarValue?.toFixed(2)}
-        <hr className="hr0" />
-        {totalMarValue_v1?.toFixed(2)}
-      </td>
-    </tr>
-  );
+  const customTotalMay = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      let totalMayValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.May_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      let totalMayValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.May_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
 
-  const tableWithTotalRow = [...tableRows, totalRow];
+      return (
+        <>
+          {fNWCommas(totalMayValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalMayValue_v2)}
+          {GetPercent(totalMayValue_v2, totalMayValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalJun = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalJunValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jun_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalJunValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jun_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalJunValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalJunValue_v2)}
+          {GetPercent(totalJunValue_v2, totalJunValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalJul = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalJulValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jul_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalJulValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jul_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalJulValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalJulValue_v2)}
+          {GetPercent(totalJulValue_v2, totalJulValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalAug = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalAugValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Aug_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalAugValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Aug_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalAugValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalAugValue_v2)}
+          {GetPercent(totalAugValue_v2, totalAugValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalSep = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalSepValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Sep_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalSepValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Sep_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalSepValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalSepValue_v2)}
+          {GetPercent(totalSepValue_v2, totalSepValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+
+  const customTotalOct = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalOctValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Oct_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalOctValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Oct_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalOctValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalOctValue_v2)}
+          {GetPercent(totalOctValue_v2, totalOctValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalNov = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalNovValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Nov_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalNovValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Nov_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalNovValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalNovValue_v2)}
+          {GetPercent(totalNovValue_v2, totalNovValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalDec = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalDecValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Dec_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalDecValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Dec_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalDecValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalDecValue_v2)}
+          {GetPercent(totalDecValue_v2, totalDecValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalJan = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalJanValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jan_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalJanValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Jan_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalJanValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalJanValue_v2)}
+          {GetPercent(totalJanValue_v2, totalJanValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalFeb = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalFebValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Feb_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalFebValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Feb_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalFebValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalFebValue_v2)}
+          {GetPercent(totalFebValue_v2, totalFebValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const customTotalMar = () => {
+    if (monthWiseSalesInstance.current) {
+      let shownData = monthWiseSalesInstance.current.getCurrentViewRecords();
+      const totalMarValue1 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Mar_Month_Value_v1.toFixed(0)) || 0),
+        0
+      );
+      const totalMarValue_v2 = shownData?.reduce(
+        (acc, item) =>
+          acc + (parseInt(item?.Mar_Month_Sale_act.toFixed(0)) || 0),
+        0
+      );
+
+      return (
+        <>
+          {fNWCommas(totalMarValue1)}
+          <hr className="hr0" />
+          {fNWCommas(totalMarValue_v2)}
+          {GetPercent(totalMarValue_v2, totalMarValue1)}
+        </>
+      );
+    } else {
+      return "Calculating";
+    }
+  };
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      monthWiseSalesInstance.current &&
+      args.item.id === "monthWiseSalesInstance_id_excelexport"
+    ) {
+      const arrObj = monthWiseSalesData.map((element, index) => ({
+        "S.No": index + 1,
+        Zone: element.zone_name,
+        Depot: element.depot_name,
+        LLY: parseInt(element.LLY_Value).toFixed(0),
+        LY: parseInt(element.LY_Value).toFixed(0),
+        "CY Plan": parseInt(element.CY_ValuePlanV1).toFixed(0),
+        YTD: parseInt(element.YTD_Value).toFixed(0),
+        Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
+        "Apr Sale": parseInt(element.Apr_Month_Sale_act).toFixed(0),
+        May: parseInt(element.May_Month_Value_v1).toFixed(0),
+        "May Sale": parseInt(element.May_Month_Sale_act).toFixed(0),
+        Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
+        "Jun Sale": parseInt(element.Jun_Month_Sale_act).toFixed(0),
+        Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
+        "Jul Sale": parseInt(element.Jul_Month_Sale_act).toFixed(0),
+        Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
+        "Aug Sale": parseInt(element.Aug_Month_Sale_act).toFixed(0),
+        Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
+        "Sep Sale": parseInt(element.Sep_Month_Sale_act).toFixed(0),
+        Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
+        "Oct Sale": parseInt(element.Oct_Month_Sale_act).toFixed(0),
+        Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
+        "Nov Sale": parseInt(element.Nov_Month_Sale_act).toFixed(0),
+        Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
+        "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
+        Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
+        "Jan Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+        Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
+        "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+        Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
+        "Mar Sale": parseInt(element.Mar_Month_Sale_act).toFixed(0),
+      }));
+
+      ExportExcel("Depot-Wise-Monthly-Plan-Achievement", arrObj);
+    }
+  };
 
   return (
-    <div id="mom-north" className="w3-row w3-margin-top ">
-      <div id="mom-bar-north" >
-        <div className="form-group filterInput">
-          <input className="w3-margin-bottom w3-input w3-border "
-            type="text"
-            placeholder="Filter By Depot  Name"
-            aria-label="Search Input"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-        </div>
-        <table className="w3-table w3-stripped table-bordered">
-          <tr className="colrdrow">
-            <td >
-              Zone
-            </td>
-            <td >
-              Depot
-            </td>
-            <td >
-              LLY
-            </td>
-            <td >
-              LY
-            </td>
-            <td >
-              CY Plan / YTD
-            </td>
-            <td className="w3-gray"> Apr </td>
-            <td className="w3-gray"> May </td>
-            <td className="w3-gray"> Jun </td>
-            <td className="w3-gray"> Jul </td>
-            <td className="w3-gray"> Aug </td>
-            <td className="w3-gray"> Sep </td>
-            <td className="w3-gray"> Oct </td>
-            <td className="w3-gray"> Nov </td>
-            <td className="w3-gray"> Dec </td>
-            <td className="w3-gray"> Jan </td>
-            <td className="w3-gray"> Feb </td>
-            <td className="w3-gray"> Mar </td>
-          </tr>
-          {isLoading ? (
-            <tr>
-              <td colSpan="18">
-                <LoadingPlaceholder numberOfRows={4}></LoadingPlaceholder>
-              </td>
-            </tr>
-          ) : (
-            <>
-              {filteredItems?.length === 0 ? (
-                <tr>
-                  <td colSpan="18">No data found</td>
-                </tr>
-              ) : (
-                tableWithTotalRow
-              )}
-            </>
-          )}
-        </table>
+    <div id="mom-north" className="row">
+      {isLoading && <Loader />}
+      <div className="full">
+        <Row>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="monthWiseSalesInstance_id"
+              key="monthWiseSalesInstance_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={monthWiseSalesData}
+              toolbar={toolbar}
+              toolbarClick={toolbarClick}
+              height={"500px"}
+              ref={monthWiseSalesInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={40}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              frozenColumns={2}
+              allowExcelExport={true}
+              allowSorting={true}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="zone_name"
+                  headerText={"Zone"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  Freeze={true}
+                />
+                <ColumnDirective
+                  field="depot_name"
+                  headerText={"Depot"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  Freeze={true}
+                />
+                <ColumnDirective
+                  field="LLY_Value"
+                  headerText={"LLY"}
+                  width="100"
+                  format={"N2"}
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="LY_Value"
+                  headerText={"LY"}
+                  width="100"
+                  visible={true}
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="cyPLan/ytd"
+                  headerText={"CY Plan / YTD"}
+                  width="170"
+                  textAlign="center"
+                  allowFiltering={false}
+                  template={CyPlanYtdTemplate}
+                />
+                <ColumnDirective
+                  headerText={"Apr"}
+                  field="Apr"
+                  width="130"
+                  visible={true}
+                  textAlign="center"
+                  allowFiltering={false}
+                  template={AprTemplate}
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="May"
+                  headerText={"May"}
+                  width="130"
+                  textAlign="center"
+                  allowFiltering={false}
+                  template={MayTemplate}
+                />
+                <ColumnDirective
+                  field="Jun"
+                  headerText={"Jun"}
+                  width="130"
+                  textAlign="center"
+                  allowFiltering={false}
+                  template={JunTemplate}
+                />
+                <ColumnDirective
+                  field="Jul"
+                  headerText={"Jul"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={JulTemplate}
+                />
+                <ColumnDirective
+                  field="Aug"
+                  headerText={"Aug"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={AugTemplate}
+                />
+                <ColumnDirective
+                  field="Sep"
+                  headerText={"Sep"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={SepTemplate}
+                />
+                <ColumnDirective
+                  field="Oct"
+                  headerText={"Oct"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={OctTemplate}
+                />
+                <ColumnDirective
+                  field="Nov"
+                  headerText={"Nov"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={NovTemplate}
+                />
+                <ColumnDirective
+                  field="Dec"
+                  headerText={"Dec"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={DecTemplate}
+                />
+                <ColumnDirective
+                  field="Jan"
+                  headerText={"Jan"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={JanTemplate}
+                />
+                <ColumnDirective
+                  field="Feb"
+                  headerText={"Feb"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={FebTemplate}
+                />
+                <ColumnDirective
+                  field="Mar"
+                  headerText={"Mar"}
+                  width="130"
+                  textAlign={"center"}
+                  allowFiltering={false}
+                  template={MarTemplate}
+                />
+              </ColumnsDirective>
+              <AggregatesDirective>
+                <AggregateDirective>
+                  <AggregateColumnsDirective>
+                    <AggregateColumnDirective
+                      field="depot_name"
+                      type="Custom"
+                      footerTemplate={customTotalFooter}
+                    />
+                    <AggregateColumnDirective
+                      field="LLY_Value"
+                      type="Custom"
+                      footerTemplate={customTotalLly}
+                    />
+                    <AggregateColumnDirective
+                      field="LY_Value"
+                      type="Custom"
+                      footerTemplate={customTotalLy}
+                    />
+                    <AggregateColumnDirective
+                      field="cyPLan/ytd"
+                      type="Custom"
+                      footerTemplate={customTotalCYPlanYTD}
+                    />
+                    <AggregateColumnDirective
+                      field="Apr"
+                      type="Custom"
+                      footerTemplate={customTotalApr}
+                    />
+                    <AggregateColumnDirective
+                      field="May"
+                      type="Custom"
+                      footerTemplate={customTotalMay}
+                    />
+                    <AggregateColumnDirective
+                      field="Jun"
+                      type="Custom"
+                      footerTemplate={customTotalJun}
+                    />
+                    <AggregateColumnDirective
+                      field="Jul"
+                      type="Custom"
+                      footerTemplate={customTotalJul}
+                    />
+                    <AggregateColumnDirective
+                      field="Aug"
+                      type="Custom"
+                      footerTemplate={customTotalAug}
+                    />
+                    <AggregateColumnDirective
+                      field="Sep"
+                      type="Custom"
+                      footerTemplate={customTotalSep}
+                    />
+                    <AggregateColumnDirective
+                      field="Oct"
+                      type="Custom"
+                      footerTemplate={customTotalOct}
+                    />
+                    <AggregateColumnDirective
+                      field="Nov"
+                      type="Custom"
+                      footerTemplate={customTotalNov}
+                    />
+                    <AggregateColumnDirective
+                      field="Dec"
+                      type="Custom"
+                      footerTemplate={customTotalDec}
+                    />
+                    <AggregateColumnDirective
+                      field="Jan"
+                      type="Custom"
+                      footerTemplate={customTotalJan}
+                    />
+                    <AggregateColumnDirective
+                      field="Feb"
+                      type="Custom"
+                      footerTemplate={customTotalFeb}
+                    />
+                    <AggregateColumnDirective
+                      field="Mar"
+                      type="Custom"
+                      footerTemplate={customTotalMar}
+                    />
+                  </AggregateColumnsDirective>
+                </AggregateDirective>
+              </AggregatesDirective>
+              <Inject
+                services={[
+                  Edit,
+                  CommandColumn,
+                  Freeze,
+                  Page,
+                  Filter,
+                  Aggregate,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
       </div>
     </div>
   );
 };
-
 export default DepoMonthWiseSalesReport;

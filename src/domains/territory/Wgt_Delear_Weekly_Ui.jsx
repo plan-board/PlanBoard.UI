@@ -1,13 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
+import ExportExcel from "../ExportExcel";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Edit,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  AggregateColumnDirective,
+  Toolbar,
+  ExcelExport,
+  Sort,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import Loader from "../../common/Loader";
 
 const Wgt_Delear_Weekly_Ui = ({ data }) => {
   const dispatch = useDispatch();
-
+  let Wgt_Delear_Weekly_Instance = useRef();
   const [weekdata, setWeekdata] = useState([]);
-  const [getinputs, setGetinputs] = useState({});
   const [reload, setReload] = useState(false);
   // const currentDate = new Date("2023-10-22");
   const currentDate = new Date();
@@ -27,17 +50,6 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
     "December",
   ];
   const month = monthNames[currentDate.getMonth()];
-  function getInput() {
-    console.log("🚀 ~ file: Wgt_Delear_Ui.jsx:20 ~ getinputs:", getinputs);
-    setReload(true);
-  }
-
-  function onchangeInputs(e, id) {
-    setGetinputs({
-      ...getinputs,
-      [id]: { ...getinputs[id], [e.target.name]: e.target.value },
-    });
-  }
 
   const payload = {
     Token: localStorage.getItem("access_token"),
@@ -75,73 +87,135 @@ const Wgt_Delear_Weekly_Ui = ({ data }) => {
       fetchDepotSalesPlan();
     }
   }, [reload]);
+
+  const monthHeaderTemp = () => {
+    return (
+      <>
+        <span style={{ textAlign: "center" }}>{month}</span>
+      </>
+    );
+  };
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      Wgt_Delear_Weekly_Instance.current &&
+      args.item.id === "CustomerMonthWeekPlan_id_excelexport"
+    ) {
+      const arrObj = weekdata.map((element, index) => ({
+        "S.No": index + 1,
+        "Dealer Name": element.dealer_name,
+        "Dealer Code": element.dealer_code,
+        Sales: element.month_value,
+        "Week 1": element.week1,
+        "Week 2": element.week2,
+        "Week 3": element.week3,
+        "Week 4": element.week4,
+      }));
+
+      ExportExcel("Dealer-Week-Wise-Monthly-Plan-Achievement", arrObj);
+    }
+  };
+
   return (
     <>
-      <div className="w3-col l12 m12 s12  ">
-        <span className="w3-large w3-hide ">
-          <b> [ H05 ] Dealers </b> Weekly (Targets){" "}
-          <i className="w3-text-red fa fa-lock"> </i>{" "}
-        </span>
-        <br />
+      <div className="w-100">
+        {reload && <Loader />}
+        <Row>
+          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+            <GridComponent
+              locale="en-Us"
+              id="CustomerMonthWeekPlan_id"
+              key="CustomerMonthWeekPlan_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={weekdata}
+              toolbar={toolbar}
+              toolbarClick={toolbarClick}
+              height={"400px"}
+              ref={Wgt_Delear_Weekly_Instance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={30}
+              pageSettings={{ pageSize: 15, pageCount: 15 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              // frozenColumns={2}
+              allowExcelExport={true}
+              allowSorting={true}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="dealer_name"
+                  headerText={"Delear Name"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  Freeze={true}
+                />
+                <ColumnDirective
+                  field="dealer_code"
+                  headerText={"Delear Code"}
+                  width="130"
+                  visible={true}
+                  textAlign="left"
+                  allowEditing={false}
+                  Freeze={true}
+                />
+                <ColumnDirective
+                  columns={[
+                    {
+                      field: "month_value",
+                      headerText: "Sales",
+                      width: 90,
+                      textAlign: "Center",
+                      allowEditing: false,
+                      allowFiltering: false,
+                    },
+                    {
+                      field: "week1",
+                      headerText: "Week-1",
+                      width: 90,
+                      textAlign: "Center",
+                      allowEditing: false,
+                      allowFiltering: false,
+                    },
+                    {
+                      field: "week2",
+                      headerText: "Week-2",
+                      width: 90,
+                      textAlign: "Center",
+                      allowEditing: false,
+                      allowFiltering: false,
+                    },
+                    {
+                      field: "week3",
+                      headerText: "Week-3",
+                      width: 90,
+                      textAlign: "Center",
+                      allowEditing: false,
+                      allowFiltering: false,
+                    },
+                    {
+                      field: "week4",
+                      headerText: "Week-4",
+                      width: 90,
+                      textAlign: "Center",
+                      allowEditing: false,
+                      allowFiltering: false,
+                    },
+                  ]}
+                  headerTemplate={monthHeaderTemp}
+                  textAlign="center"
+                  headerTextAlign="Center"
+                />
+              </ColumnsDirective>
 
-        <table className="tbl_grid w3-table table-bordered h6 w3-small">
-          {/* <tr className="w3-gray">
-            <td colSpan="30" className=" h5 w3-padding  text-left ">
-              Dealers Weekly Plan ({weekdata?.length})
-
-            </td>
-          </tr> */}
-
-          <tr className=" w3-yellow h6 w3-small">
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
-              Delear{" "}
-            </td>
-            <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
-              Delear Code
-            </td>{" "}
-            <td className="" colSpan={4}>
-              {month}
-            </td>
-            <td className="" colspan={12}>
-              Week{" "}
-            </td>{" "}
-          </tr>
-
-          <tr className=" w3-yellow h6 w3-small">
-
-            <td className="" colSpan={1}>
-              Sales{" "}
-            </td>{" "}
-            <td className="">Week-1 </td> <td className="">Week-2 </td>{" "}
-            <td className="">Week-3 </td> <td className="">Week-4 </td>{" "}
-          </tr>
-          {weekdata?.sort((a, b) => a.month_value.toString()?.localeCompare(b.month_value.toString())).map((item, index) => (
-           
-            <tr className="h6 w3-small" key={item?.dealerid}>
-              <td className="" colSpan={1} style={{ width: "15%" }}>
-                {item?.dealer_name}
-              </td>
-              <td className="" colSpan={1} style={{ width: "15%" }}>
-                {item?.dealer_code}
-              </td>
-              <td className="" colSpan={1}>
-                {item?.month_value}
-              </td>
-              <td className="">
-                {item?.week1}
-              </td>
-              <td className="">
-                {item?.week2}
-              </td>
-              <td className="">
-                {item?.week3}
-              </td>
-              <td className="">
-                {item?.week4}
-              </td>
-            </tr>
-          ))}
-        </table>
+              <Inject services={[Page, Filter, Toolbar, ExcelExport, Sort]} />
+            </GridComponent>
+          </Col>
+        </Row>
       </div>
     </>
   );

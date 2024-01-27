@@ -1,9 +1,14 @@
+import { useSelector } from "react-redux";
 const Verifyemail = () => {
-    return (
-        <div className="main  w3-border"> 
-           Verifyemail 
-        </div>
-    ) 
-}
+  const flag = useSelector((state) => state.sidebarStatus.flag);
+  return (
+    <div
+      className=" main w3-border"
+      style={{ marginLeft: flag ? "150px" : "0px" }}
+    >
+      Verifyemail
+    </div>
+  );
+};
 
-export default Verifyemail 
+export default Verifyemail;

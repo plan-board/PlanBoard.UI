@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { Navigate, Link, useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 
@@ -8,12 +8,16 @@ import { rolePermission, zoneData } from "../../auth/middleware";
 
 const Dealer = () => {
   const [visibility, setVisibility] = useState(false);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   const popupCloseHandler = (e) => {
     setVisibility(e);
   };
 
   return (
-    <div className="main  w3-border">
+    <div
+      className="main  w3-border"
+      style={{ marginLeft: flag ? "150px" : "0px" }}
+    >
       <div className="w3-row w3-padding-16"></div>
 
       <br />

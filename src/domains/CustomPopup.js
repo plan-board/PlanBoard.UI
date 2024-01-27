@@ -17,7 +17,8 @@ const CustomPopup = (props) => {
     <div
       style={{
         visibility: show ? "visible" : "hidden",
-        opacity: show ? "1" : "0"
+        opacity: show ? "1" : "0",
+        // overflowY: "auto",
       }}
       className={popupStyles.overlay}
     >
@@ -26,18 +27,21 @@ const CustomPopup = (props) => {
         <span className={popupStyles.close} onClick={closeHandler}>
           &times;
         </span>
-        <div className={popupStyles.content}>{props.children}</div>
+        <div
+          className={popupStyles.content}
+          style={{ overflowY: "auto", maxHeight: "75vh" }}
+        >
+          {props.children}
+        </div>
       </div>
     </div>
   );
 };
 
-
 CustomPopup.propTypes = {
   title: PropTypes.string.isRequired,
   show: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
-
 
 export default CustomPopup;

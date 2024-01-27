@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-
 import CommonTopSales from "../components/CommonTopSales";
 import ZoneDropDown from "../components/ZoneDropDown";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
+import AllFigureText from "../components/AllFigureText";
+import LogSummary from "../components/LogSummary";
+import ZoneBar from "./ZoneBarChart";
+import axiosInstance from "./../../auth/api";
+import { SHOW_TOAST } from "../../store/constant/types";
+import { useDispatch } from "react-redux";
 
 const Zone = () => {
+  const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  console.log("--AuthData---", AuthData)
-
-  const [selectedZone, setSelectedZone] = useState(AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
+  const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [selectedZone, setSelectedZone] = useState(
+    AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0
+  );
   const [selectedDepot, setSelectedDepot] = useState(0);
 
   const handleSelectionChange = (newValue) => {
@@ -21,43 +30,102 @@ const Zone = () => {
     setToggleState(index);
   };
 
-  return (
-    <div className=" main ">
+  useEffect(() => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      ZoneId: selectedZone,
+      DepotId: 0,
+    };
+    const fetchDepotSalesPlan = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.post("DepotMonthPlan", payload);
+        // console.log("=====DepotMonthPlan====", response);
+        if (response?.status === 200) {
+          setMonthWiseSalesData(
+            response.data.Data != null ? response.data.Data : []
+          );
+        }
+        setLoading(false);
+      } catch (error) {
+        // Handle errors
+        dispatch({ type: SHOW_TOAST, payload: error.message });
+      }
+    };
 
-      <div className="w3-row  w3-margin-bottom">
-        <div className="w3-col l3 m3 s6 ">
-          <ZoneDropDown selectedZone={selectedZone} onValueChange={handleSelectionChange} />
-        </div>
-        <div className="w3-col l3 m3 s6 w3-right ">
-          <span className=" w3-small w3-text-gray w3-right" > * All figures are in Lacs (INR)  </span>
+    fetchDepotSalesPlan();
+  }, [selectedZone]);
+
+  return (
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
+      <div className="w3-row">
+        <span className="main-title">
+          Shalimar Paints Limited <AllFigureText />
+        </span>
+      </div>
+      <div className="card-box px-0 lightblue">
+        <div className="row justify-content-between w-100 align-items-center m-0">
+          <div className="one-fourth">
+            <ZoneDropDown
+              selectedZone={selectedZone}
+              onValueChange={handleSelectionChange}
+            />
+          </div>
         </div>
       </div>
 
       <CommonTopSales actionType="Zone" selectedZone={selectedZone} />
-
-      <div class="w3-row w3-padding-16"></div>
-
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray ">
-          <div className={toggleState === 1 ? " w3-bar-item w3-button w3-white  w3-hover-white  " : " w3-bar-item w3-button w3-gray  w3-hover-white  "} onClick={() => toggleTab(1)} >
-            <span className=" h6  w3-text-gray" > Depots  Monthly  Plan  </span>
+      <div className="card-box lightblue">
+        <div className="tbl-container">
+          <ZoneBar
+            selectedZone={selectedZone}
+            monthWiseSalesData={monthWiseSalesData}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
+      <div class="card-box lightblue">
+        <div className="w3-bar tab-container">
+          <div
+            className={
+              toggleState === 1 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(1)}
+          >
+            <span className="h6"> Depots Monthly Plan </span>
+          </div>
+          <div
+            className={
+              toggleState === 2 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(2)}
+          >
+            <span className="h6">
+              <i className="fa fa-list"></i> Lock Summary{" "}
+            </span>
           </div>
         </div>
-        <div class="w3-row w3-padding " style={{ minheight: "300px" }}>
+        <div class="w3-row w-100" style={{ minheight: "300px" }}>
           <div>
             <h3>Depot Wise Monthly Plan / Achievement</h3>
           </div>
-          <div className={toggleState === 1 ? "  " : " w3-hide  "} onClick={() => toggleTab(1)} >
-            <DepoMonthWiseSalesReport selectedZone={selectedZone} selectedDepot={selectedDepot} />
+          <div className={toggleState === 1 ? "  " : " w3-hide  "}>
+            {toggleState === 1 && (
+              <DepoMonthWiseSalesReport
+                selectedZone={selectedZone}
+                selectedDepot={selectedDepot}
+                monthWiseSalesData={monthWiseSalesData}
+                isLoading={isLoading}
+              />
+            )}
+          </div>
+          <div className={toggleState === 2 ? "  " : " w3-hide  "}>
+            {toggleState === 2 && (
+              <LogSummary actionType="Zone" selectedId={selectedZone} />
+            )}
           </div>
         </div>
       </div>
-
-      <div class="w3-row w3-padding-16"> </div>
-
-
-
-
     </div>
   );
 };

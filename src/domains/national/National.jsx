@@ -1,43 +1,36 @@
 import React from "react";
 import { useEffect, useState } from "react";
-
+import { SHOW_TOAST } from "../../store/constant/types";
 import CommonTopSales from "../components/CommonTopSales";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ZoneDropDown from "../components/ZoneDropDown";
 import DepoSelectionBox from "../components/DepoSelectionBox";
-
+import axiosInstance from "./../../auth/api";
 import NationalZoneMonthSale from "../components/NationalZoneMonthSale";
 import DepoMonthWiseSalesReport from "../components/DepoMonthWiseSalesReport";
 import TerritoryMonthWiseSalesReport from "../components/TerritoryMonthWiseSalesReport";
-import TerritoryMonthSale from "../components/TerritoryMonthSale";
 import TerritorySelectionBox from "../components/TerritorySelectionBox";
-import Wgt_Delear_Ui from "../territory/Wgt_Delear_Ui";
 import DealerMonthSale from "../components/DealerMonthSale";
+import AllFigureText from "../components/AllFigureText";
+import LogSummary from "../components/LogSummary";
+import NationalBarChart from "./NationalBarChart";
 
 const National = () => {
+  const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  // console.log("====auth====", AuthData);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
+  const [isLoading, setLoading] = useState(true);
+
   // Set Select Zone
   const [selectedZone, setSelectedZone] = useState(0);
+  const [monthWiseSalesData, setMonthWiseSalesData] = useState([]);
   const [selectedZoneDrop, setSelectedZoneDrop] = useState(
-    AuthData?.Zone[0].ZoneID ? AuthData?.Zone[0].ZoneID : 0
+    AuthData?.Zone[0]?.ZoneID ? AuthData?.Zone[0]?.ZoneID : 0
   );
-  const [filteredZones, setFilteredZones] = useState([]);
-  const [filteredZonesData, setFilteredZonesData] = useState([]);
-  // console.log(
-  //   "🚀 ~ file: National.jsx:27 ~ National ~ filteredZonesData:",
-  //   filteredZonesData
-  // );
-  const [data, setData] = useState(null);
-  // console.log("🚀 ~ file: National.jsx:28 ~ National ~ id:", data);
 
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
     setToggleState(index);
-  };
-
-  const handleSelectionChange = (newValue) => {
-    setSelectedZone(newValue);
   };
 
   const handleSelectionChangeDrop = (newValue) => {
@@ -49,149 +42,176 @@ const National = () => {
 
   const onSelectedTerritoryChange = (newValue) => {
     setSelectedTerritory(newValue);
-    // console.log("45-setselectedTerritory", newValue);
   };
 
   const onSelectedDepoChange = (newValue) => {
-    // console.log("79-onSelectedDepoChange", newValue);
-
     setSelectedDepot(newValue);
   };
+  useEffect(() => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      ZoneId: selectedZoneDrop,
+      DepotId: 0,
+    };
+    const fetchDepotSalesPlan = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.post("DepotMonthPlan", payload);
+
+        if (response?.status === 200) {
+          setMonthWiseSalesData(
+            response.data.Data != null ? response.data.Data : []
+          );
+        }
+        setLoading(false);
+      } catch (error) {
+        dispatch({ type: SHOW_TOAST, payload: error.message });
+      }
+    };
+
+    fetchDepotSalesPlan();
+  }, [selectedZoneDrop]);
 
   return (
-    <div className=" main ">
-      <div className="w3-clear w3-padding-16"></div>
-
-      <div className="w3-row ">
-        <span className="w3-large">Shalimar Paints Limited</span>
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
+      <div className="w3-row">
+        <span className="main-title">
+          Shalimar Paints Limited <AllFigureText />
+        </span>
       </div>
-
       <CommonTopSales actionType="hod" selectedZone={0} />
-
-      <div
-        id="Wgt_Zone_Id"
-        className=" w3-leftbar w3-border-red Wgt_Zone_Class w3-row w3-row-padding w3-margin-bottom w3-white "
-      >
-        <div><h3>Zone Wise Monthly Plan / Achievement</h3></div>
-        <NationalZoneMonthSale selectedZone={selectedZone} />
+      <div id="Wgt_Zone_Id" className="card-box lightblue">
+        <h4>Zone Wise Monthly Plan / Achievement</h4>
+        <div className="tbl-container">
+          <NationalZoneMonthSale selectedZone={selectedZone} />
+        </div>
       </div>
-      <div className="w3-clear w3-padding-16"> </div>
+      {/* <div className="card-box lightblue">
+        <div className="tbl-container">
+          <NationalBarChart />
+        </div>
+      </div> */}
 
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray">
+      <div className="card-box lightred">
+        <div className="row w-100 mb-4 mt-2">
+          {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
+            <div className="one-fourth">
+              <ZoneDropDown
+                selectedZone={selectedZoneDrop}
+                onValueChange={handleSelectionChangeDrop}
+              />
+            </div>
+          ) : null}
+
+          {toggleState === 2 || toggleState === 3 ? (
+            <div className="one-fourth">
+              <DepoSelectionBox
+                selectedZone={selectedZoneDrop}
+                selectedDepot={selectedDepot}
+                onSelectedDepoChange={onSelectedDepoChange}
+              />
+            </div>
+          ) : null}
+
+          {toggleState === 3 ? (
+            <div className="one-fourth">
+              <TerritorySelectionBox
+                selectedZone={selectedZoneDrop}
+                selectedDepot={selectedDepot}
+                selectedTerritory={selectedTerritory}
+                onSelectedTerritoryChange={onSelectedTerritoryChange}
+              />
+            </div>
+          ) : null}
+        </div>
+
+        <div className="w3-bar tab-container">
           <div
             className={
-              toggleState === 1
-                ? " w3-bar-item w3-button w3-white  w3-hover-white  "
-                : " w3-bar-item w3-button w3-gray  w3-hover-white  "
+              toggleState === 1 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
-            <span className=" h6  w3-text-gray "> Depot Monthly Plan </span>
+            <span className="h6"> Depot Monthly Plan </span>
           </div>
           <div
             className={
-              toggleState === 2
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
+              toggleState === 2 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(2)}
           >
-            <span className=" h6  w3-text-gray "> Territory Monthly Plan </span>
+            <span className="h6"> Territory Month Plan </span>
           </div>
           <div
             className={
-              toggleState === 3
-                ? " w3-bar-item w3-button  w3-white  w3-hover-white "
-                : " w3-bar-item w3-button w3-gray w3-hover-white "
+              toggleState === 3 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(3)}
           >
-            <span className=" h6 w3-text-gray "> Dealer Monthly Plan </span>
+            <span className="h6"> Dealer Month Plan </span>
+          </div>
+
+          <div
+            className={
+              toggleState === 4 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(4)}
+          >
+            <span className="h6">
+              {" "}
+              <span style={{ fontFamily: "Nunito sans" }}>
+                Lock Summary
+              </span>{" "}
+            </span>
           </div>
         </div>
-        <div class="w3-row w3-padding ">
-          <div>
-            <div className="w3-row">
-              {toggleState === 1 || toggleState === 2 || toggleState === 3 ? (
-                <div className="w3-col l3 m4 s6">
-                  <ZoneDropDown
-                    selectedZone={selectedZoneDrop}
-                    onValueChange={handleSelectionChangeDrop}
-                  />
-                </div>
-              ) : null}
 
-              {toggleState === 2 || toggleState === 3 ? (
-                <div className="w3-col l3 m4 s6">
-                  <DepoSelectionBox
-                    selectedZone={selectedZoneDrop}
-                    selectedDepot={selectedDepot}
-                    onSelectedDepoChange={onSelectedDepoChange}
-                  />
-                </div>
-              ) : null}
-
-              {toggleState === 3 ? (
-                <div className="w3-col l3 m4 s6">
-                  <TerritorySelectionBox
-                    selectedZone={selectedZoneDrop}
-                    selectedDepot={selectedDepot}
-                    selectedTerritory={selectedTerritory}
-                    onSelectedTerritoryChange={onSelectedTerritoryChange}
-                  />
-                </div>
-              ) : null}
-            </div>
-          </div>
-          <div className="w3-clear w3-padding-16"> </div>
-          <div
-            className={toggleState === 1 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(1)}
-          >
-            <div>
-              <h3>Depot Wise Monthly Plan / Achievement</h3>
-            </div>
-            <DepoMonthWiseSalesReport
-              selectedZone={selectedZoneDrop}
-              selectedDepot={0}
-            />
-            {/* <div style={{ marginTop: "12px" }}>
-              <h3>Depot Month Wise Report V1</h3>
-            </div>
-            <DepoMonthWiseSalesReport
-              selectedZone={selectedZoneDrop}
-              selectedDepot={0}
-              forVersion={"v1"}
-            /> */}
-          </div>
-          <div
-            className={toggleState === 2 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(2)}
-          >
-            <div>
-              <h3>Territory Wise Monthly Plan / Achievement</h3>
-            </div>
-            <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
-          </div>
-          <div
-            className={toggleState === 3 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(3)}
-          >
-            <div>
-              <h3>Dealer Wise Monthly Plan / Achievement</h3>
-            </div>
-            {/* {selectedTerritory ? (<Wgt_Delear_Ui data={selectedTerritory} />) : (<div>Please select a territory</div>)} */}
-            {selectedTerritory ? (
-              <DealerMonthSale selectedTerritory={selectedTerritory} />
-            ) : (
-              <div>Please select a territory</div>
-            )}
-          </div>
+        <div class="w-100">
+          {/* <div className="table-container"> */}
+          {toggleState === 1 && (
+            <>
+              <div>
+                <h3>Depot Wise Monthly Plan / Achievement</h3>
+              </div>
+              <DepoMonthWiseSalesReport
+                selectedZone={selectedZoneDrop}
+                selectedDepot={0}
+                monthWiseSalesData={monthWiseSalesData}
+                isLoading={isLoading}
+              />
+            </>
+          )}
+          {toggleState === 2 && (
+            <>
+              <div>
+                <h3>Territory Wise Monthly Plan / Achievement</h3>
+              </div>
+              <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+            </>
+          )}
+          {toggleState === 3 && (
+            <>
+              <div>
+                <h3>Dealer Wise Monthly Plan / Achievement</h3>
+              </div>
+              {selectedTerritory ? (
+                <DealerMonthSale selectedTerritory={selectedTerritory} />
+              ) : (
+                //
+                <div>Please select a territory</div>
+              )}
+            </>
+          )}
+          {toggleState === 4 && (
+            <>
+              <div style={{ fontFamily: "Nunito sans" }}>
+                <h3>Lock Summary</h3>
+              </div>
+              <LogSummary actionType="HOD" selectedId={0} />
+            </>
+          )}
         </div>
       </div>
-
-      <div className="w3-clear w3-padding-16"></div>
     </div>
   );
 };

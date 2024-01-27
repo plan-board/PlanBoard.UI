@@ -1,69 +1,180 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axiosInstance from "../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
 import { useDispatch } from "react-redux";
 import CustomPopup from "../CustomPopup";
+import ExportExcel from "../ExportExcel";
+import { GetPercent, formatDateTimes } from "../../utils/utils";
+import Loader from "../../common/Loader";
+import { Row, Col } from "reactstrap";
+import {
+  GridComponent,
+  Inject,
+  ColumnDirective,
+  ColumnsDirective,
+  Edit,
+  CommandColumn,
+  Freeze,
+  Page,
+  Filter,
+  Toolbar,
+  ExcelExport,
+  AggregateColumnDirective,
+  Sort,
+  ForeignKey,
+} from "@syncfusion/ej2-react-grids";
+import {
+  AggregateColumnsDirective,
+  AggregateDirective,
+  AggregatesDirective,
+} from "@syncfusion/ej2-react-grids";
+import { Aggregate } from "@syncfusion/ej2-react-grids";
+import { getValue } from "@syncfusion/ej2-base";
+import ResponsePopup from "../../common/ResponsePopup";
+import ConfirmResponsePopup from "../../common/ResponsePopup/ConfirmResponse";
+import Popup from "../../common/DialogPopup/DialogPopup";
+import { formatDate } from "../../common/dateFormat";
+// import CustomPopup1 from "../../common/DialogPopup/DialogPopup";
+const monthArr = [
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+];
+const date = new Date();
+const cMName = date.toLocaleString("default", { month: "short" });
+const mStartName = cMName.substring(0, 3);
 
-const Wgt_Delear_Ui = ({ data }) => {
+const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const dispatch = useDispatch();
+  let Wgt_DelearUiGridInstance = useRef();
+  let dealerPopupInstance = useRef();
+  let Wgt_DelearUiGridInstancePopup = useRef();
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
-  const currentDate = new Date("2023-08-30");
-
+  const [gridMonth, setGridMonth] = useState([]);
   const currentMonthCount =
-    currentDate.getMonth() < 3
-      ? currentDate.getMonth() + 13
-      : currentDate.getMonth() + 1;
+    date.getMonth() < 3 ? date.getMonth() + 13 : date.getMonth() + 1;
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
   const [visibility, setVisibility] = useState(false);
+  const [submitForm, setSubmitForm] = useState(false);
+  // const [marketSectorSelected,setMarketSectorChanged]=useState()
 
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState([]);
+  const [popupVisitValue, setPopupVisitValue] = useState(0);
   const [modalData, setModalData] = useState(null);
+  const [monthName, setMonthName] = useState("");
 
-  function getInput() {
-    console.log("🚀 ~ file: Wgt_Delear_Ui.jsx:20 ~ getinputs:", getinputs);
-  }
+  const [isLocked, setIsLocked] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [filterText, setFilterText] = useState("");
+  const [multiConSwitch, setmultiConSwitch] = useState(false); // To store the current sorting field (empty for no sorting)
+  const [openDealerPopup, setopenDealerPopup] = useState(false); // To store the current sorting direction ('asc' or 'desc')
 
-  function onchangeInputs(e, id) {
-    setGetinputs({
-      ...getinputs,
-      [id]: { ...getinputs[id], [e.target.name]: e.target.value },
-    });
-  }
+  const [currentPage, setCurrentPage] = useState(0);
+  const [monthKey, setMonthKey] = useState(cMName + "_Month_Value_v1");
+  const [responseDetails, setResponseDetails] = useState({
+    type: "",
+    show: false,
+    message: "",
+  });
+  const [minDate, setMinDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
+  const [formDetails, setFormDetails] = useState({
+    Sno: 0,
+    dealer_name: "",
+    city: "",
+    potential: 0,
+    SalesValPlan: 0,
+    EstOnBoardDate: "",
+    visit: 0,
+  });
+  const [errors, setErrorDetails] = useState({
+    dealer_name: "",
+    city: "",
+    SalesValPlan: "",
+    EstOnBoardDate: "",
+    potential: "",
+    visit: "",
+  });
 
-  const getMonthTarget = (item) => {
-    console.log("--open item", item);
-    setVisibility(true);
-    setModalData(item);
-    fetchMonthDataById(item);
-  }
+  const [confirmResponseDetails, setConfirmResponseDetails] = useState({
+    type: "error",
+    show: false,
+    message: "Do you want to Lock",
+  });
+  const [dealerPopupGridData, setDealerPoupGridData] = useState([]);
 
-  const fetchMonthDataById = async (dataObj) => {
+  useEffect(() => {
+    fetchDealerMaster();
+    sortMonth();
+    getNewDealerData();
+  }, [data]);
+
+  const getNewDealerData = async () => {
+    setDealerPoupGridData([]);
     const cMonth = new Date().getMonth() + 1;
     const payload = {
       Token: localStorage.getItem("access_token"),
-      FPDealerWiseParam: [
-        {
-          FYId: 0,//dataObj.FYId,
-          Month: 0//cMonth,
-        }
-      ]
+      TerritoryId: data,
+      Month: cMonth,
     };
+
     try {
-      const response = await axiosInstance.post("GetFocusProductDealerWise", payload);
+      const response = await axiosInstance.post("GetNewDealerPlan", payload);
 
       if (response?.status === 200) {
-        const filterByDealer = response?.data?.Data.filter((item) => item.DealerId == dataObj.dealerid)
-        setSelectedRow(filterByDealer);
-        console.log("=====GetFocusProductDealerWise==== 65", filterByDealer);
+        const result = response?.data?.Data;
+        let changeFormat = [];
+        if (result.length > 0) {
+          result.map((val, index) => {
+            changeFormat.push({
+              Sno: val.tableid,
+              dealer_name: val.dealer_name,
+              city: val.city,
+              potential: parseInt(val.potential),
+              SalesValPlan: parseInt(val.salesvalueplan),
+              EstOnBoardDate: val.salesvalueplan,
+              visit: val.visit,
+            });
+          });
+          setDealerPoupGridData(changeFormat);
+          // dealerPopupInstance.current.refresh();
+        }
       }
+
+      setLoading(false);
     } catch (error) {
-      // Handle errors
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
 
+  const sortMonth = () => {
+    const headers = [];
+
+    for (let i = 0; i < monthArr.length; i++) {
+      const monName = monthArr[i];
+      if (monName === mStartName) {
+        break;
+      } else {
+        headers.push(monName);
+      }
+    }
+    setGridMonth([...headers]);
+  };
+
   const fetchDealerMaster = async () => {
+    setLoading(true);
     const payload = {
       Token: localStorage.getItem("access_token"),
       TerritoryId: data,
@@ -73,8 +184,322 @@ const Wgt_Delear_Ui = ({ data }) => {
       const response = await axiosInstance.post("CustomerMonthPlan", payload);
 
       if (response?.status === 200) {
-        setDealerlist(response?.data?.Data);
-        console.log("=====api/Master/ZoneData==== 65", response);
+        if (response.data.Data.length > 0) {
+          let res = response.data.Data;
+          res.map((val) => {
+            let lydata =
+              val.potential != 0 ? (val.LY_Value * 100) / val.potential : 0;
+            val.lYActualShare = lydata.toFixed(2);
+
+            let YTDData =
+              val.potential != 0
+                ? ((val.YTD_Value + val[`${mStartName}_Month_Value_v1`]) *
+                    100) /
+                  val.potential
+                : 0;
+            val.YTDActualPlanShare = YTDData.toFixed(2);
+            val.tDue = val.creepage_value + val.OD;
+            let collectSum =
+              val.creepage_value + val.OD + val[`${mStartName}_Month_Value_v1`];
+            val.collectionVal = collectSum.toFixed(2);
+          });
+          setDealerlist(res);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+
+  const percentageFormatter = (field, data, column) => {
+    return getValue("lYActualShare", data) + " %";
+  };
+  const percentageFormatterYTD = (field, data, column) => {
+    return getValue("YTDActualPlanShare", data) + " %";
+  };
+  const templateCyTd = (args) => {
+    return (
+      <>
+        {args.CY_ValuePlanV1} <hr className="hr0" /> {args.YTD_Value}
+        {GetPercent(args.CY_ValuePlanV1, args.YTD_Value)}
+      </>
+    );
+  };
+
+  const nonCurMonTemp = (args, val) => {
+    return (
+      <>
+        {args[`${val}_Month_Value_v1`]}
+        <hr className="hr0" />
+        {args[`${val}_Month_Sale_act`]}
+        {GetPercent(
+          args[`${val}_Month_Sale_act`],
+          args[`${val}_Month_Value_v1`]
+        )}
+      </>
+    );
+  };
+
+  const salesTemplate = (args) => {
+    return (
+      <>
+        {args[`${mStartName}_Month_Value_v0`]}
+        <hr className="hr0" />
+        {args[`${mStartName}_Month_Value_v1`]}
+      </>
+    );
+  };
+
+  const ActsalesTemplate = (args) => {
+    return (
+      <>
+        {args[`${mStartName}_Month_Value_v1`]}
+        <hr className="hr0" />
+        {args[`${mStartName}_Month_Sale_act`]}{" "}
+        {GetPercent(
+          args[`${mStartName}_Month_Sale_act`],
+          args[`${mStartName}_Month_Value_v1`]
+        )}
+      </>
+    );
+  };
+
+  const lastTdTemplate = (args) => {
+    let YTDPlusV1 = args?.YTD_Value + args[`${mStartName}_Month_Value_v1`];
+
+    let llyYTTD =
+      YTDPlusV1 != 0
+        ? ((YTDPlusV1 - args?.LYYTDvsCYYTD) * 100) / args?.LYYTDvsCYYTD
+        : 0;
+    return (
+      <>
+        {args?.LYYTDvsCYYTD}/{YTDPlusV1.toFixed(2)} ({llyYTTD.toFixed(2)}){" "}
+      </>
+    );
+  };
+
+  const commmandTemplate = [
+    {
+      type: "Edit",
+      buttonOption: { cssClass: "e-flat", iconCss: "e-edit e-icons" },
+    },
+  ];
+  const getMonthTarget = (item) => {
+    let rowData = item.rowData;
+    setLoading(true);
+    setVisibility(true);
+    // setSumValue(0);
+    setModalData(rowData);
+    fetchMonthDataById(rowData);
+    setPopupVisitValue(rowData.VisitPlan_V1);
+  };
+  const fetchMonthDataById = async (dataObj) => {
+    const cMonth = new Date().getMonth() + 1;
+    const date = new Date();
+    let monthName1 = date.toLocaleString("default", { month: "long" });
+    setMonthName(monthName1);
+
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      FPDealerWiseParam: [
+        {
+          // FYId: dataObj.FYId,
+          Month: cMonth,
+          DealerId: dataObj?.dealerid,
+        },
+      ],
+    };
+    try {
+      const response = await axiosInstance.post(
+        "GetFocusProductDealerWise",
+        payload
+      );
+
+      if (response?.status === 200) {
+        if (response?.data?.Data) {
+          const result = response?.data?.Data;
+          if (result.length > 0) {
+            result.map((val, index) => {
+              val.serialNo = index + 1;
+            });
+          }
+          setSelectedRow(result?.length ? result : []);
+        }
+      }
+
+      setLoading(false);
+    } catch (error) {
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+  const popupCloseHandler = (e) => {
+    Wgt_DelearUiGridInstance.current.refresh();
+    setmultiConSwitch(false);
+    setVisibility(false);
+    setSelectedRow([]);
+    setModalData(null);
+    setPopupVisitValue(0);
+  };
+
+  const handleCellSaved = (args) => {
+    console.log(args);
+    let change_records = [...selectedRow];
+    if (args.columnName == "Volume") {
+      change_records.map((val) => {
+        if (args.rowData.tableid == val.tableid) {
+          val.Volume = args.value;
+        }
+      });
+    }
+    if (args.columnName == "Value") {
+      change_records.map((val) => {
+        if (args.rowData.tableid == val.tableid) {
+          val.Value = args.value;
+        }
+      });
+    }
+
+    setSelectedRow([...change_records]);
+  };
+
+  const validateFormMarketSector = (event) => {
+    event.preventDefault();
+    let changedRecords =
+      Wgt_DelearUiGridInstancePopup.current.getBatchChanges().changedRecords;
+    // if (changedRecords.length == 0) {
+    //   setResponseDetails({
+    //     type: "error",
+    //     show: true,
+    //     message: "No Changes Found to Proceed",
+    //   });
+    // } else if (changedRecords.length == 1) {
+    //   setmultiConSwitch(true);
+    //   setConfirmResponseDetails({
+    //     type: "error",
+    //     show: true,
+    //     message: "Are you sure you want to submit",
+    //   });
+    // } else {
+    handleSubmit();
+    // }
+  };
+
+  const handleSubmit = async (event) => {
+    handleCloseResponse();
+    setLoading(true);
+    setSubmitForm(true);
+
+    try {
+      const payArr = selectedRow.map((item) => ({
+        FYId: parseInt(item.FYId),
+        Month: parseInt(item.Month),
+        MarketSectorId: item.MarketSectorId,
+        DealerId: modalData.dealerid,
+        Value: item.Value,
+        Volume: item.Volume,
+      }));
+
+      const payload = {
+        Token: localStorage.getItem("access_token"),
+        FocusedProductDealerWiseParam: payArr,
+        visit: parseInt(popupVisitValue),
+      };
+
+      const response = await axiosInstance.post(
+        "SetFocusedProductDealerWise",
+        payload
+      );
+
+      if (response?.status === 200) {
+        if (response?.data?.Status == true) {
+          setResponseDetails({
+            type: "success",
+            show: true,
+            message: response?.data?.Data[0].MESSAGE,
+          });
+          setDealerlist([]); //clear data
+          fetchDealerMaster();
+          popupCloseHandler(false);
+          setPopupVisitValue(0);
+        } else {
+          setResponseDetails({
+            type: "error",
+            show: true,
+            message: response?.data?.Data[0].MESSAGE,
+          });
+        }
+      }
+      setSubmitForm(false);
+      setLoading(false);
+    } catch (error) {
+      setSubmitForm(false);
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+  const handleCloseResponse = () => {
+    setmultiConSwitch(false);
+    setConfirmResponseDetails({ show: false });
+    setResponseDetails({ show: false, message: "", type: "" });
+  };
+
+  const DataBoundFocused = (args) => {
+    if (args.row) {
+      if (getValue("IsFocused", args.data) === 1) {
+        args.row.classList.add("IsFocused");
+      }
+    }
+  };
+  const lockData = async () => {
+    setLoading(true);
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      islock_id: 0,
+      FYId: 5,
+      month: date.getMonth() + 1,
+      territory_id: data,
+      islock: true,
+    };
+    try {
+      const response = await axiosInstance.post(
+        "api/Master/SetIsLockData",
+        payload
+      );
+
+      if (response?.status === 200) {
+        setIsLocked(true);
+        handleCloseResponse();
+      }
+      setLoading(false);
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
+
+  // Lock / Unlock
+  const getLockData = async () => {
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      islock_id: 0,
+      FYId: 5,
+      month: date.getMonth() + 1,
+      territory_id: data,
+    };
+    try {
+      const response = await axiosInstance.post(
+        "api/Master/GetIsLockData",
+        payload
+      );
+
+      if (response?.status === 200) {
+        if (response?.data?.Data.length) {
+          setIsLocked(true);
+        } else {
+          setIsLocked(false);
+        }
       }
     } catch (error) {
       // Handle errors
@@ -83,880 +508,969 @@ const Wgt_Delear_Ui = ({ data }) => {
   };
 
   useEffect(() => {
-    fetchDealerMaster();
+    getLockData();
   }, [data]);
 
-  const popupCloseHandler = (e) => {
-    setVisibility(e);
-    // Close the modal by resetting the selected row and modal data
-    setSelectedRow(null);
-    setModalData(null);
+  const toolbar = ["ExcelExport", "Search"];
+  const toolbarClick = (args) => {
+    if (
+      Wgt_DelearUiGridInstance.current &&
+      args.item.id === "Wgt_DelearUiGrid_id_excelexport"
+    ) {
+      const arrObj = dealerlist.map((element, index) => ({
+        "S.No": index + 1,
+        "Dealer Name": element.dealer_name,
+        "Dealer Code": element.dealer_code,
+        "Creation Date": formatDateTimes(element.customer_creationdate),
+        Category: element.dealer_category,
+        Potential: element.potential,
+        "LY Actual Share (%)": element.lYActualShare,
+        "Ytd Actual + Plan Share(%)": element.YTDActualPlanShare,
+        LY: element.LY_Value,
+        "CY Plan": element.CY_ValuePlanV1,
+        YTD: element.YTD_Value,
+        "6 month": element.LastSixMonth_Avg_Sales,
+        OS: element.OS,
+        OD: element.OD,
+        "LYYTD vs CYYTD": element.LYYTDvsCYYTD,
+        Apr: element.Apr_Month_Value_v1,
+        "Apr Sale": element.Apr_Month_Sale_act,
+        May: element.May_Month_Value_v1,
+        "May Sale": element.May_Month_Sale_act,
+        Jun: element.Jun_Month_Value_v1,
+        "Jun Sale": element.Jun_Month_Sale_act,
+        Jul: element.Jul_Month_Value_v1,
+        "Jul Sale": element.Jul_Month_Sale_act,
+        Aug: element.Aug_Month_Value_v1,
+        "Aug Sale": element.Aug_Month_Sale_act,
+        Sep: element.Sep_Month_Value_v1,
+        "Sep Sale": element.Sep_Month_Sale_act,
+        Oct: element.Oct_Month_Value_v1,
+        "Oct Sale": element.Oct_Month_Sale_act,
+        Nov: element.Nov_Month_Value_v1,
+        "Nov Sale": element.Nov_Month_Sale_act,
+        Dec: element.Dec_Month_Value_v1,
+        "Dec Sale": element.Dec_Month_Sale_act,
+        Jan: element.Jan_Month_Value_v1,
+        "Jan Sale": element.Jan_Month_Sale_act,
+        Feb: element.Feb_Month_Value_v1,
+        "Feb Sale": element.Feb_Month_Sale_act,
+        Mar: element.Mar_Month_Value_v1,
+        "Mar Sale": element.Mar_Month_Sale_act,
+        visit: element.VisitPlan_V1,
+      }));
+      ExportExcel("Dealer-Wise-Monthly-Plan-Achievement", arrObj);
+    }
+  };
+  const tDueTemplate = () => {
+    return (
+      <span>
+        <th
+          style={{ textWrap: "nowrap", paddingLeft: "0px" }}
+          title="Creepage + OD"
+        >{`Total Due`}</th>
+      </span>
+    );
+  };
+  const salesHeadTemplate = () => {
+    return (
+      <>
+        <th
+          title="V0 vs V1"
+          style={{ paddingLeft: "0px" }}
+        >{`System/Actual Plan`}</th>
+      </>
+    );
+  };
+  const ActSalesHeadTemplate = () => {
+    return (
+      // <>
+      <th
+        title="V0 vs V1"
+        style={{ paddingLeft: "0px" }}
+      >{`Plan/Actual Sale`}</th>
+      // </>
+    );
   };
 
+  const Rows = useMemo(() => {
+    const rows = [
+      {
+        field: "dealer_name",
+        headerText: "Dealer Name",
+        width: "170",
+        visible: true,
+        freeze: "Left",
+      },
+      {
+        field: "dealer_code",
+        headerText: "Dealer Code",
+        width: "130",
+        visible: true,
+        freeze: "Left",
+      },
+      {
+        field: "customer_creationdate",
+        headerText: "Creation Date",
+        width: "130",
+        visible: true,
+        textAlign: "center",
+        allowEditing: false,
+        type: "date",
+        format: "dd-MMM-yyyy",
+        allowFiltering: false,
+      },
+      {
+        field: "dealer_category",
+        headerText: "Category",
+        width: "130",
+        visible: true,
+        allowFiltering: true,
+      },
+      {
+        field: "potential",
+        headerText: "Potentials",
+        width: "115",
+        visible: true,
+        allowFiltering: false,
+      },
+      {
+        field: "lYActualShare",
+        headerText: "LY Actual Share",
+        width: "130",
+        visible: true,
+        allowFiltering: false,
+        valueAccessor: percentageFormatter,
+      },
+      {
+        field: "YTDActualPlanShare",
+        headerText: "Ytd Actual + Plan Share",
+        width: "130",
+        visible: true,
+        allowFiltering: false,
+        valueAccessor: percentageFormatterYTD,
+      },
+      {
+        field: "LY_Value",
+        headerText: "LY",
+        width: "100",
+        visible: true,
+        allowFiltering: false,
+      },
+      {
+        // field: "LY_Value",
+        headerText: "CY / YTD",
+        width: "130",
+        visible: true,
+        allowFiltering: false,
+        textAlign: "center",
+        template: templateCyTd,
+      },
+      {
+        field: "LastSixMonth_Avg_Sales",
+        headerText: "6 month Avg. sale",
+        width: "115",
+        visible: true,
+        allowFiltering: false,
+      },
+      {
+        field: `${mStartName}_Month_ly_Value`,
+        headerText: "LY Same Month",
+        width: "130",
+        visible: true,
+        allowFiltering: false,
+      },
+    ];
+    gridMonth.map((val) => {
+      rows.push({
+        headerText: val,
+        width: "130",
+        allowFiltering: false,
+        textAlign: "center",
+        template: (args) => nonCurMonTemp(args, val),
+      });
+    });
+    rows.push({
+      columns: [
+        {
+          // format: "C2",
+          field: "OS",
+          headerText: "OS",
+          width: 90,
+          allowEditing: false,
+          allowFiltering: false,
+        },
+        {
+          // format: "C2",
+          field: "OD",
+          headerText: "OD",
+          width: 90,
+          allowEditing: false,
+          allowFiltering: false,
+        },
+        {
+          // format: "C2",
+          field: "tDue",
+          headerText: "Total Due",
+          width: 100,
+          headerTemplate: tDueTemplate,
+          allowEditing: false,
+          allowFiltering: false,
+        },
+        {
+          // format: "C2",
+          field: "LY_Value",
+          headerTemplate: salesHeadTemplate,
+          width: 130,
+          textAlign: "center",
+          allowEditing: false,
+          allowFiltering: false,
+          template: salesTemplate,
+        },
+        {
+          // format: "C2",
+          field: "LY_Value",
+          headerTemplate: ActSalesHeadTemplate,
+          width: 130,
+          textAlign: "center",
+          allowEditing: false,
+          allowFiltering: false,
+          template: ActsalesTemplate,
+        },
+        {
+          // format: "C2",
+          field: "tDue",
+          headerText: "Collection",
+          width: 120,
+          allowEditing: false,
+          allowFiltering: false,
+        },
+        {
+          // format: "C2",
+          field: "VisitPlan_V1",
+          headerText: "Visit",
+          width: 100,
+          allowEditing: false,
+          allowFiltering: false,
+        },
+        {
+          headerText: "LYYTD vs CYYTD",
+          width: 180,
+          textAlign: "center",
+          allowEditing: false,
+          allowFiltering: false,
+          template: lastTdTemplate,
+        },
+        {
+          headerTemplate: "Action",
+          textAlign: "center",
+          width: "100",
+          commands: commmandTemplate,
+          // freeze: "Right",
+        },
+      ],
+      headerText: mStartName,
+      textAlign: "center",
+    });
+
+    return rows;
+  }, [dealerlist]);
+
+  const handleRowDataBound = (args) => {
+    if (args.row) {
+      let limitPercentage = (20 / 100) * getValue("OS", args.data);
+      if (getValue("OD", args.data) > limitPercentage) {
+        args.row.classList.add("below-20");
+      }
+    }
+  };
+  const handleDealerPopupOpen = () => {
+    setopenDealerPopup(true);
+  };
+  const handleDealerPopupClose = () => {
+    setopenDealerPopup(false);
+  };
+  const commmandTemplateDel = [
+    {
+      type: "Delete",
+      buttonOption: {
+        cssClass: "e-flat ",
+        iconCss: "e-delete e-icons e-redicon",
+      },
+    },
+  ];
+
+  const handleChange = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    const ErrorMsg = "This Field Can't be Blank";
+    if (e.target) {
+      if (name === "potential" || name === "SalesValPlan") {
+        setFormDetails({ ...formDetails, [name]: parseInt(value) });
+        setErrorDetails({
+          ...errors,
+          [name]: value ? "" : ErrorMsg,
+        });
+      } else {
+        setFormDetails({ ...formDetails, [name]: value });
+        setErrorDetails({
+          ...errors,
+          [name]: value ? "" : ErrorMsg,
+        });
+      }
+    }
+  };
+  const validateForm = () => {
+    let formIsValid = true;
+    let error = errors;
+    const ErrorMsg = "This Field Can't be Blank";
+    if (formDetails["dealer_name"] == "") {
+      formIsValid = false;
+      error["dealer_name"] = ErrorMsg;
+    }
+    if (formDetails["city"] == "") {
+      formIsValid = false;
+      error["city"] = ErrorMsg;
+    }
+    if (formDetails["SalesValPlan"] == "" || formDetails["SalesValPlan"] == 0) {
+      formIsValid = false;
+      error["SalesValPlan"] = ErrorMsg;
+    }
+    if (formDetails["potential"] == "" || formDetails["potential"] == 0) {
+      formIsValid = false;
+      error["potential"] = ErrorMsg;
+    }
+    if (formDetails["EstOnBoardDate"] == "") {
+      formIsValid = false;
+      error["EstOnBoardDate"] = ErrorMsg;
+    }
+
+    setErrorDetails({ ...error });
+    return formIsValid;
+  };
+
+  const handleAdd = () => {
+    if (validateForm()) {
+      let newDetails = { ...formDetails };
+      if (dealerPopupGridData.length !== 0) {
+        newDetails.Sno = dealerPopupGridData.length + 1;
+      }
+      setDealerPoupGridData([...dealerPopupGridData, newDetails]);
+    }
+  };
+
+  const handlePopupDataSubmit = async () => {
+    let apidata = [...dealerPopupGridData];
+    let change_records =
+      dealerPopupInstance.current.getBatchChanges().changedRecords;
+    let deleted_records =
+      dealerPopupInstance.current.getBatchChanges().deletedRecords;
+    if (change_records.length > 0) {
+      change_records.map((val) => {
+        let matchIndex = apidata.findIndex((itm) => itm.Sno === val.Sno);
+        if (matchIndex > -1) {
+          apidata[matchIndex] = val;
+        }
+      });
+    }
+    if (deleted_records.length > 0) {
+      deleted_records.map((val) => {
+        let matchIndex = apidata.findIndex((itm) => itm.Sno === val.Sno);
+        if (matchIndex > -1) {
+          apidata.splice(matchIndex, 1);
+        }
+      });
+    }
+    //  const
+    const cMonth = new Date().getMonth() + 1;
+
+    let newDealerPayload = [];
+    apidata.map((val) => {
+      newDealerPayload.push({
+        TerritoryId: data,
+        Month: cMonth,
+        DealerName: val.dealer_name,
+        City: val.city,
+        Potential: parseInt(val.potential),
+        SalesValuePlan: parseInt(val.SalesValPlan),
+        OnBoaringDate: formatDate(val.EstOnBoardDate),
+        Visit: val.visit ? parseInt(val.visit) : 0,
+      });
+    });
+    const payload = {
+      Token: localStorage.getItem("access_token"),
+      PlanNewDealerParam: newDealerPayload,
+    };
+
+    try {
+      const response = await axiosInstance.post("SetNewDealerPlan", payload);
+      if (response?.status === 200) {
+        if (response?.data?.Status == true) {
+          setopenDealerPopup(false);
+
+          setTimeout(() => {
+            setResponseDetails({
+              type: "success",
+              show: true,
+              message: response.data.Message,
+            });
+          }, 2000);
+          setFormDetails({
+            Sno: 0,
+            dealer_name: "",
+            city: "",
+            potential: 0,
+            SalesValPlan: 0,
+            EstOnBoardDate: "",
+          });
+          setDealerPoupGridData([]);
+        } else {
+          setResponseDetails({
+            type: "error",
+            show: true,
+            message: response.data.Message,
+          });
+        }
+      }
+
+      setLoading(false);
+    } catch (error) {
+      // Handle errors
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
+  };
 
   return (
     <>
-      <table className="tbl_grid w3-table table-bordered  h6 w3-small">
-        {/* <tr className="w3-blue  h6 ">
-          <td colSpan="30" className=" text-left ">
-            Month wise Sales Target
-            <span className="">Dealer(s) {dealerlist.length}</span>
-            <span
-              className="w3-button w3-right w3-blue "
-              onClick={getInput}
-              style={{ cursor: "pointer" }}
+      <section>
+        {isLoading && <Loader />}
+        <Row>
+          <Col xl={1} lg={1} md={2} sm={2} className="pr-0">
+            {isLocked ? (
+              <button className=" icon-button">
+                <i className="fa fa-lock  w3-text-red"></i>
+              </button>
+            ) : (
+              <button
+                className=" icon-button"
+                onClick={() =>
+                  setConfirmResponseDetails({
+                    message: "Do you want to Lock",
+                    type: "error",
+                    show: true,
+                  })
+                }
+              >
+                <i className="fa fa-unlock  w3-text-yellow"></i>
+              </button>
+            )}
+          </Col>
+          <Col xl={3} lg={3} md={3} sm={4} className="pl-0">
+            {" "}
+            <button className="buttonForMainUi" onClick={handleDealerPopupOpen}>
+              <span style={{ fontFamily: "Nunito sans" }}>
+                New Dealer Planning
+              </span>
+            </button>{" "}
+          </Col>
+        </Row>
+        <Row>
+          <Col
+            xl={12}
+            lg={12}
+            md={12}
+            sm={12}
+            xs={12}
+            style={{ marginTop: "15px" }}
+          >
+            <GridComponent
+              locale="en-Us"
+              id="Wgt_DelearUiGrid_id"
+              key="Wgt_DelearUiGrid_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={dealerlist}
+              toolbar={toolbar}
+              toolbarClick={toolbarClick}
+              height={"500px"}
+              ref={Wgt_DelearUiGridInstance}
+              allowPaging={true}
+              allowSelection={true}
+              gridLines="Both"
+              rowHeight={25}
+              pageSettings={{ pageSize: 15, pageCount: 10 }}
+              allowFiltering={true}
+              filterSettings={{ type: "Excel" }}
+              frozenColumns={2}
+              allowExcelExport={true}
+              allowSorting={true}
+              commandClick={getMonthTarget}
+              rowDataBound={handleRowDataBound}
+              columns={Rows}
             >
-              <i className=" fa fa-save"> </i> Save
-            </span>
-          </td>
-        </tr> */}
+              <Inject
+                services={[
+                  CommandColumn,
+                  Freeze,
+                  Page,
+                  Filter,
+                  Toolbar,
+                  ExcelExport,
+                  Sort,
+                  ForeignKey,
+                ]}
+              />
+            </GridComponent>
+          </Col>
+        </Row>
+        <CustomPopup
+          onClose={() => popupCloseHandler()}
+          show={visibility}
+          title={
+            modalData?.dealer_name +
+            "(" +
+            modalData?.dealer_code +
+            ") - Month : " +
+            monthName
+          }
+        >
+          <span className="h6 w3-small">
+            (Dealer Month Sales Plan + Focus Sector Breakup )
+          </span>
+          <span className="h6 w3-small" style={{ color: "red" }}>
+            (Double click on Cell to edit* )
+          </span>
+          <hr />
 
-        <tr className=" w3-yellow h6 w3-small">
-          <td className="" rowSpan={2}>
-            S.No
-          </td>
-          <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
-            Delear{" "}
-          </td>
-          <td className="" colSpan={1} rowSpan={2} style={{ width: "15%" }}>
-            Delear Code
-          </td>{" "}
+          <form className="w3-container" onSubmit={validateFormMarketSector}>
+            <table className="w3-table table-bordered w3-small ">
+              <tr className="w3-gray">
+                <td colspan="30">
+                  A : Sales Plan Produced by Dealer Level Rules
+                </td>
+              </tr>
+              <tr className="">
+                <td style={{ width: "60%" }}>
+                  Rule 1 : Active Dealer <br />
+                  Rule 2 : Category based % impact <br />
+                </td>
+                <td>
+                  <label className="formlabel" style={{ paddingTop: "5px" }}>
+                    Sale Plan
+                  </label>
+                </td>
+                <td style={{ width: "10%" }}>
+                  <input
+                    type="text"
+                    value={modalData ? modalData[monthKey] : ""}
+                    className="inp40 text-center"
+                    readOnly={true}
+                  />
+                </td>
+                <td>
+                  <label className="formlabel" style={{ paddingTop: "5px" }}>
+                    Visit
+                  </label>
+                </td>
+                <td style={{ width: "10%" }}>
+                  <input
+                    type="number"
+                    value={popupVisitValue}
+                    className="inp40 text-center"
+                    onChange={(e) => setPopupVisitValue(e.target.value)}
+                  />
+                </td>
+              </tr>
+            </table>
+            <table className="w3-table table-bordered w3-small ">
+              <tr className="w3-gray">
+                <td colspan="29">
+                  B ( Focus Sector List for Month of {monthName} ) * Add values
+                  / volume
+                  <span style={{ float: "right" }}>
+                    Hight lighted rows are focus product for current month
+                  </span>
+                </td>
+              </tr>
+            </table>
+            <GridComponent
+              locale="en-Us"
+              id="Wgt_DelearUiGridPopup_id"
+              key="Wgt_DelearUiGridPopup_id"
+              allowTextWrap={true}
+              allowResizing={false}
+              dataSource={selectedRow}
+              height={"400px"}
+              ref={Wgt_DelearUiGridInstancePopup}
+              allowPaging={false}
+              gridLines="Both"
+              editSettings={{
+                allowEditing: true,
+                mode: "Batch",
+                persistSelection: true,
+                // showConfirmDialog: false,
+              }}
+              rowHeight={25}
+              rowDataBound={DataBoundFocused}
+              cellSaved={handleCellSaved}
+              frozenColumns={1}
+            >
+              <ColumnsDirective>
+                <ColumnDirective
+                  field="tableid"
+                  haederText="table Id"
+                  visible={false}
+                  isPrimaryKey={true}
+                />
+                <ColumnDirective
+                  field="MarketSectorName"
+                  headerText="Focus Product Sector"
+                  width="150"
+                  textAlign="left"
+                  allowEditing={false}
+                  freeze="Left"
+                />
+                <ColumnDirective
+                  field="LLY"
+                  headerText="LLY"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="LY"
+                  headerText="LY"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="YTD"
+                  headerText="YTD"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="Last6MonthAvgSales"
+                  headerText="6 Mo. Avg"
+                  width="100"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="SameMonthLY"
+                  headerText={`LY (${mStartName})`}
+                  width="80"
+                  textAlign="center"
+                  allowEditing={false}
+                />
+                <ColumnDirective
+                  field="Value"
+                  headerText="Value (Rs.)"
+                  width="150"
+                  editType="numericedit"
+                  textAlign="center"
+                  allowEditing={true}
+                />
+                <ColumnDirective
+                  field="Volume"
+                  headerText="Volume (Ltrs.)"
+                  width="150"
+                  textAlign="center"
+                  editType="numericedit"
+                  allowEditing={true}
+                />
+              </ColumnsDirective>
+              <AggregatesDirective>
+                <AggregateDirective>
+                  <AggregateColumnsDirective>
+                    <AggregateColumnDirective
+                      field="Value"
+                      type="Sum"
+                      format="N2"
+                    />
+                  </AggregateColumnsDirective>
+                </AggregateDirective>
+              </AggregatesDirective>
 
-          <td className="" rowSpan={2}>
-            Category{" "}
-          </td>{" "}
-          <td className="" rowSpan={2}>
-            LY <br /> 22-23{" "}
-          </td>
-          <td className="" rowSpan={2}>
-            Plan CY <br /> 23-24{" "}
-          </td>
-          <td className="" rowSpan={2}>
-            6 month
-          </td>
-          {currentMonth <= 4 ? (
-            currentMonth == 4 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Apr{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Apr{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Apr{" "}
-            </td>
-          )}
-          {currentMonth <= 5 ? (
-            currentMonth == 5 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                May{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                May{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              May{" "}
-            </td>
-          )}
-          {currentMonth <= 6 ? (
-            currentMonth == 6 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Jun{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Jun{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Jun{" "}
-            </td>
-          )}
-          {currentMonth <= 7 ? (
-            currentMonth == 7 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Jul{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Jul{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Jul{" "}
-            </td>
-          )}
-          {currentMonth <= 8 ? (
-            currentMonth == 8 ? (
-              <td className="  w3-blue " colSpan={4}>
-                {" "}
-                Aug <i className=" fa fa-unlock"> </i>{" "}
-              </td>
-            ) : (
-              <td className=" w3-blue " rowSpan={2}>
-                {" "}
-                Aug{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Aug{" "}
-            </td>
-          )}
-          {currentMonth <= 9 ? (
-            currentMonth == 9 ? (
-              <td className="  w3-blue  " colSpan={4}>
-                {" "}
-                Sep{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Sep{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Sep{" "}
-            </td>
-          )}
-          {currentMonth <= 10 ? (
-            currentMonth == 10 ? (
-              <td className="  w3-blue  " colSpan={4}>
-                {" "}
-                Oct{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Oct{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Oct{" "}
-            </td>
-          )}
-          {currentMonth <= 11 ? (
-            currentMonth == 11 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Nov{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Nov{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Nov{" "}
-            </td>
-          )}
-          {currentMonth <= 12 ? (
-            currentMonth == 12 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Dec{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Dec{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Dec{" "}
-            </td>
-          )}
-          {currentMonth <= 13 ? (
-            currentMonth == 13 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Jan{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Jan{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Jan{" "}
-            </td>
-          )}
-          {currentMonth <= 14 ? (
-            currentMonth == 14 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                Feb{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                Feb{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              Feb{" "}
-            </td>
-          )}
-          {currentMonth <= 15 ? (
-            currentMonth == 15 ? (
-              <td className=" " colSpan={4}>
-                {" "}
-                March{" "}
-              </td>
-            ) : (
-              <td className=" " rowSpan={2}>
-                {" "}
-                March{" "}
-              </td>
-            )
-          ) : (
-            <td className=" " rowSpan={2}>
-              {" "}
-              March{" "}
-            </td>
-          )}
-        </tr>
-
-        <tr className="  w3-blue h6 w3-small">
-          <td className=" "> OS </td>
-          <td className=" "> OD </td>
-          <td className="" style={{ width: "100px" }}>
-            {" "}
-            Sales{" "}
-          </td>
-          <td className=" " style={{ width: "100px" }}>
-            {" "}
-            Collection{" "}
-          </td>
-        </tr>
-
-        {dealerlist?.sort((a, b) => a.Aug_Month_Value_v1.toString()?.localeCompare(b.Aug_Month_Value_v1.toString())).map((item, index) => {
-
-          return (
-            <tr key={index}>
-              <td>{++index}</td>
-              <td className="" colSpan={1}>
-                {" "}
-                {item?.dealer_name}{" "}
-              </td>
-              <td className="" colSpan={1}>
-                {" "}
-                {item?.dealer_code}{" "}
-              </td>
-              <td className=""> {item?.dealer_category} </td>
-              <td className="">{item?.LY_Value}</td>
-              <td className="">
-                {" "}
-                {item?.CY_Value} <hr className="hr0" /> {item?.YTD_Value}{" "}
-              </td>
-              <td className="">0</td>
-              {currentMonth >= 4 ? (
-                currentMonth == 4 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Apr_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Apr_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Apr_Month_Value_v1}
-                    {/* <hr className="hr0" />
-                    {item?.Apr_Month_Value} */}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 5 ? (
-                currentMonth == 5 ? (
-                  <>
-                    <td>{item?.May_Month_Value}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.May_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.May_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.May_Month_Value == 0 &&
-                      item?.May_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {item?.May_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.May_Month_Value} */}
-                      </>
+              <Inject
+                services={[Edit, Sort, Aggregate, CommandColumn, Freeze]}
+              />
+            </GridComponent>
+            <table className="w3-table table-bordered w3-small ">
+              <tr className="w3-gray">
+                <td colspan="30">
+                  Net Sales Plan ( {monthName} ) Total Sale A + B
+                </td>
+              </tr>
+              <tr className="">
+                <td style={{ width: "80%" }}>
+                  ( This total will be updated to Dealers Sales Plan ( v1 ) and
+                  the list will will be added in transaction table as dealers
+                  breakup )
+                </td>
+                <td style={{ width: "10%" }} align="right">
+                  {isLocked ? null : submitForm ? (
+                    <i className="w3-button fa fa-spinner"></i>
+                  ) : (
+                    <button className="w3-button w3-indigo">Submit</button>
+                  )}
+                </td>
+              </tr>
+            </table>
+          </form>
+        </CustomPopup>
+        <ResponsePopup
+          show={responseDetails.show}
+          text={responseDetails.message}
+          type={responseDetails.type}
+          onClose={() => handleCloseResponse()}
+        />
+        <ConfirmResponsePopup
+          show={confirmResponseDetails.show}
+          type={confirmResponseDetails.type}
+          text={confirmResponseDetails.message}
+          onConfirm={multiConSwitch ? handleSubmit : lockData}
+          onClose={() => handleCloseResponse()}
+        />
+        {openDealerPopup ? (
+          <Popup
+            isOpen={openDealerPopup}
+            onClose={handleDealerPopupClose}
+            isWidth={false}
+          >
+            <div className="paddingForPopupTerritory">
+              <div className="titlePopupHeader">New Dealer Planning</div>
+              <div
+                className="employeeForm-component"
+                style={{ marginBottom: "10px" }}
+              >
+                <Row>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">Dealer Name*</label>
+                    <input
+                      type="text"
+                      name="dealer_name"
+                      value={formDetails.dealer_name}
+                      onChange={handleChange}
+                    />
+                    {errors.dealer_name && (
+                      <span style={{ color: "red" }}>{errors.dealer_name}</span>
                     )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 6 ? (
-                currentMonth == 6 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Jun_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Jun_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Jun_Month_Target == 0 &&
-                      item?.Jun_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {item?.Jun_Month_Value_v1}
-                        {/* <hr className="hr0" />
-                        {item?.Jun_Month_Value} */}
-                      </>
+                  </Col>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">City*</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formDetails.city}
+                      onChange={handleChange}
+                    />
+                    {errors.city && (
+                      <span style={{ color: "red" }}>{errors.city}</span>
                     )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 7 ? (
-                currentMonth == 7 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Jul_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Jul_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Jul_Month_Value == 0 &&
-                      item?.Jul_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {" "}
-                        {item?.Jul_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Jul_Month_Value} */}
-                      </>
+                  </Col>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">Potentail(Lacs)</label>
+                    <input
+                      type="number"
+                      name="potential"
+                      value={formDetails.potential}
+                      onChange={handleChange}
+                    />
+                    {errors.potential && (
+                      <span style={{ color: "red" }}>{errors.potential}</span>
                     )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 8 ? (
-                currentMonth == 8 ? (
-                  <>
-                    <td className="  w3-blue  ">{item?.OD}</td>
-                    <td className="  w3-blue ">{item?.OS}</td>
-                    <td className="  w3-blue ">
-                      {item?.Aug_Month_Value}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Aug_Month_Value_v1}
-                        readOnly={true}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      /><div style={{ padding: "5px", cursor: "pointer" }} onClick={() => getMonthTarget(item)}>
-                        <i className="fa fa-pencil" title="Click to update" ></i></div>
-                    </td>
-                    <td className=" w3-blue ">
-                      {" "}
-                      <input
-                        className="inp40"
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Aug_Month_Target == 0 &&
-                      item?.Aug_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {item?.Aug_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Aug_Month_Value} */}
-                      </>
+                  </Col>
+                </Row>
+                <Row style={{ marginTop: "10px" }}>
+                  <Col xl={4} lg={4} md={4} sm={4} xs={4}>
+                    <label className="formlabel">Sales Value Plan(Rs.)*</label>
+                    <input
+                      type="number"
+                      name="SalesValPlan"
+                      value={formDetails.SalesValPlan}
+                      onChange={handleChange}
+                    />
+                    {errors.SalesValPlan && (
+                      <span style={{ color: "red" }}>
+                        {errors.SalesValPlan}
+                      </span>
                     )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 9 ? (
-                currentMonth == 9 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Sep_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Sep_Month_Value_1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Sep_Month_Target == 0 && item?.Sep_Month_Value ? (
-                      0
-                    ) : (
-                      <>
-                        {item?.Sep_Month_Value_v1}
-                        {/* <hr className="hr0" />
-                        {item?.Sep_Month_Value} */}
-                      </>
+                  </Col>
+                  <Col xl={4} lg={4} md={5} sm={5} xs={5}>
+                    <label className="formlabel">
+                      Estimated Onboarding Date
+                    </label>
+                    <input
+                      type="date"
+                      name="EstOnBoardDate"
+                      min={minDate}
+                      value={formDetails.EstOnBoardDate}
+                      onChange={handleChange}
+                    />
+                    {errors.EstOnBoardDate && (
+                      <span style={{ color: "red" }}>
+                        {errors.EstOnBoardDate}
+                      </span>
                     )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 10 ? (
-                currentMonth == 10 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Oct_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Oct_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Oct_Month_Target == 0 &&
-                      item?.Oct_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {item?.Oct_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Oct_Month_Value} */}
-                      </>
+                  </Col>
+                  <Col xl={4} lg={4} md={3} sm={3} xs={3}>
+                    <label className="formlabel">Visit</label>
+                    <input
+                      type="number"
+                      name="visit"
+                      value={formDetails.visit}
+                      onChange={handleChange}
+                    />
+                    {errors.visit && (
+                      <span style={{ color: "red" }}>{errors.visit}</span>
                     )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 11 ? (
-                currentMonth == 11 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Nov_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Nov_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Nov_Month_Target == 0 &&
-                      item?.Nov_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {" "}
-                        {item?.Nov_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Nov_Month_Value} */}
-                      </>
-                    )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 12 ? (
-                currentMonth == 12 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Dec_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Dec_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Dec_Month_Target == 0 &&
-                      item?.Dec_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {item?.Dec_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Dec_Month_Value} */}
-                      </>
-                    )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 13 ? (
-                currentMonth == 13 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Jan_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Jan_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Jan_Month_Target == 0 &&
-                      item?.Jan_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {" "}
-                        {item?.Jan_Month_Value_v1}
-                        {/* <hr className="hr0" />
-                        {item?.Jan_Month_Value} */}
-                      </>
-                    )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 14 ? (
-                currentMonth == 14 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Feb_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        className="inp40"
-                        defaultValue={item?.Feb_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Feb_Month_Target == 0 &&
-                      item?.Feb_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {" "}
-                        {item?.Feb_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Feb_Month_Value} */}
-                      </>
-                    )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-              {currentMonth >= 15 ? (
-                currentMonth == 15 ? (
-                  <>
-                    <td>{item?.current_outstand}</td>
-                    <td>{item?.current_overdue}</td>
-                    <td>
-                      {" "}
-                      <input
-                        class="inp40"
-                        defaultValue={item?.Mar_Month_Value}
-                        name={item?.id + `_sales`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                    <td>
-                      {" "}
-                      <input
-                        class="inp40"
-                        defaultValue={item?.Mar_Month_Value_v1}
-                        name={item?.id + `_coll`}
-                        onChange={(e) => onchangeInputs(e, item?.id)}
-                      />{" "}
-                    </td>
-                  </>
-                ) : (
-                  <td>
-                    {item?.Mar_Month_Target == 0 &&
-                      item?.Mar_Month_Value == 0 ? (
-                      0
-                    ) : (
-                      <>
-                        {" "}
-                        {item?.Mar_Month_Value_v1}
-                        {/* <hr className="hr0" /> {item?.Mar_Month_Value} */}
-                      </>
-                    )}
-                  </td>
-                )
-              ) : (
-                <td>0</td>
-              )}
-            </tr>
-          );
-        })}
-      </table>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xl={2} lg={2} md={2} sm={2}>
+                    <div style={{ marginTop: "20px" }}>
+                      <button
+                        className="buttonForMainUi"
+                        onClick={() => handleAdd()}
+                      >
+                        <span style={{ fontFamily: "Nunito sans" }}>Add</span>
+                      </button>{" "}
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div id={"hjfcjh"}>
+                <GridComponent
+                  locale="en-Us"
+                  id="new_DelearUiGridPopup_id"
+                  key="new_DelearUiGridPopup_id"
+                  allowTextWrap={true}
+                  allowResizing={false}
+                  dataSource={dealerPopupGridData}
+                  editSettings={{
+                    allowEditing: true,
+                    mode: "Batch",
+                    persistSelection: true,
+                    allowDeleting: true,
+                    // showConfirmDialog: false,
+                  }}
+                  height={"200px"}
+                  toolbar={["Delete"]}
+                  ref={dealerPopupInstance}
+                  allowPaging={true}
+                  gridLines="Both"
+                  rowHeight={25}
+                  pageSettings={{ pageSize: 7, pageCount: 10 }}
+                >
+                  <ColumnsDirective>
+                    <ColumnDirective
+                      field="Sno"
+                      haederText="S No."
+                      visible={false}
+                      width="50"
+                      isPrimaryKey={true}
+                    />
+                    <ColumnDirective
+                      field="dealer_name"
+                      headerText="Dealer Name"
+                      width="100"
+                      textAlign="left"
+                      allowEditing={true}
+                    />
+                    <ColumnDirective
+                      field="city"
+                      headerText="City"
+                      width="100"
+                      textAlign="left"
+                      allowEditing={true}
+                    />
+                    <ColumnDirective
+                      field="potential"
+                      headerText="Potential(Lacs)"
+                      width="100"
+                      textAlign="center"
+                      editType="numericedit"
+                      allowEditing={true}
+                    />
+                    <ColumnDirective
+                      field="SalesValPlan"
+                      headerText="Sales Value Plan(Rs)"
+                      width="100"
+                      textAlign="center"
+                      editType="numericedit"
+                      allowEditing={true}
+                    />
 
-      <CustomPopup
-        onClose={popupCloseHandler}
-        show={visibility}
-        title={modalData?.dealer_name + ' - Month : ' + currentMonth}
-      >
-        <span className="h6 w3-small" >(Dealer Month Sales Plan + Focus Sector Breakup )</span>
-        <hr />
-        <form className="w3-container">
-          <table className="w3-table table-bordered w3-small ">
-            <tr className="w3-gray">
-              <td colspan="30"> A :  Sales Plan Produced by Dealer Level Rules    </td>
-            </tr>
-            <tr className="">
-              <td style={{ width: "90%" }}>
-                Rule 1 : Active Dealer <br />
-                Rule 2 : Category based % impact  <br />
-              </td>
-              <td style={{ width: "10%" }}><input type="text" value=" 5  " disabled={true} className="inp40" />
-              </td>
-            </tr>
+                    <ColumnDirective
+                      field="EstOnBoardDate"
+                      headerText="Estimated Onboarding Date"
+                      width="130"
+                      textAlign="center"
+                      allowEditing={true}
+                      editType="datepickeredit"
+                      type="date"
+                      format="dd-MMM-yyyy"
+                    />
+                    <ColumnDirective
+                      field="visit"
+                      headerText="Visit"
+                      width="100"
+                      textAlign="center"
+                      editType="numericedit"
+                      allowEditing={true}
+                    />
+                  </ColumnsDirective>
+                  <AggregatesDirective>
+                    <AggregateDirective>
+                      <AggregateColumnsDirective>
+                        <AggregateColumnDirective
+                          field="potential"
+                          type="Sum"
+                          format="N2"
+                        />
+                        <AggregateColumnDirective
+                          field="SalesValPlan"
+                          type="Sum"
+                          format="N2"
+                        />
+                      </AggregateColumnsDirective>
+                    </AggregateDirective>
+                  </AggregatesDirective>
 
-          </table>
-
-          <table className="w3-table table-bordered w3-small ">
-            <tr className="w3-gray">
-              <td colspan="30"> B ( Focus Sector List for Month of Aug )  * Add values / volume  </td>
-            </tr>
-            <tr className="w3-yellow">
-              <th style={{ width: "5%" }}>#</th>
-              <th style={{ width: "5%" }}>Focus Product Sector </th>
-              <th style={{ width: "5%" }}>LLY</th>
-              <th style={{ width: "5%" }}>LY</th>
-              <th style={{ width: "5%" }}>YTD</th>
-              <th style={{ width: "5%" }}> 6 Mo. Avg </th>
-              <th style={{ width: "5%" }}>LY (Aug) Vol.</th>
-              <th style={{ width: "5%" }}>LY (Aug) Val.</th>
-              <th style={{ width: "10%" }}>Volume (Ltrs.) </th>
-              <th style={{ width: "10%" }}>Value (Lacs)</th>
-            </tr>
-            <>
-              {selectedRow?.length === 0 ? (
-                <tr className="">
-                  <td colSpan={10}>No Data found</td>
-                </tr>
-              ) : (
-                selectedRow?.map((item, index) => (
-                  <tr className="" key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item?.MarketSectorName}</td>
-                    <td>{item?.LLY}</td>
-                    <td>{item?.LY}</td>
-                    <td>{item?.YTD}</td>
-                    <td>{item?.Last6MonthAvgSales}</td>
-                    <td>{item?.SameMonthLY}</td>
-                    <td>{item?.SameMonthLY}</td>
-                    <td>
-                      <input type="text" value={item?.Volume} className="inp40" />
-                    </td>
-                    <td>
-                      <input type="text" value={item?.Value} className="inp40" />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </>
-
-          </table>
-
-          <table className="w3-table table-bordered w3-small ">
-            <tr className="w3-gray">
-              <td colspan="30"> Net  Sales Plan ( Aug ) Total Sale  A + B   </td>
-            </tr>
-            <tr className="">
-              <td style={{ width: "80%" }}> ( This total will be updated to Dealers Sales Plan ( v1 ) and the list will will be added in transaction table as dealers breakup )  </td>
-              <td style={{ width: "10%" }} align="right" > <button className="w3-button w3-indigo " >  Submit </button></td>
-              <td style={{ width: "10%" }}><input type="text" value=" 7  " disabled={true} className="inp40" /></td>
-            </tr>
-
-          </table>
-
-
-        </form>
-
-      </CustomPopup>
+                  <Inject
+                    services={[
+                      Edit,
+                      Sort,
+                      Aggregate,
+                      CommandColumn,
+                      Freeze,
+                      Page,
+                    ]}
+                  />
+                </GridComponent>
+              </div>
+              {/* {isLocked ? null : ( */}
+              <div className="titlePopupHeader" style={{ marginTop: "10px" }}>
+                <button
+                  className="buttonForMainUi"
+                  style={{ backgroundColor: "#5a240e" }}
+                  onClick={handlePopupDataSubmit}
+                >
+                  <span style={{ fontFamily: "Nunito sans" }}>
+                    {" "}
+                    Save Details
+                  </span>
+                </button>
+              </div>
+              {/* )} */}
+            </div>
+          </Popup>
+        ) : null}
+      </section>
     </>
   );
 };
-
 export default Wgt_Delear_Ui;

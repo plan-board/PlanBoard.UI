@@ -7,7 +7,7 @@ import {
   API_TARRITORY_SALES_SUCCESS,
   API_DEPOT_SALES_PLAN_SUCCESS,
   API_SUMMARY_SUCCESS,
-  API_MONTH_WISE_SALES_SUCCESS
+  API_MONTH_WISE_SALES_SUCCESS,
 } from "../constant/types";
 
 export const fetchNatSumWidgetReq = () => ({
@@ -53,19 +53,16 @@ export const actionSummaryData = (payload) => {
   return (dispatch) => {
     dispatch({
       type: API_SUMMARY_SUCCESS,
-      payload
-    })
-  }
-}
+      payload,
+    });
+  };
+};
 
 export const actionMonthWiseSalesData = (payload) => {
   return (dispatch) => {
     dispatch({
       type: API_MONTH_WISE_SALES_SUCCESS,
-      payload
-    })
-  }
-
-  
-}
-
+      payload,
+    });
+  };
+};

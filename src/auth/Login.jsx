@@ -1,67 +1,37 @@
-import { useEffect, useState, useContext } from "react";
-import { Navigate, Link, useNavigate } from "react-router-dom";
-
-import iconGoogle from "../images/google.png";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import MayankSoftLogo from "../images/MayankSoftLogo.jpg";
+import ShalimarPaintsLogo from "../images/ShalimarPaintsLogo.jpg";
+import logoShalimaar from "../images/logo.png";
+import logoPlanboard from "../images/logo1-white.png";
+
 import axiosInstance from "./api";
-import { provider } from "../firebase";
 import { setAuthData } from "../store/actions/Auth";
 import { SHOW_TOAST } from "../store/constant/types";
+import LoadingBar from "react-top-loading-bar";
 
 const Login = ({ setIsAuth }) => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const { AuthData } = useSelector((state) => state.auth);
-  // 1 : Login with Google
-  const signInWithGoogle = () => {
-    signInWithPopup(auth, provider).then(async (result) => {
-      const user = GoogleAuthProvider.credentialFromResult(result);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState(false);
 
-      const email = user?.email;
-      const accessToken = user?.accessToken;
-
-      // const email='a.srivastava@shalimarpaints.com';
-      // const accessToken='4644616546565414651asdasd';
-
-      const data = {
-        SessionData: [
-          {
-            Email: email,
-            Token: accessToken,
-          },
-        ],
-      };
-      await axiosInstance
-        .post("api/UserMaster/SessionCheck", data)
-        .then((res) => {
-          if (res?.status === 200) {
-            console.log(res.data);
-            dispatch(setAuthData(res?.data));
-            localStorage.setItem("access_token", res.data.Data[0].TokenValid);
-            localStorage.setItem("Isloggedin", res?.data?.Status);
-
-            if (res?.data?.Data[0]?.EmployeeTpye == "ZM") {
-              navigate("/zone");
-            }
-            if (res?.data?.Data[0]?.EmployeeTpye == "DM") {
-              navigate("/depot");
-            }
-            if (
-              res?.data?.Data[0]?.EmployeeTpye == "TM" ||
-              res?.data?.Data[0]?.EmployeeTpye == "AM"
-            ) {
-              navigate("/territory");
-            }
-          }
-        })
-        .catch((error) => {
-          dispatch({ type: SHOW_TOAST, payload: error.message });
-        });
-    });
-  }; // 1 : Ends
+  const initialFormData = {
+    Email: "",
+    Password: "",
+    Token: "",
+  };
+  const [formData, setFormData] = useState(initialFormData);
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   useEffect(() => {
     if (AuthData?.Status == true) {
@@ -75,145 +45,142 @@ const Login = ({ setIsAuth }) => {
         navigate("/territory");
       }
     }
-  }, [AuthData]);
-  //// 2 : Login with Email Password
-  const [error, setError] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  }, [AuthData, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const payload = {
+      SessionData: [formData],
+    };
+    setProgress(60);
+    try {
+      const res = await axiosInstance.post(
+        "api/UserMaster/SessionCheck",
+        payload
+      );
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        // Signed in
-        const user = userCredential.user;
+      if (res?.status === 200) {
+        const responseData = res?.data;
 
-        const email = user?.email;
-        // const accessToken = user?.accessToken;
+        if (responseData?.Status === true) {
+          setError("");
+          resetForm();
 
-        // const email='amitgupta@shalimarpaints.com';
-        // const email = 'a.srivastava@shalimarpaints.com';
-        // const email = 'a.chavan@shalimarpaints.com';
-        // const email = 'anil.soni@shalimarpaints.com';
+          dispatch(setAuthData(responseData));
 
-        const accessToken='4644616546565414651asdasd';
-
-        const data = {
-          SessionData: [
-            {
-              Email: email,
-              Token: accessToken,
-            },
-          ],
-        };
-        await axiosInstance
-          .post("api/UserMaster/SessionCheck", data)
-          .then((res) => {
-            if (res?.status === 200) {
-              console.log("===SessionCheck===",res.data);
-              dispatch(setAuthData(res?.data));
-              localStorage.setItem("access_token", res.data.Data[0].TokenValid);
-              localStorage.setItem("Isloggedin", res?.data?.Status);
-              if (res?.data?.Data[0]?.EmployeeTpye == "HOD") {
-                navigate("/national");
-              }
-              if (res?.data?.Data[0]?.EmployeeTpye == "ZM") {
-                navigate("/zone");
-              }
-              if (res?.data?.Data[0]?.EmployeeTpye == "DM") {
-                navigate("/depot");
-              }
-              if (
-                res?.data?.Data[0]?.EmployeeTpye == "TM" ||
-                res?.data?.Data[0]?.EmployeeTpye == "AM"
-              ) {
-                navigate("/territory");
-              }
-            }
-          })
-          .catch((error) => {
-            dispatch({ type: SHOW_TOAST, payload: error.message });
-          });
-      })
-      .catch((error) => {
-        setError(" Wrong email or password   ");
-      });
+          localStorage.setItem(
+            "access_token",
+            responseData.Data[0]?.TokenValid
+          );
+          localStorage.setItem("Isloggedin", responseData.Status);
+          localStorage.setItem(
+            "EmployeeType",
+            responseData.Data[0]?.EmployeeTpye
+          );
+          setProgress(100);
+          switch (responseData.Data[0]?.EmployeeTpye) {
+            case "HOD":
+              navigate("/national");
+              break;
+            case "ZM":
+              navigate("/zone");
+              break;
+            case "DM":
+              navigate("/depot");
+              break;
+            case "TM":
+            case "AM":
+              navigate("/territory");
+              break;
+            default:
+              // Handle unknown EmployeeType
+              break;
+          }
+        } else {
+          setError(responseData?.Message || "An error occurred");
+        }
+      } else {
+        setError("Request failed");
+      }
+    } catch (error) {
+      dispatch({ type: SHOW_TOAST, payload: error.message });
+    }
   }; // 2 : handleLogin ends
 
+  const resetForm = () => {
+    setFormData(initialFormData);
+  };
+
   return (
-    <div className="login  w3-border w3-text-gray">
-      <div className="wrapper w3-padding ">
-        <div className="w3-row  w3-padding ">
-          <div className="w3-col l5">
-            <form onSubmit={handleLogin}>
-              <div className="form-group h6">
-                Registered Email
-                <input
-                  className="w3-input w3-border"
-                  type="email"
-                  placeholder="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+    <>
+      <style>{".w3-sidebar{display:none}"}</style>
+      <LoadingBar
+        color="#007ad1"
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+      />
+      <div className="login-Container">
+        <div className="loginBg">
+          <div className="logo-container">
+            <img src={MayankSoftLogo} alt="MayankSoft" />
+            <img src={ShalimarPaintsLogo} alt="Shailmar Planboard" />
+          </div>
+          <div className="wrapper">
+            <div className="login-box">
+              <h2 className="login-title">Sign In Here</h2>
+              <div
+                className="w3-content w3-center w3-padding-large mb-3"
+                style={{ fontFamily: "Nunito sans" }}
+              >
+                Sign in with Planboard registered account.
               </div>
-
-              <div className="form-group h6">
-                Password
-                <input
-                  className="w3-input w3-border"
-                  type="password"
-                  placeholder="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group w3-small h6 ">
-                <p>
-                  {" "}
-                  <u>I forgot my password </u>
-                </p>
-              </div>
-
-              <div className="form-group">
-                <button
-                  className="w3-button w3-block  w3-indigo "
-                  type="submit"
-                >
-                  Login
-                </button>
-              </div>
-
-              <div className="form-group w3-text-red">
-                <p>{error}</p>
-              </div>
-            </form>
-
-            <div className="w3-small h5 w3-content w3-center w3-margin w3-padding-large ">
-              Sign in with Planboard registered account.
+              <form onSubmit={handleLogin}>
+                <div className="form-group h6">
+                  <input
+                    className="w3-input w3-border"
+                    type="email"
+                    required={true}
+                    placeholder="Email"
+                    name="Email"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group h6">
+                  <input
+                    className="w3-input w3-border"
+                    type="password"
+                    required={true}
+                    placeholder="Password"
+                    name="Password"
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group w3-small h6 ">
+                  <Link to="/forgot-password">I forgot my password !</Link>
+                </div>
+                <div className="form-group m-0">
+                  <button className="" type="submit">
+                    {" "}
+                    Login{" "}
+                  </button>
+                </div>
+                <div className="form-group w3-text-red">
+                  <p>{error}</p>
+                </div>
+              </form>
             </div>
           </div>
-
-          <div className="center w3-col l2">
-            <div className="line" />
-            <div className="or w3-circle">OR</div>
-          </div>
-
-          <div className="w3-col l5 w3-right">
-            <div
-              className="w3-button w3-block  w3-red"
-              onClick={signInWithGoogle}
-            >
-              <img src={iconGoogle} alt="" className="icon" />
-              Sign in with Gmail
+          <div className="loginFooter">
+            <div className="footertextDev">
+              Design & Developed By Mayank Software Solution
             </div>
-
-            <div className="w3-small h5 w3-content w3-center w3-margin w3-padding-large ">
-              Sign in with your corporate Gmail workspace email account
+            <div className="copyRight">
+              2023©All Rights Reserved Shalimar Paints Limited
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

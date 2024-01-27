@@ -6,9 +6,12 @@ import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import ZoneSelectionBox from "../components/ZoneSelectionBox";
 import DepoSelectionBox from "../components/DepoSelectionBox";
+import AllFigureText from "../components/AllFigureText";
+import LogSummary from "../components/LogSummary";
 
 const Depot = () => {
   const [toggleState, setToggleState] = useState(1);
+  const flag = useSelector((state) => state.sidebarStatus.flag);
   const toggleTab = (index) => {
     setToggleState(index);
   };
@@ -44,27 +47,32 @@ const Depot = () => {
   }, []);
 
   return (
-    <div className=" main ">
-      <div className="w3-row w3-padding-16">
+    <div className="main" style={{ marginLeft: flag ? "150px" : "0px" }}>
+      <div className="w3-row">
+        <span className="main-title">
+          Shalimar Paints Limited <AllFigureText />
+        </span>
+      </div>
+      <div className="card-box lightblue">
         {AuthData?.Data[0].EmployeeTpye === "HOD" ||
         AuthData?.Data[0].EmployeeTpye === "ZM" ? (
-          <>
-            <div className="w3-col l3 m3 s6">
+          <div className="row w-100">
+            <div className="one-fourth">
               <ZoneSelectionBox
                 selectedZone={selectedZone}
                 onValueChange={handleSelectionChange}
               />
             </div>
-            <div className="w3-col l3 m3 s6">
+            <div className="one-fourth">
               <DepoSelectionBox
                 selectedZone={selectedZone}
                 selectedDepot={selectedDepot}
                 onSelectedDepoChange={onSelectedDepoChange}
               />
             </div>
-          </>
+          </div>
         ) : AuthData?.Data[0].EmployeeTpye === "DM" ? (
-          <div className="w3-col l3 m3 s6">
+          <div className="one-fourth">
             <DepoSelectionBox
               selectedZone={selectedZone}
               selectedDepot={selectedDepot}
@@ -79,36 +87,49 @@ const Depot = () => {
         selectedZone={selectedZone}
         selectedDepot={selectedDepot}
       />
-
-      <div class="w3-row w3-padding-16"></div>
-
-      <div class="w3-row w3-white w3-border w3-border-gray">
-        <div className="w3-bar w3-gray ">
+      <div class="card-box lightblue">
+        <div className="w3-bar tab-container">
           <div
             className={
-              toggleState === 1
-                ? " w3-bar-item w3-button w3-white  w3-hover-white  "
-                : " w3-bar-item w3-button w3-gray  w3-hover-white  "
+              toggleState === 1 ? "w3-button tab tab-active" : "w3-button tab"
             }
             onClick={() => toggleTab(1)}
           >
-            <span className=" h6 w3-text-gray "> Territory Monthly Plan</span>
+            <span className="h6"> Territory Monthly Plan</span>
+          </div>
+
+          <div
+            className={
+              toggleState === 2 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(2)}
+          >
+            <span className="h6">
+              {" "}
+              <i className="fa fa-list"></i>
+              <span style={{ fontFamily: "Nunito sans" }}>Lock Summary</span>
+            </span>
           </div>
         </div>
-        <div class="w3-row w3-padding ">
-          <div
-            className={toggleState === 1 ? "  " : " w3-hide  "}
-            onClick={() => toggleTab(1)}
-          >
+        <div class="w3-row w-100">
+          <div className={toggleState === 1 ? "  " : " w3-hide  "}>
             <div>
-            <h3>Territory Wise Monthly Plan / Achievement</h3>
+              <h3>Territory Wise Monthly Plan / Achievement</h3>
+            </div>
+            {toggleState === 1 && (
+              <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+            )}
           </div>
-            <TerritoryMonthWiseSalesReport selectedDepot={selectedDepot} />
+          <div className={toggleState === 2 ? "  " : " w3-hide  "}>
+            <div>
+              <h3 style={{ fontFamily: "Nunito sans" }}>Lock Summary</h3>
+            </div>
+            {toggleState === 2 && (
+              <LogSummary actionType="Depot" selectedId={selectedDepot} />
+            )}
           </div>
         </div>
       </div>
-
-      <div class="w3-row w3-padding-16"> </div>
     </div>
   );
 };
