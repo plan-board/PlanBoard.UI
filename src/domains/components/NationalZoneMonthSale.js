@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
@@ -44,6 +44,8 @@ const monthArr = [
 ];
 
 const NationalZoneMonthSale = ({ selectedZone }) => {
+  const { AuthData } = useSelector((state) => state?.auth);
+
   const dispatch = useDispatch();
   let NationalZoneGridInstance = useRef();
   const [isLoading, setLoading] = useState(true);
@@ -71,7 +73,39 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       }
     };
 
-    getZoneMonthPlan();
+    const secondPayload = {
+      Token: localStorage.getItem("access_token"),
+      SegmentId: selectedZone,
+    };
+
+    const getSegmentMonthPlan = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.post(
+          "SegmentMonthPlan",
+          secondPayload
+        );
+
+        if (response?.status === 200) {
+          setZoneMonthPlan(
+            response.data.Data != null ? response.data.Data : []
+          );
+        }
+        setLoading(false);
+      } catch (error) {
+        // Handle errors
+        dispatch({ type: SHOW_TOAST, payload: error.message });
+      }
+    };
+
+    if (
+      AuthData.Data[0]?.EmployeeTpye == "IH" ||
+      AuthData.Data[0]?.EmployeeTpye == "SH"
+    ) {
+      getSegmentMonthPlan();
+    } else {
+      getZoneMonthPlan();
+    }
   }, [selectedZone]);
   const CyPlanYtdTemplate = (args) => {
     return (
@@ -203,9 +237,22 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
     );
   };
   const headerTemplateForCy = () => {
+    let Year = new Date().getFullYear();
+
     return (
       <>
-        <span>Plan 2023 / YTD</span>
+        <span>Plan {Year} / YTD</span>
+      </>
+    );
+  };
+  const headerTemplateForLy = () => {
+    let Year = new Date().getFullYear();
+    let lastTwoDigits = Year.toString().slice(2);
+    let lastTwoDigitPLusOne = parseInt(lastTwoDigits) - 1;
+
+    return (
+      <>
+        <span>{`LY ${lastTwoDigitPLusOne} - ${lastTwoDigits}`}</span>
       </>
     );
   };
@@ -584,8 +631,16 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
   const Rows = useMemo(() => {
     const rows = [
       {
-        field: "zone_name",
-        headerText: "Zone",
+        field:
+          AuthData?.Data[0]?.EmployeeTpye == "IH" ||
+          AuthData?.Data[0]?.EmployeeTpye == "SH"
+            ? "segmentname"
+            : "zone_name",
+        headerText:
+          AuthData?.Data[0]?.EmployeeTpye == "IH" ||
+          AuthData?.Data[0]?.EmployeeTpye == "SH"
+            ? "Segment"
+            : "Zone",
         width: "130",
         visible: true,
         textAlign: "left",
@@ -594,7 +649,7 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       },
       {
         field: "LY_Value",
-        headerText: "LY 22-23",
+        headerTemplate: headerTemplateForLy,
         width: "130",
         visible: true,
         textAlign: "center",
@@ -733,166 +788,216 @@ const NationalZoneMonthSale = ({ selectedZone }) => {
       NationalZoneGridInstance.current &&
       args.item.id === "nationZoneMonthSaleGrid_id_excelexport"
     ) {
-      const arrObj = zoneMonthPlan.map((element, index) => ({
-        "S.No": index + 1,
-        Zone: element.zone_name,
-        "LY 22-23": parseInt(element.LY_Value).toFixed(0),
-        "Plan 2023": parseInt(element.CY_ValuePlanV1).toFixed(0),
-        YTD: parseInt(element.YTD_Value).toFixed(0),
-        Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
-        "Apr Sale": parseInt(element.Apr_Month_Sale_act).toFixed(0),
-        May: parseInt(element.May_Month_Value_v1).toFixed(0),
-        "May Sale": parseInt(element.May_Month_Sale_act).toFixed(0),
-        Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
-        "Jun Sale": parseInt(element.Jun_Month_Sale_act).toFixed(0),
-        Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
-        "Jul Sale": parseInt(element.Jul_Month_Sale_act).toFixed(0),
-        Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
-        "Aug Sale": parseInt(element.Aug_Month_Sale_act).toFixed(0),
-        Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
-        "Sep Sale": parseInt(element.Sep_Month_Sale_act).toFixed(0),
-        Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
-        "Oct Sale": parseInt(element.Oct_Month_Sale_act).toFixed(0),
-        Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
-        "Nov Sale": parseInt(element.Nov_Month_Sale_act).toFixed(0),
-        Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
-        "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
-        Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
-        "Jan Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
-        Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
-        "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
-        Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
-        "Mar Sale": parseInt(element.Mar_Month_Sale_act).toFixed(0),
-      }));
-
-      ExportExcel("Zone-Wise-Monthly-Plan-Achievement", arrObj);
+      const arrObj = [];
+      zoneMonthPlan.map((element, index) => {
+        let obj = {};
+        if (
+          AuthData?.Data[0]?.EmployeeTpye == "IH" ||
+          AuthData?.Data[0]?.EmployeeTpye == "SH"
+        ) {
+          obj = {
+            "S.No": index + 1,
+            Segment: element.segmentname,
+            "LY 22-23": parseInt(element.LY_Value).toFixed(0),
+            "Plan 2023": parseInt(element.CY_ValuePlanV1).toFixed(0),
+            YTD: parseInt(element.YTD_Value).toFixed(0),
+            Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
+            "Apr Sale": parseInt(element.Apr_Month_Sale_act).toFixed(0),
+            May: parseInt(element.May_Month_Value_v1).toFixed(0),
+            "May Sale": parseInt(element.May_Month_Sale_act).toFixed(0),
+            Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
+            "Jun Sale": parseInt(element.Jun_Month_Sale_act).toFixed(0),
+            Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
+            "Jul Sale": parseInt(element.Jul_Month_Sale_act).toFixed(0),
+            Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
+            "Aug Sale": parseInt(element.Aug_Month_Sale_act).toFixed(0),
+            Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
+            "Sep Sale": parseInt(element.Sep_Month_Sale_act).toFixed(0),
+            Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
+            "Oct Sale": parseInt(element.Oct_Month_Sale_act).toFixed(0),
+            Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
+            "Nov Sale": parseInt(element.Nov_Month_Sale_act).toFixed(0),
+            Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
+            "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
+            Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
+            "Jan Sale": parseInt(element.Jan_Month_Sale_act).toFixed(0),
+            Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
+            "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+            Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
+            "Mar Sale": parseInt(element.Mar_Month_Sale_act).toFixed(0),
+          };
+        } else {
+          obj = {
+            "S.No": index + 1,
+            Zone: element.zone_name,
+            "LY 22-23": parseInt(element.LY_Value).toFixed(0),
+            "Plan 2023": parseInt(element.CY_ValuePlanV1).toFixed(0),
+            YTD: parseInt(element.YTD_Value).toFixed(0),
+            Apr: parseInt(element.Apr_Month_Value_v1).toFixed(0),
+            "Apr Sale": parseInt(element.Apr_Month_Sale_act).toFixed(0),
+            May: parseInt(element.May_Month_Value_v1).toFixed(0),
+            "May Sale": parseInt(element.May_Month_Sale_act).toFixed(0),
+            Jun: parseInt(element.Jun_Month_Value_v1).toFixed(0),
+            "Jun Sale": parseInt(element.Jun_Month_Sale_act).toFixed(0),
+            Jul: parseInt(element.Jul_Month_Value_v1).toFixed(0),
+            "Jul Sale": parseInt(element.Jul_Month_Sale_act).toFixed(0),
+            Aug: parseInt(element.Aug_Month_Value_v1).toFixed(0),
+            "Aug Sale": parseInt(element.Aug_Month_Sale_act).toFixed(0),
+            Sep: parseInt(element.Sep_Month_Value_v1).toFixed(0),
+            "Sep Sale": parseInt(element.Sep_Month_Sale_act).toFixed(0),
+            Oct: parseInt(element.Oct_Month_Value_v1).toFixed(0),
+            "Oct Sale": parseInt(element.Oct_Month_Sale_act).toFixed(0),
+            Nov: parseInt(element.Nov_Month_Value_v1).toFixed(0),
+            "Nov Sale": parseInt(element.Nov_Month_Sale_act).toFixed(0),
+            Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
+            "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
+            Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
+            "Jan Sale": parseInt(element.Jan_Month_Sale_act).toFixed(0),
+            Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
+            "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+            Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),
+            "Mar Sale": parseInt(element.Mar_Month_Sale_act).toFixed(0),
+          };
+        }
+        arrObj.push(obj);
+      });
+      if (
+        AuthData?.Data[0]?.EmployeeTpye == "IH" ||
+        AuthData?.Data[0]?.EmployeeTpye == "SH"
+      ) {
+        ExportExcel("Segment-Wise-Monthly-Plan-Achievement", arrObj);
+      } else {
+        ExportExcel("Zone-Wise-Monthly-Plan-Achievement", arrObj);
+      }
     }
   };
 
   return (
     <>
       <div className="full">
-        <Row>
-          <Col xl={12} lg={12} md={12} sm={12} xs={12}>
-            <GridComponent
-              locale="en-Us"
-              id="nationZoneMonthSaleGrid_id"
-              key="nationZoneMonthSaleGrid_id"
-              allowTextWrap={true}
-              allowResizing={false}
-              dataSource={zoneMonthPlan}
-              toolbar={toolbar}
-              toolbarClick={toolbarClick}
-              height={"250px"}
-              ref={NationalZoneGridInstance}
-              gridLines="Both"
-              rowHeight={45}
-              // allowFiltering={true}
-              // filterSettings={{ type: "Excel" }}
-              allowExcelExport={true}
-              allowPaging={true}
-              allowSorting={true}
-              pageSettings={{ pageSize: 15, pageCount: 15 }}
-              columns={Rows}
-              frozenColumns={1}
-            >
-              <AggregatesDirective>
-                <AggregateDirective>
-                  <AggregateColumnsDirective>
-                    <AggregateColumnDirective
-                      field="zone_name"
-                      type="Custom"
-                      footerTemplate={customTotalFooter}
-                    />
+        {AuthData && (
+          <Row>
+            <Col xl={12} lg={12} md={12} sm={12} xs={12}>
+              <GridComponent
+                locale="en-Us"
+                id="nationZoneMonthSaleGrid_id"
+                key="nationZoneMonthSaleGrid_id"
+                allowTextWrap={true}
+                allowResizing={false}
+                dataSource={zoneMonthPlan}
+                toolbar={toolbar}
+                toolbarClick={toolbarClick}
+                height={"250px"}
+                ref={NationalZoneGridInstance}
+                gridLines="Both"
+                rowHeight={45}
+                // allowFiltering={true}
+                // filterSettings={{ type: "Excel" }}
+                allowExcelExport={true}
+                allowPaging={true}
+                allowSorting={true}
+                pageSettings={{ pageSize: 15, pageCount: 15 }}
+                columns={Rows}
+                frozenColumns={1}
+              >
+                <AggregatesDirective>
+                  <AggregateDirective>
+                    <AggregateColumnsDirective>
+                      <AggregateColumnDirective
+                        field="zone_name"
+                        type="Custom"
+                        footerTemplate={customTotalFooter}
+                      />
 
-                    <AggregateColumnDirective
-                      field="LY_Value"
-                      type="Custom"
-                      footerTemplate={customTotalLy}
-                    />
-                    <AggregateColumnDirective
-                      field="cyPLan/ytd"
-                      type="Custom"
-                      footerTemplate={customTotalCYPlanYTD}
-                    />
-                    <AggregateColumnDirective
-                      field="Apr"
-                      type="Custom"
-                      footerTemplate={customTotalApr}
-                    />
-                    <AggregateColumnDirective
-                      field="May"
-                      type="Custom"
-                      footerTemplate={customTotalMay}
-                    />
-                    <AggregateColumnDirective
-                      field="Jun"
-                      type="Custom"
-                      footerTemplate={customTotalJun}
-                    />
-                    <AggregateColumnDirective
-                      field="Jul"
-                      type="Custom"
-                      footerTemplate={customTotalJul}
-                    />
-                    <AggregateColumnDirective
-                      field="Aug"
-                      type="Custom"
-                      footerTemplate={customTotalAug}
-                    />
-                    <AggregateColumnDirective
-                      field="Sep"
-                      type="Custom"
-                      footerTemplate={customTotalSep}
-                    />
-                    <AggregateColumnDirective
-                      field="Oct"
-                      type="Custom"
-                      footerTemplate={customTotalOct}
-                    />
-                    <AggregateColumnDirective
-                      field="Nov"
-                      type="Custom"
-                      footerTemplate={customTotalNov}
-                    />
-                    <AggregateColumnDirective
-                      field="Dec"
-                      type="Custom"
-                      footerTemplate={customTotalDec}
-                    />
-                    <AggregateColumnDirective
-                      field="Jan"
-                      type="Custom"
-                      footerTemplate={customTotalJan}
-                    />
-                    <AggregateColumnDirective
-                      field="Feb"
-                      type="Custom"
-                      footerTemplate={customTotalFeb}
-                    />
-                    <AggregateColumnDirective
-                      field="Mar"
-                      type="Custom"
-                      footerTemplate={customTotalMar}
-                    />
-                  </AggregateColumnsDirective>
-                </AggregateDirective>
-              </AggregatesDirective>
-              <Inject
-                services={[
-                  CommandColumn,
-                  Page,
-                  Filter,
-                  Aggregate,
-                  Toolbar,
-                  ExcelExport,
-                  Sort,
-                  Freeze,
-                ]}
-              />
-            </GridComponent>
-          </Col>
-        </Row>
+                      <AggregateColumnDirective
+                        field="LY_Value"
+                        type="Custom"
+                        footerTemplate={customTotalLy}
+                      />
+                      <AggregateColumnDirective
+                        field="cyPLan/ytd"
+                        type="Custom"
+                        footerTemplate={customTotalCYPlanYTD}
+                      />
+                      <AggregateColumnDirective
+                        field="Apr"
+                        type="Custom"
+                        footerTemplate={customTotalApr}
+                      />
+                      <AggregateColumnDirective
+                        field="May"
+                        type="Custom"
+                        footerTemplate={customTotalMay}
+                      />
+                      <AggregateColumnDirective
+                        field="Jun"
+                        type="Custom"
+                        footerTemplate={customTotalJun}
+                      />
+                      <AggregateColumnDirective
+                        field="Jul"
+                        type="Custom"
+                        footerTemplate={customTotalJul}
+                      />
+                      <AggregateColumnDirective
+                        field="Aug"
+                        type="Custom"
+                        footerTemplate={customTotalAug}
+                      />
+                      <AggregateColumnDirective
+                        field="Sep"
+                        type="Custom"
+                        footerTemplate={customTotalSep}
+                      />
+                      <AggregateColumnDirective
+                        field="Oct"
+                        type="Custom"
+                        footerTemplate={customTotalOct}
+                      />
+                      <AggregateColumnDirective
+                        field="Nov"
+                        type="Custom"
+                        footerTemplate={customTotalNov}
+                      />
+                      <AggregateColumnDirective
+                        field="Dec"
+                        type="Custom"
+                        footerTemplate={customTotalDec}
+                      />
+                      <AggregateColumnDirective
+                        field="Jan"
+                        type="Custom"
+                        footerTemplate={customTotalJan}
+                      />
+                      <AggregateColumnDirective
+                        field="Feb"
+                        type="Custom"
+                        footerTemplate={customTotalFeb}
+                      />
+                      <AggregateColumnDirective
+                        field="Mar"
+                        type="Custom"
+                        footerTemplate={customTotalMar}
+                      />
+                    </AggregateColumnsDirective>
+                  </AggregateDirective>
+                </AggregatesDirective>
+                <Inject
+                  services={[
+                    CommandColumn,
+                    Page,
+                    Filter,
+                    Aggregate,
+                    Toolbar,
+                    ExcelExport,
+                    Sort,
+                    Freeze,
+                  ]}
+                />
+              </GridComponent>
+            </Col>
+          </Row>
+        )}
       </div>
     </>
   );

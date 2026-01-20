@@ -92,6 +92,12 @@ const Login = ({ setIsAuth }) => {
             case "AM":
               navigate("/territory");
               break;
+            case "IH":
+              navigate("/Ihnational");
+              break;
+            case "SH":
+              navigate("/segment");
+              break;
             default:
               // Handle unknown EmployeeType
               break;

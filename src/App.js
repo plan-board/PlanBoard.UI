@@ -31,13 +31,21 @@ import { setAuthData } from "./store/actions/Auth";
 import { SHOW_TOAST } from "./store/constant/types";
 import Settings from "./domains/settings/Settings";
 import TerritoryDashboard from "./domains/territoryDashboard";
+import NewProductPlaning from "./domains/newProductPlaning";
+import Reports from "./domains/Reports/Reports";
+
+import Ihnational from "./domains/Ihnational";
+import Segment from "./domains/segment";
+import TintingMachine from "./domains/TintingMachine";
 
 function App() {
   const { AuthData } = useSelector((state) => state.auth);
+
   const [flag, setflag] = useState(false);
   const [isAuth, setIsAuth] = useState(localStorage.getItem("access_token"));
   const dispatch = useDispatch();
   const loggedIn = localStorage.getItem("Isloggedin");
+  // const
   const checkUserAuth = async () => {
     try {
       const response = await axiosInstance.post("api/UserMaster/UserAuth", {
@@ -61,9 +69,6 @@ function App() {
     if (AuthData == null) {
       checkUserAuth();
     }
-    // if ((window.location.pathname = "/")) {
-    //   console.log("shankar");
-    // }
   }, [AuthData]);
   useEffect(() => {
     if (window.location.pathname == "/") {
@@ -85,6 +90,10 @@ function App() {
       window.location.pathname = "/territory";
     } else if (type == null) {
       window.location.pathname = "login";
+    } else if (type == "IH") {
+      window.location.pathname = "/Ihnational";
+    } else if (type == "SH") {
+      window.location.pathname = "/segment";
     }
   };
 
@@ -187,6 +196,31 @@ function App() {
             path="/territory-dashobard"
             element={<PrivateRoute element={<TerritoryDashboard />} />}
           />
+          <Route
+            path="/new-Product-Planing"
+            element={<PrivateRoute element={<NewProductPlaning />} />}
+          />
+          <Route
+            path="/Reports"
+            element={<PrivateRoute element={<Reports />} />}
+          />
+
+          <Route
+            path="/Ihnational"
+            element={<PrivateRoute element={<Ihnational />} />}
+          />
+          <Route
+            path="/segment"
+            element={<PrivateRoute element={<Segment />} />}
+          />
+           <Route
+            path="/tintingMachine"
+            element={<PrivateRoute element={<TintingMachine />} />}
+          />
+          {/* <Route
+            path="/newProductPlanningReport"
+            element={<PrivateRoute element={<Segment />} />}
+          /> */}
         </Routes>
       </BrowserRouter>
     </>

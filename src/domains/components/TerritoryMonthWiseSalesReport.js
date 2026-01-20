@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
@@ -31,6 +31,11 @@ import Loader from "../../common/Loader";
 const itemsPerPage = 10; // Number of items to display per page
 
 const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
+  const [EmployeeTpye, setEmployeeType] = useState(
+    localStorage.getItem("EmployeeType")
+      ? localStorage.getItem("EmployeeType")
+      : ""
+  );
   const dispatch = useDispatch();
   let TerritoryMonthWiseInstance = useRef();
   const [territoryMonthPlan, setTerritoryMonthPlan] = useState([]);
@@ -589,42 +594,89 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
       TerritoryMonthWiseInstance.current &&
       args.item.id === "territoryMonthWiseSales_Id_excelexport"
     ) {
-      const arrObj = territoryMonthPlan.map((element, index) => ({
-        "S.No": index + 1,
-        Depot: element.depot_name,
-        Territory: element.territory_name,
-        Zone: element.zone_name,
-        LLY: element.LLY_Value,
-        LY: element.LY_Value,
-        "CY Plan": element.CY_ValuePlanV1,
-        YTD: element.YTD_Value,
-        Apr: element.Apr_Month_Value_v1,
-        "Apr Sale": element.Apr_Month_Sale_act,
-        May: element.May_Month_Value_v1,
-        "May Sale": element.May_Month_Sale_act,
-        Jun: element.Jun_Month_Value_v1,
-        "Jun Sale": element.Jun_Month_Sale_act,
-        Jul: element.Jul_Month_Value_v1,
-        "Jul Sale": element.Jul_Month_Sale_act,
-        Aug: element.Aug_Month_Value_v1,
-        "Aug Sale": element.Aug_Month_Sale_act,
-        Sep: element.Sep_Month_Value_v1,
-        "Sep Sale": element.Sep_Month_Sale_act,
-        Oct: element.Oct_Month_Value_v1,
-        "Oct Sale": element.Oct_Month_Sale_act,
-        Nov: element.Nov_Month_Value_v1,
-        "Nov Sale": element.Nov_Month_Sale_act,
-        Dec: element.Dec_Month_Value_v1,
-        "Dec Sale": element.Dec_Month_Sale_act,
-        Jan: element.Jan_Month_Value_v1,
-        "Jan Sale": element.Jan_Month_Sale_act,
-        Feb: element.Feb_Month_Value_v1,
-        "Feb Sale": element.Feb_Month_Sale_act,
-        Mar: element.Mar_Month_Value_v1,
-        "Mar Sale": element.Mar_Month_Sale_act,
-      }));
+      const arrObj = [];
+      territoryMonthPlan.map((element, index) => {
+        let obj = {};
+        if (EmployeeTpye == "SH" || EmployeeTpye == "IH") {
+          obj = {
+            "S.No": index + 1,
+            Segment: element.depot_name,
+            Territory: element.territory_name,
+            // Zone: element.zone_name,
+            LLY: element.LLY_Value,
+            LY: element.LY_Value,
+            "CY Plan": element.CY_ValuePlanV1,
+            YTD: element.YTD_Value,
+            Apr: element.Apr_Month_Value_v1,
+            "Apr Sale": element.Apr_Month_Sale_act,
+            May: element.May_Month_Value_v1,
+            "May Sale": element.May_Month_Sale_act,
+            Jun: element.Jun_Month_Value_v1,
+            "Jun Sale": element.Jun_Month_Sale_act,
+            Jul: element.Jul_Month_Value_v1,
+            "Jul Sale": element.Jul_Month_Sale_act,
+            Aug: element.Aug_Month_Value_v1,
+            "Aug Sale": element.Aug_Month_Sale_act,
+            Sep: element.Sep_Month_Value_v1,
+            "Sep Sale": element.Sep_Month_Sale_act,
+            Oct: element.Oct_Month_Value_v1,
+            "Oct Sale": element.Oct_Month_Sale_act,
+            Nov: element.Nov_Month_Value_v1,
+            "Nov Sale": element.Nov_Month_Sale_act,
+            Dec: element.Dec_Month_Value_v1,
+            "Dec Sale": element.Dec_Month_Sale_act,
+            Jan: element.Jan_Month_Value_v1,
+            "Jan Sale": element.Jan_Month_Sale_act,
+            Feb: element.Feb_Month_Value_v1,
+            "Feb Sale": element.Feb_Month_Sale_act,
+            Mar: element.Mar_Month_Value_v1,
+            "Mar Sale": element.Mar_Month_Sale_act,
+          };
+        } else {
+          obj = {
+            "S.No": index + 1,
+            Depot: element.depot_name,
+            Territory: element.territory_name,
+            Zone: element.zone_name,
+            LLY: element.LLY_Value,
+            LY: element.LY_Value,
+            "CY Plan": element.CY_ValuePlanV1,
+            YTD: element.YTD_Value,
+            Apr: element.Apr_Month_Value_v1,
+            "Apr Sale": element.Apr_Month_Sale_act,
+            May: element.May_Month_Value_v1,
+            "May Sale": element.May_Month_Sale_act,
+            Jun: element.Jun_Month_Value_v1,
+            "Jun Sale": element.Jun_Month_Sale_act,
+            Jul: element.Jul_Month_Value_v1,
+            "Jul Sale": element.Jul_Month_Sale_act,
+            Aug: element.Aug_Month_Value_v1,
+            "Aug Sale": element.Aug_Month_Sale_act,
+            Sep: element.Sep_Month_Value_v1,
+            "Sep Sale": element.Sep_Month_Sale_act,
+            Oct: element.Oct_Month_Value_v1,
+            "Oct Sale": element.Oct_Month_Sale_act,
+            Nov: element.Nov_Month_Value_v1,
+            "Nov Sale": element.Nov_Month_Sale_act,
+            Dec: element.Dec_Month_Value_v1,
+            "Dec Sale": element.Dec_Month_Sale_act,
+            Jan: element.Jan_Month_Value_v1,
+            "Jan Sale": element.Jan_Month_Sale_act,
+            Feb: element.Feb_Month_Value_v1,
+            "Feb Sale": element.Feb_Month_Sale_act,
+            Mar: element.Mar_Month_Value_v1,
+            "Mar Sale": element.Mar_Month_Sale_act,
+          };
+        }
 
-      ExportExcel("Territory-Wise-Monthly-Plan-Achievement", arrObj);
+        arrObj.push(obj);
+      });
+
+      if (EmployeeTpye == "SH" || EmployeeTpye == "IH") {
+        ExportExcel("Segments-Wise-Monthly-Plan", arrObj);
+      } else {
+        ExportExcel("Territory-Wise-Monthly-Plan-Achievement", arrObj);
+      }
     }
   };
 
@@ -659,7 +711,11 @@ const TerritoryMonthWiseSalesReport = ({ selectedDepot }) => {
                 <ColumnsDirective>
                   <ColumnDirective
                     field="depot_name"
-                    headerText={"Depot"}
+                    headerText={
+                      EmployeeTpye == "SH" || EmployeeTpye == "IH"
+                        ? "Segment"
+                        : "Depot"
+                    }
                     width="130"
                     visible={true}
                     textAlign="left"

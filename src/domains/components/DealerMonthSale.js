@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "./../../auth/api";
 import { SHOW_TOAST } from "../../store/constant/types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
 import ExportExcel from "../ExportExcel";
 import { GetPercent, fNWCommas, getMonths } from "../../utils/utils";
@@ -31,8 +31,9 @@ import Loader from "../../common/Loader";
 
 const DealerMonthSale = ({ selectedTerritory }) => {
   const dispatch = useDispatch();
+  const { AuthData } = useSelector((state) => state.auth);
   let DealerMonthWiseInstance = useRef();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [dealerMonthPlan, setDealerMonthPlan] = useState([]);
 
   const [filterText, setFilterText] = useState("");
@@ -43,12 +44,25 @@ const DealerMonthSale = ({ selectedTerritory }) => {
 
   const getZoneMonthPlan = async () => {
     try {
-      const payload = {
-        Token: localStorage.getItem("access_token"),
-        ZoneId: 0,
-        DepotId: 0,
-        TerritoryId: selectedTerritory,
-      };
+      let payload = {};
+      if (
+        AuthData?.Data[0].EmployeeTpye === "SH" ||
+        AuthData?.Data[0].EmployeeTpye === "IH"
+      ) {
+        payload = {
+          Token: localStorage.getItem("access_token"),
+          DealerId: selectedTerritory,
+          TerritoryId: 0,
+        };
+      } else {
+        payload = {
+          Token: localStorage.getItem("access_token"),
+          ZoneId: 0,
+          DepotId: 0,
+          TerritoryId: selectedTerritory,
+        };
+      }
+
       const response = await axiosInstance.post("CustomerMonthPlan", payload);
 
       if (response?.status === 200) {
@@ -64,7 +78,11 @@ const DealerMonthSale = ({ selectedTerritory }) => {
   };
 
   useEffect(() => {
-    if (selectedTerritory != 0) {
+    if (
+      selectedTerritory != 0 ||
+      AuthData?.Data[0].EmployeeTpye === "SH" ||
+      AuthData?.Data[0].EmployeeTpye === "IH"
+    ) {
       setLoading(true);
       getZoneMonthPlan();
     }
@@ -528,41 +546,93 @@ const DealerMonthSale = ({ selectedTerritory }) => {
       DealerMonthWiseInstance.current &&
       args.item.id === "dealerMonthWiseSales_Id_excelexport"
     ) {
-      const arrObj = dealerMonthPlan.map((element, index) => ({
-        "S.No": index + 1,
-        Territory: element.territory_name,
-        "Dealer Name": element.dealer_name,
-        LLY: element.LLY_Value,
-        LY: element.LY_Value,
-        "CY Plan": element.CY_ValuePlanV1,
-        YTD: element.YTD_Value,
-        Apr: element.Apr_Month_Value_v1,
-        "Apr Sale": element.Apr_Month_Sale_act,
-        May: element.May_Month_Value_v1,
-        "May Sale": element.May_Month_Sale_act,
-        Jun: element.Jun_Month_Value_v1,
-        "Jun Sale": element.Jun_Month_Sale_act,
-        Jul: element.Jul_Month_Value_v1,
-        "Jul Sale": element.Jul_Month_Sale_act,
-        Aug: element.Aug_Month_Value_v1,
-        "Aug Sale": element.Aug_Month_Sale_act,
-        Sep: element.Sep_Month_Value_v1,
-        "Sep Sale": element.Sep_Month_Sale_act,
-        Oct: element.Oct_Month_Value_v1,
-        "Oct Sale": element.Oct_Month_Sale_act,
-        Nov: element.Nov_Month_Value_v1,
-        "Nov Sale": element.Nov_Month_Sale_act,
-        Dec: element.Dec_Month_Value_v1,
-        "Dec Sale": element.Dec_Month_Sale_act,
-        Jan: element.Jan_Month_Value_v1,
-        "Jan Sale": element.Jan_Month_Sale_act,
-        Feb: element.Feb_Month_Value_v1,
-        "Feb Sale": element.Feb_Month_Sale_act,
-        Mar: element.Mar_Month_Value_v1,
-        "Mar Sale": element.Mar_Month_Sale_act,
-      }));
-
-      ExportExcel("Dealer-Wise-Monthly-Plan-Achievement", arrObj);
+      const arrObj = [];
+      dealerMonthPlan.map((element, index) => {
+        let obj = {};
+        if (
+          AuthData?.Data[0]?.EmployeeTpye == "IH" ||
+          AuthData?.Data[0]?.EmployeeTpye == "SH"
+        ) {
+          obj = {
+            "S.No": index + 1,
+            "Segment Head": element.zone_name,
+            Segment: element.depot_name,
+            "Dealer Name": element.dealer_name,
+            Territory: element.territory_name,
+            LLY: element.LLY_Value,
+            LY: element.LY_Value,
+            "CY Plan": element.CY_ValuePlanV1,
+            YTD: element.YTD_Value,
+            Apr: element.Apr_Month_Value_v1,
+            "Apr Sale": element.Apr_Month_Sale_act,
+            May: element.May_Month_Value_v1,
+            "May Sale": element.May_Month_Sale_act,
+            Jun: element.Jun_Month_Value_v1,
+            "Jun Sale": element.Jun_Month_Sale_act,
+            Jul: element.Jul_Month_Value_v1,
+            "Jul Sale": element.Jul_Month_Sale_act,
+            Aug: element.Aug_Month_Value_v1,
+            "Aug Sale": element.Aug_Month_Sale_act,
+            Sep: element.Sep_Month_Value_v1,
+            "Sep Sale": element.Sep_Month_Sale_act,
+            Oct: element.Oct_Month_Value_v1,
+            "Oct Sale": element.Oct_Month_Sale_act,
+            Nov: element.Nov_Month_Value_v1,
+            "Nov Sale": element.Nov_Month_Sale_act,
+            Dec: element.Dec_Month_Value_v1,
+            "Dec Sale": element.Dec_Month_Sale_act,
+            Jan: element.Jan_Month_Value_v1,
+            "Jan Sale": element.Jan_Month_Sale_act,
+            Feb: element.Feb_Month_Value_v1,
+            "Feb Sale": element.Feb_Month_Sale_act,
+            Mar: element.Mar_Month_Value_v1,
+            "Mar Sale": element.Mar_Month_Sale_act,
+          };
+        } else {
+          obj = {
+            "S.No": index + 1,
+            Territory: element.territory_name,
+            "Dealer Name": element.dealer_name,
+            LLY: element.LLY_Value,
+            LY: element.LY_Value,
+            "CY Plan": element.CY_ValuePlanV1,
+            YTD: element.YTD_Value,
+            Apr: element.Apr_Month_Value_v1,
+            "Apr Sale": element.Apr_Month_Sale_act,
+            May: element.May_Month_Value_v1,
+            "May Sale": element.May_Month_Sale_act,
+            Jun: element.Jun_Month_Value_v1,
+            "Jun Sale": element.Jun_Month_Sale_act,
+            Jul: element.Jul_Month_Value_v1,
+            "Jul Sale": element.Jul_Month_Sale_act,
+            Aug: element.Aug_Month_Value_v1,
+            "Aug Sale": element.Aug_Month_Sale_act,
+            Sep: element.Sep_Month_Value_v1,
+            "Sep Sale": element.Sep_Month_Sale_act,
+            Oct: element.Oct_Month_Value_v1,
+            "Oct Sale": element.Oct_Month_Sale_act,
+            Nov: element.Nov_Month_Value_v1,
+            "Nov Sale": element.Nov_Month_Sale_act,
+            Dec: element.Dec_Month_Value_v1,
+            "Dec Sale": element.Dec_Month_Sale_act,
+            Jan: element.Jan_Month_Value_v1,
+            "Jan Sale": element.Jan_Month_Sale_act,
+            Feb: element.Feb_Month_Value_v1,
+            "Feb Sale": element.Feb_Month_Sale_act,
+            Mar: element.Mar_Month_Value_v1,
+            "Mar Sale": element.Mar_Month_Sale_act,
+          };
+        }
+        arrObj.push(obj);
+      });
+      if (
+        AuthData?.Data[0].EmployeeTpye === "SH" ||
+        AuthData?.Data[0].EmployeeTpye === "IH"
+      ) {
+        ExportExcel("Segments-Dealer-Monthly-Plan", arrObj);
+      } else {
+        ExportExcel("Dealer-Wise-Monthly-Plan-Achievement", arrObj);
+      }
     }
   };
 
@@ -592,11 +662,40 @@ const DealerMonthSale = ({ selectedTerritory }) => {
                   pageSettings={{ pageSize: 15, pageCount: 10 }}
                   allowFiltering={true}
                   filterSettings={{ type: "Excel" }}
-                  frozenColumns={2}
+                  frozenColumns={
+                    AuthData?.Data[0].EmployeeTpye === "SH" ||
+                    AuthData?.Data[0].EmployeeTpye === "IH"
+                      ? 4
+                      : 2
+                  }
                   allowExcelExport={true}
                   allowSorting={true}
                 >
                   <ColumnsDirective>
+                    {AuthData?.Data[0].EmployeeTpye === "SH" ||
+                    AuthData?.Data[0].EmployeeTpye === "IH" ? (
+                      <ColumnDirective
+                        field="zone_name"
+                        headerText={"Segment Head"}
+                        width="130"
+                        visible={true}
+                        textAlign="left"
+                        allowEditing={false}
+                        Freeze={true}
+                      />
+                    ) : null}
+                    {AuthData?.Data[0].EmployeeTpye === "SH" ||
+                    AuthData?.Data[0].EmployeeTpye === "IH" ? (
+                      <ColumnDirective
+                        field="depot_name"
+                        headerText={"Segment "}
+                        width="130"
+                        visible={true}
+                        textAlign="left"
+                        allowEditing={false}
+                        Freeze={true}
+                      />
+                    ) : null}
                     <ColumnDirective
                       field="territory_name"
                       headerText={"Territory"}

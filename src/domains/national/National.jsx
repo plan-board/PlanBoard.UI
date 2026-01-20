@@ -83,7 +83,9 @@ const National = () => {
       <div id="Wgt_Zone_Id" className="card-box lightblue">
         <h4>Zone Wise Monthly Plan / Achievement</h4>
         <div className="tbl-container">
-          <NationalZoneMonthSale selectedZone={selectedZone} />
+          {AuthData != null && (
+            <NationalZoneMonthSale selectedZone={selectedZone} />
+          )}
         </div>
       </div>
       {/* <div className="card-box lightblue">

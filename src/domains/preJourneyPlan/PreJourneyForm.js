@@ -11,8 +11,10 @@ export const PreJourneyForm = ({
   handleChange,
   customerList,
   customterMultiInstance,
+  activityMultiInstance,
   formDetails,
   handleSave,
+  activityList,
 }) => {
   const [minDate, setMinDate] = useState(() => {
     const today = new Date();
@@ -69,6 +71,28 @@ export const PreJourneyForm = ({
             value={formDetails.visitdate}
             onChange={handleChange}
           />
+        </Col>
+        <Col xl={3} lg={3} md={6} sm={12} xs={12}>
+          <label className="formlabel">Customer*</label>
+          <MultiSelectComponent
+            id={"activityId"}
+            key={"activityId"}
+            dataSource={activityList}
+            ref={activityMultiInstance}
+            fields={{ text: "ActivityName", value: "ActivityID" }}
+            placeholder={"Select Activity"}
+            mode="CheckBox"
+            showSelectAll={false}
+            showDropDownIcon={true}
+            filterBarPlaceholder={"Customer"}
+            popupHeight={"185px"}
+            change={handleChange}
+            cssClass={"e-outline"}
+            floatLabelType="Never"
+            enabled={true}
+          >
+            <Inject services={[CheckBoxSelection]} />
+          </MultiSelectComponent>
         </Col>
       </Row>
       <Row style={{ marginTop: "10px" }}>

@@ -12,6 +12,7 @@ const CommonTopSales = ({
   selectedZone,
   selectedDepot,
   selectedTerritory,
+  selectedSegment,
 }) => {
   const dispatch = useDispatch();
   const [summaryData, setSummaryData] = useState([]);
@@ -37,6 +38,14 @@ const CommonTopSales = ({
               ? selectedTerritory
                 ? selectedTerritory
                 : 0
+              : actionType === "IH"
+              ? selectedSegment
+                ? selectedSegment
+                : 0
+              : actionType === "SH"
+              ? selectedSegment
+                ? selectedSegment
+                : 0
               : 0,
         },
       ],
@@ -54,7 +63,7 @@ const CommonTopSales = ({
   };
 
   useEffect(() => {
-    if (actionType === "hod") {
+    if (actionType === "hod" || actionType === "IH" || actionType === "SH") {
       fetchTerritoryData();
     } else if (
       actionType === "Zone" &&
@@ -75,7 +84,7 @@ const CommonTopSales = ({
     ) {
       fetchTerritoryData();
     }
-  }, [selectedZone, selectedDepot, selectedTerritory]);
+  }, [selectedZone, selectedDepot, selectedTerritory, selectedSegment]);
 
   return (
     <>
@@ -83,6 +92,12 @@ const CommonTopSales = ({
         {actionType == "hod" ? (
           <div className="one-fifth text-center">
             <span className="w3-text-gray h6">All Zone</span>
+            <hr className="hr1" />
+            <span className=" "> Shalimar</span>
+          </div>
+        ) : actionType == "IH" ? (
+          <div className="one-fifth text-center">
+            <span className="w3-text-gray h6">All Segment</span>
             <hr className="hr1" />
             <span className=" "> Shalimar</span>
           </div>
@@ -99,17 +114,19 @@ const CommonTopSales = ({
           </div>
         )}
 
-        <div className="one-fifth text-center">
-          <span className="w3-text-gray h6">
-            LLY {summaryData.length ? summaryData[0]?.summ_lly_fy : ""}
-          </span>
-          <hr className="hr1" />
-          <span className=" ">
-            {summaryData.length
-              ? fNWCommas(summaryData[0]?.summ_lly_sale_value)
-              : "-"}
-          </span>
-        </div>
+        {actionType === "IH" || actionType === "SH" ? null : (
+          <div className="one-fifth text-center">
+            <span className="w3-text-gray h6">
+              LLY {summaryData.length ? summaryData[0]?.summ_lly_fy : ""}
+            </span>
+            <hr className="hr1" />
+            <span className=" ">
+              {summaryData.length
+                ? fNWCommas(summaryData[0]?.summ_lly_sale_value)
+                : "-"}
+            </span>
+          </div>
+        )}
 
         <div className="one-fifth text-center">
           <span className="w3-text-gray h6">

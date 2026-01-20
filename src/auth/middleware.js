@@ -12,6 +12,9 @@ export const permissions = [
       "customer-potential",
       "change-password",
       "pre-journey-plan",
+      "new-Product-Planing",
+      "Reports",
+      "Tinting Machine"
     ],
   },
   {
@@ -25,6 +28,8 @@ export const permissions = [
       "customer-potential",
       "change-password",
       "pre-journey-plan",
+      "new-Product-Planing",
+      "Reports",
     ],
   },
   {
@@ -37,6 +42,8 @@ export const permissions = [
       "customer-potential",
       "change-password",
       "pre-journey-plan",
+      "new-Product-Planing",
+      "Reports",
     ],
   },
   {
@@ -52,7 +59,16 @@ export const permissions = [
       "customer-potential",
       "change-password",
       "pre-journey-plan",
+      "Reports",
     ],
+  },
+  {
+    roleId: "IH",
+    permission: ["Ihnational", "segment"],
+  },
+  {
+    roleId: "SH",
+    permission: ["segment"],
   },
 ];
 

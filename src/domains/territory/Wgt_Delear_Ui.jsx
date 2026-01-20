@@ -34,6 +34,7 @@ import ResponsePopup from "../../common/ResponsePopup";
 import ConfirmResponsePopup from "../../common/ResponsePopup/ConfirmResponse";
 import Popup from "../../common/DialogPopup/DialogPopup";
 import { formatDate } from "../../common/dateFormat";
+import { useSelector } from "react-redux";
 // import CustomPopup1 from "../../common/DialogPopup/DialogPopup";
 const monthArr = [
   "Apr",
@@ -61,6 +62,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
   const [getinputs, setGetinputs] = useState({});
   const [dealerlist, setDealerlist] = useState([]);
   const [gridMonth, setGridMonth] = useState([]);
+  const { AuthData } = useSelector((state) => state.auth);
   const currentMonthCount =
     date.getMonth() < 3 ? date.getMonth() + 13 : date.getMonth() + 1;
   const [currentMonth, setCurrentMonth] = useState(currentMonthCount);
@@ -965,14 +967,18 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
               </button>
             )}
           </Col>
-          <Col xl={3} lg={3} md={3} sm={4} className="pl-0">
-            {" "}
-            <button className="buttonForMainUi" onClick={handleDealerPopupOpen}>
-              <span style={{ fontFamily: "Nunito sans" }}>
-                New Dealer Planning
-              </span>
-            </button>{" "}
-          </Col>
+          {AuthData?.Data[0]?.Division == "D" && (
+            <Col xl={3} lg={3} md={3} sm={4} className="pl-0">
+              <button
+                className="buttonForMainUi"
+                onClick={handleDealerPopupOpen}
+              >
+                <span style={{ fontFamily: "Nunito sans" }}>
+                  New Dealer Planning
+                </span>
+              </button>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col
@@ -1077,7 +1083,11 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                     type="number"
                     value={popupVisitValue}
                     className="inp40 text-center"
-                    onChange={(e) => setPopupVisitValue(e.target.value)}
+                    onChange={(e) =>
+                      setPopupVisitValue(
+                        e.target.value > 0 ? e.target.value : 0
+                      )
+                    }
                   />
                 </td>
               </tr>
@@ -1144,7 +1154,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                   textAlign="center"
                   allowEditing={false}
                 />
-                <ColumnDirective
+                {/* <ColumnDirective
                   field="YTD"
                   headerText="YTD"
                   width="100"
@@ -1157,7 +1167,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                   width="100"
                   textAlign="center"
                   allowEditing={false}
-                />
+                /> */}
                 <ColumnDirective
                   field="SameMonthLY"
                   headerText={`LY (${mStartName})`}
@@ -1172,6 +1182,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                   editType="numericedit"
                   textAlign="center"
                   allowEditing={true}
+                  validationRules={{ required: true, min: 0 }}
                 />
                 <ColumnDirective
                   field="Volume"
@@ -1180,6 +1191,7 @@ const Wgt_Delear_Ui = ({ data, handleDealerPopup }) => {
                   textAlign="center"
                   editType="numericedit"
                   allowEditing={true}
+                  validationRules={{ required: true, min: 0 }}
                 />
               </ColumnsDirective>
               <AggregatesDirective>

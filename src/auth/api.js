@@ -1,30 +1,22 @@
 // api.js
 import axios from "axios";
 
-// const instance = axios.create({
-//   baseURL: "https://api.planboard.in",
-//   timeout: 10000,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
-// const instance = axios.create({
-//   baseURL: "https://salesplanapi.mayanksoftwares.co/",
-//   timeout: 10000,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
 const instance = axios.create({
-  baseURL: "https://salesplandemoapi.mayanksoftwares.co/",
-  timeout: 10000,
+  baseURL: "https://salesplanapi.mayanksoftwares.co/",
+  timeout: 50000,
   headers: {
     "Content-Type": "application/json",
   },
 });
-export const ServerAPI = "https://salesplandemoapi.mayanksoftwares.co/";
-// export const ServerAPI = "https://salesplanapi.mayanksoftwares.co/";
+// const instance = axios.create({
+//   baseURL: "https://salesplandemoapi.mayanksoftwares.co/",
+//   timeout: 10000,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
+// export const ServerAPI = "https://salesplandemoapi.mayanksoftwares.co/";
+export const ServerAPI = "https://salesplanapi.mayanksoftwares.co/";
 
 // const summary = axios.create({
 //   baseURL: 'https://api.planboard.in/api/Summary/FYData',

@@ -570,7 +570,7 @@ const DepoMonthWiseSalesReport = ({
         Dec: parseInt(element.Dec_Month_Value_v1).toFixed(0),
         "Dec Sale": parseInt(element.Dec_Month_Sale_act).toFixed(0),
         Jan: parseInt(element.Jan_Month_Value_v1).toFixed(0),
-        "Jan Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
+        "Jan Sale": parseInt(element.Jan_Month_Sale_act).toFixed(0),
         Feb: parseInt(element.Feb_Month_Value_v1).toFixed(0),
         "Feb Sale": parseInt(element.Feb_Month_Sale_act).toFixed(0),
         Mar: parseInt(element.Mar_Month_Value_v1).toFixed(0),

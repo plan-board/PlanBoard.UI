@@ -23,6 +23,7 @@ const PreJourneyPlan = () => {
   let todayActivityGridInstance = useRef();
   let customterGridInstance = useRef();
   let customterMultiInstance = useRef();
+  let activityMultiInstance = useRef();
   const { zoneId, depotId, territoryId } = useParams();
   const { AuthData } = useSelector((state) => state?.auth);
   const [todayActivityOpen, setTodayActivityOpen] = useState(false);
@@ -45,11 +46,13 @@ const PreJourneyPlan = () => {
   const [todayActivityData, setTodayaActivityData] = useState([]);
 
   const [customerList, setCustomerList] = useState([]);
+  const [activityList, setActivityList] = useState([]);
   const [formDetails, setFormDetails] = useState({
     tableid: 0,
     customerid: "",
     visitdate: "",
     visitpurpose: "",
+    activityId: [],
   });
 
   const [responseDetails, setResponseDetails] = useState({
@@ -97,6 +100,7 @@ const PreJourneyPlan = () => {
       if (response?.status === 200) {
         if (response.data.Data != null) {
           setCustomerList(response.data.Data.Table);
+          fetchActvityList();
         }
       }
       setLoading(false);
@@ -104,13 +108,37 @@ const PreJourneyPlan = () => {
       dispatch({ type: SHOW_TOAST, payload: error.message });
     }
   };
+  const fetchActvityList = async () => {
+    activityMultiInstance.current.value = [];
+    setLoading(true);
+
+    fetch(
+      "https://shalimarsalesforceapi.mayanksoftwares.co/GetActivityMasterData",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        if (res && Array.isArray(res.Data) && res.Data.length > 0) {
+          setActivityList(res.Data);
+        }
+        setLoading(false);
+      })
+      .catch((err) =>
+        console.log("Error While trying to fetch Activity Data", err)
+      );
+  };
 
   const handleChange = (e) => {
     if (e.element) {
-      let newCustomerIds = e.value;
       setFormDetails((prevstate) => ({
         ...prevstate,
-        customerid: newCustomerIds,
+        [e.element.id]: e.value,
       }));
     } else {
       setFormDetails((prevstate) => ({
@@ -122,11 +150,13 @@ const PreJourneyPlan = () => {
 
   const getSingleRowData = (args) => {
     customterMultiInstance.current.value = args.rowData.customerid;
+    activityMultiInstance.current.value = args.rowData.useractivityid;
     setFormDetails({
       tableid: args.rowData.tableid,
       customerid: args.rowData.customerid,
       visitdate: formatDate(args.rowData.visitdate),
       visitpurpose: args.rowData.visitpurpose,
+      activityId: args.rowData.useractivityid,
     });
   };
 
@@ -152,8 +182,16 @@ const PreJourneyPlan = () => {
 
   const handleSave = async () => {
     if (validateForm()) {
-      setLoading(true);
+      // setLoading(true);
       let payload = {};
+      let activityApiData = [];
+      if (formDetails.activityId.length > 0) {
+        formDetails.activityId.map((val) => {
+          activityApiData.push({
+            useractivityid: val,
+          });
+        });
+      }
       if (formDetails.tableid == 0) {
         payload = {
           action: "Save",
@@ -163,6 +201,7 @@ const PreJourneyPlan = () => {
           visitdate: formDetails.visitdate,
           visitpurpose: formDetails.visitpurpose,
           createdby: parseInt(AuthData?.Data[0].EmployeeID),
+          ScheduleDetailsMaster: activityApiData,
         };
       } else {
         payload = {
@@ -173,6 +212,7 @@ const PreJourneyPlan = () => {
           visitdate: formDetails.visitdate,
           visitpurpose: formDetails.visitpurpose,
           createdby: parseInt(AuthData?.Data[0].EmployeeID),
+          ScheduleDetailsMaster: activityApiData,
         };
       }
 
@@ -192,8 +232,10 @@ const PreJourneyPlan = () => {
               customerid: "",
               visitdate: "",
               visitpurpose: "",
+              activityId: [],
             });
             customterMultiInstance.current.value = null;
+            activityMultiInstance.current.value = null;
             handlegetData();
           } else {
             setResponseDetails({
@@ -515,6 +557,8 @@ const PreJourneyPlan = () => {
                   handleChange={handleChange}
                   formDetails={formDetails}
                   handleSave={handleSave}
+                  activityMultiInstance={activityMultiInstance}
+                  activityList={activityList}
                 />
               </div>
             </div>

@@ -7,6 +7,7 @@ import DepotMaster from "./Components/DepotMaster";
 import TerritoryMaster from "./Components/TerritoryMaster";
 import EmployeeMaster from "./Components/EmployeeMaster";
 import CustomerMaster from "./Components/CustomerMaster";
+import NewProductMaster from "./Components/newProductPlanning";
 import { useSelector } from "react-redux";
 const Settings = () => {
   const [toggleState, setToggleState] = useState(1);
@@ -117,6 +118,22 @@ const Settings = () => {
               </i>{" "}
             </span>
           </div>
+          <div
+            className={
+              toggleState === 7 ? "w3-button tab tab-active" : "w3-button tab"
+            }
+            onClick={() => toggleTab(7)}
+          >
+            <span className="h6">
+              {" "}
+              <i className="fa fa-gear">
+                <span style={{ fontFamily: "Nunito Sans" }}>
+                  {" "}
+                  New Product Planning
+                </span>
+              </i>{" "}
+            </span>
+          </div>
         </div>
         <div class="row w-100">
           <div className="full">
@@ -160,6 +177,14 @@ const Settings = () => {
             >
               {toggleState === 6 && (
                 <CustomerMaster toggleState={toggleState} />
+              )}
+            </div>
+            <div
+              className={toggleState === 7 ? "  " : " w3-hide  "}
+              onClick={() => toggleTab(7)}
+            >
+              {toggleState === 7 && (
+                <NewProductMaster toggleState={toggleState} />
               )}
             </div>
           </div>
