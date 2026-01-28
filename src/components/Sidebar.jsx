@@ -87,17 +87,40 @@ const Sidebar = ({ isAuth, rolId }) => {
             <p className="w3-small h6">Territory</p>
           </NavLink>
         )}
-        {/* {hasPermission(rolId, "dashscheduleboard") && (
+        {hasPermission(rolId, "Reports") && (
           <NavLink
             className={({ isActive }) =>
               "nav-link" + (!isActive ? " unselected" : " active")
             }
-            to="schedule"
+            to="Reports"
           >
-            <i className="fa fa-table"></i>
-            <p className="w3-small h6">Schedule</p>
+            <i className="fa  fa-file-text-o"></i>
+            <p className="w3-small h6">Reports</p>
+          </NavLink>
+        )}
+          {/* {hasPermission(rolId, "Tinting Machine") && (
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link" + (!isActive ? " unselected" : " active")
+            }
+            to="tintingMachine"
+          >
+            <i className="fa  fa-file-text-o"></i>
+            <p className="w3-small h6">Tinting Machine</p>
           </NavLink>
         )} */}
+
+        {hasPermission(rolId, "new-Product-Planing") && (
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link" + (!isActive ? " unselected" : " active")
+            }
+            to="new-Product-Planing"
+          >
+            <i className="fa fa-tasks"></i>
+            <p className="w3-small h6">New Product Planning</p>
+          </NavLink>
+        )}
         {hasPermission(rolId, "national") && (
           <NavLink
             className={({ isActive }) =>
@@ -145,6 +168,32 @@ const Sidebar = ({ isAuth, rolId }) => {
             >
               <i className="fa fa-lock"></i>
               <p className="w3-small h6">Change Password</p>
+            </NavLink>
+          </div>
+        )}
+        {hasPermission(rolId, "Ihnational") && (
+          <div className="sub-menu">
+            <NavLink
+              className={({ isActive }) =>
+                "nav-link" + (!isActive ? " unselected" : " active")
+              }
+              to="/Ihnational"
+            >
+              <i className="fa fa-globe"></i>
+              <p className="w3-small h6">National</p>
+            </NavLink>
+          </div>
+        )}
+        {hasPermission(rolId, "segment") && (
+          <div className="sub-menu">
+            <NavLink
+              className={({ isActive }) =>
+                "nav-link" + (!isActive ? " unselected" : " active")
+              }
+              to="/segment"
+            >
+              <i className="fa fa-file-text-o"></i>
+              <p className="w3-small h6">Segment</p>
             </NavLink>
           </div>
         )}
